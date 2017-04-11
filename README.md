@@ -9,6 +9,7 @@
 * data/   
     * twitterStream.py - ` Twitter Stream as data source directly from API `
     * socketStream.py - ` Stream from UDP/TCP socket; incoming data as JSON `
+    * messageStream.py - ` Stream from distributed message queue like RabbitMQ `
 * models/
     * initializeModels.py - ` Based on configuration initializae models, two types of model service is available: Socket/API, Download Model ` 
         * SERVICE - ` Service Oriented (Socket/API based) Model - host, port, api `
