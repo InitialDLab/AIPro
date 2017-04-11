@@ -11,8 +11,8 @@
     * socketStream.py - ` Stream from UDP/TCP socket; incoming data as JSON `
 * models/
     * initializeModels.py - ` Based on configuration initializae models, two types of model service is available: Socket/API, Download Model ` 
-          * SERVICE - `Service Oriented (Socket/API based) Model - host, port, api`
-          * DOWNLOAD - `Downloaded Model - model, code, function`
+          > SERVICE - ` Service Oriented (Socket/API based) Model - host, port, api `
+          > DOWNLOAD - ` Downloaded Model - model, code, function `
     * classificationModel - ` Example classification model `
     * sentimentModel - ` Example sentiment model `
 * utils/
