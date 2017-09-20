@@ -3,7 +3,7 @@
 ------------
 
 #### Structure 
-* install.py - `Configures and Installs SONAR analytic engine, downloads models `
+* install.sh - `Configures and Installs SONAR analytic engine, downloads models `
 * config.yml - ` YAML file for configuration of the system, Data Source, Plugin Models, Databases etc. `
 * main.py   - ` Driver code `
 * data/   
