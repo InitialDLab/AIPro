@@ -36,6 +36,7 @@ class Twitter:
 		for tweet in self.api.home_timeline():
 			print tweet
 
+# Demo usage, not necessary to keep this
 if __name__ == '__main__':
 	import yaml
 	from time import sleep
