@@ -4,7 +4,7 @@
 
 #### Structure 
 * install.sh - `Configures and Installs SONAR analytic engine, downloads models `
-* config.yml - ` YAML file for configuration of the system, Data Source, Plugin Models, Databases etc. `
+* config-template.yml - ` Template YAML file for configuration of the system, Data Source, Plugin Models, Databases etc. Make sure to rename this to config.yml when setting up on your own system so that your private information doesn't get added to the repository. `
 * main.py   - ` Driver code `
 * data/   
     * twitterStream.py - ` Twitter Stream as data source directly from API `
