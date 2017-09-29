@@ -14,6 +14,14 @@ data_sources:
     queue_name: 'my_queue'
     ack_type: 'auto'
     durable: false
+  -
+    source_type: 'StreamingAPI'
+    source_alias: 'Twitter Streaming API'
+    host: ''
+    api_key: ''
+    api_secret: ''
+    access_token: ''
+    access_token_secret: ''
 
 # Model types can be 'Classification', or 'Sentiment'
 # Model service type can be either 'SERVICE' or 'DOWNLOAD'
