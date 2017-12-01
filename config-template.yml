@@ -33,6 +33,7 @@ models:
     model_build_function: 'model.build'
     model_fit_function: 'model.fit'
     mode_predict_function: 'model.predict'
+    model_save_function: 'model.save'
     # TODO: Add more fields here
   -
     model_type: 'Sentiment'
