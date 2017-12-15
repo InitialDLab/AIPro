@@ -1,7 +1,17 @@
 from pymongo.mongo_client import MongoClient
 
-class MongoConnection:
-	def __init__(self, db_name, host='localhost', port=27017):
+class MongoDB:
+	def __init__(self, source_config):
+		if 'db_name' in source_config:
+			db_name = source_config['db_name']
+		else:
+			db_name = 'localhost'
+
+		if 'port' in source_config:
+			port = source_config['port']
+		else:
+			port = 27017
+			
 		self.client = MongoClient(host, port)
 		self.db = client[db_name]
 
