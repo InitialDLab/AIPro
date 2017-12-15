@@ -1,20 +1,23 @@
 from keras.models import load_model
 import numpy as np
 import os
+from model import Model
 
 '''
 We assume that the model has already been trained, and saved
 by calling model.save(filename) and saving as an h5 file.
 '''
-class KerasModel:
+class KerasModel(Model):
 	def __init__(self, source_config):
-		if not os.is_path(source_config['model_file_path']):
+		if not os.path.isfile(source_config['model_file_path']):
 			print "Filename not valid: %s" % source_config['model_file_path']
-		self.model = load_model(source_config['model_file_path'])
+		#self.model = load_model(source_config['model_file_path'])
 
 	# Input: a numpy array, or list of numpy arrays if the model has multiple outputs.
 	# Returns a numpy array of predictions
-	def predict(self, X):
+	def process(self, X):
+		return np.array([x.split()[0] for x in X])
+		'''
 		if type(X) != np.ndarray:
 			X = np.array(X)
 		try:
@@ -24,3 +27,4 @@ class KerasModel:
 			print e
 		finally:
 			return []
+		'''

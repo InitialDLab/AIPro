@@ -1,6 +1,7 @@
 import socket
+from data_source import DataSource
 
-class SocketStream:
+class SocketStream(DataSource):
 	'''
 	A prototypical socket connection for the Compass data pipeline.
 	This one doesn't do much (just writes to and reads from a dummy server socket),
@@ -45,8 +46,8 @@ if __name__ == '__main__':
 		config = yaml.load(f)
 
 		for source_config in config['data_sources']:
-			if source_config['source_type'] == 'Socket':
-				print "Connecting to socket with alias", source_config['source_alias']
+			if source_config['type'] == 'Socket':
+				print "Connecting to socket with alias", source_config['alias']
 				s = SocketStream(source_config)
 				s.connect()
 				s.write("Hi there")

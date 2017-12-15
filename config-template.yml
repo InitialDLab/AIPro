@@ -2,42 +2,59 @@
 data_sources:
   - 
     # Socket stream incoming data is in JSON format
-    source_type: 'Socket'
-    source_alias: 'Local TCP Socket 123'
+    type: 'Socket'
+    alias: 'Local TCP Socket 123'
     host: 'localhost' #richards-mbp-5.uconnect.utah.edu'
     port: 8081
-    # May not need this -> socket_type: 'TCP'
   - 
-    source_type: 'MessageQueue'
-    source_alias: 'My RabbitMQ message queue'
+    type: 'MessageQueue'
+    alias: 'My RabbitMQ message queue'
     host: 'localhost'
     queue_name: 'my_queue'
     ack_type: 'auto'
     durable: false
   -
-    source_type: 'StreamingAPI'
-    source_alias: 'Twitter Streaming API'
-    host: ''
-    api_key: ''
-    api_secret: ''
-    access_token: ''
-    access_token_secret: ''
+    # Twitter streaming is in JSON format
+    type: 'StreamingAPI'
+    alias: 'Twitter Streaming API'
+    api_key: 'XXXXXXXXXXX'
+    api_secret: 'XXXXXXXXXXX'
+    access_token: 'XXXXXXXXXXX'
+    access_token_secret: 'XXXXXXXXXXX'
 
 # Model types can be 'Classification', or 'Sentiment'
 # Model service type can be either 'SERVICE' or 'DOWNLOAD'
 models:
-  - 
-    model_type: 'Classification'
-    model_service_type: 'DOWNLOAD'
-    model_code: 'classificationModel.py'
-    model_build_function: 'model.build'
-    model_fit_function: 'model.fit'
-    mode_predict_function: 'model.predict'
-    model_save_function: 'model.save'
-    # TODO: Add more fields here
   -
-    model_type: 'Sentiment'
-    model_service_type: 'SERVICE'
+    type: 'Keras-With-H5-File'
+    method: 'Classification'
+    alias: "Hello World Keras Model"
+    model_file_path: 'mymodel.h5'
+    service_type: 'DOWNLOAD'
+  - 
+    type: 'Classification'
+    service_type: 'DOWNLOAD'
+    code: 'classificationModel.py'
+    build_function: 'model.build'
+    fit_function: 'model.fit'
+    predict_function: 'model.predict'
+    save_function: 'model.save'
+  -
+    type: 'Sentiment'
+    service_type: 'SERVICE'
     host: 'localhost'
     port: 8082
     api: '/my_sentiment_api/'
+storage:
+  -
+    type: 'MongoDB'
+    alias: 'My MongoDB Connection'
+    db_name: 'tweets'
+    host: 'localhost'
+    collection: 'tweet_sentiments'
+    port: 27017
+  -
+    type: 'File'
+    alias: 'My file'
+    # Note - the file does need to exist, the program only needs write permissions when saving to this file
+    save_filename: 'my-tmp-file.txt'
