@@ -11,13 +11,11 @@ class KerasModel(Model):
 	def __init__(self, source_config):
 		if not os.path.isfile(source_config['model_file_path']):
 			print "Filename not valid: %s" % source_config['model_file_path']
-		#self.model = load_model(source_config['model_file_path'])
+		self.model = load_model(source_config['model_file_path'])
 
 	# Input: a numpy array, or list of numpy arrays if the model has multiple outputs.
 	# Returns a numpy array of predictions
 	def process(self, X):
-		return np.array([x.split()[0] for x in X])
-		'''
 		if type(X) != np.ndarray:
 			X = np.array(X)
 		try:
@@ -25,6 +23,4 @@ class KerasModel(Model):
 		except ValueError as e:
 			print "Error with Keras prediction"
 			print e
-		finally:
 			return []
-		'''

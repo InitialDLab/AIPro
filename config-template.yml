@@ -1,18 +1,19 @@
 # Can be the following types: 'Socket', 'MessageQueue', 'StreamingAPI', 'HTTPAPI'
 data_sources:
-  - 
-    # Socket stream incoming data is in JSON format
-    type: 'Socket'
-    alias: 'Local TCP Socket 123'
-    host: 'localhost' #richards-mbp-5.uconnect.utah.edu'
-    port: 8081
-  - 
-    type: 'MessageQueue'
-    alias: 'My RabbitMQ message queue'
-    host: 'localhost'
-    queue_name: 'my_queue'
-    ack_type: 'auto'
-    durable: false
+# NOT YET IMPLEMENTED
+# - 
+#    # Socket stream incoming data is in JSON format
+#    type: 'Socket'
+#    alias: 'Local TCP Socket 123'
+#    host: 'localhost'
+#    port: 8081
+#  - 
+#    type: 'MessageQueue'
+#    alias: 'My RabbitMQ message queue'
+#    host: 'localhost'
+#    queue_name: 'my_queue'
+#    ack_type: 'auto'
+ #   durable: false
   -
     # Twitter streaming is in JSON format
     type: 'StreamingAPI'
@@ -26,25 +27,27 @@ data_sources:
 # Model service type can be either 'SERVICE' or 'DOWNLOAD'
 models:
   -
-    type: 'Keras-With-H5-File'
+    type: 'Keras-Saved'
     method: 'Classification'
     alias: "Hello World Keras Model"
     model_file_path: 'mymodel.h5'
     service_type: 'DOWNLOAD'
-  - 
-    type: 'Classification'
-    service_type: 'DOWNLOAD'
-    code: 'classificationModel.py'
-    build_function: 'model.build'
-    fit_function: 'model.fit'
-    predict_function: 'model.predict'
-    save_function: 'model.save'
-  -
-    type: 'Sentiment'
-    service_type: 'SERVICE'
-    host: 'localhost'
-    port: 8082
-    api: '/my_sentiment_api/'
+
+# NOT YET IMPLEMENTED
+#  - 
+#    type: 'Classification'
+#    service_type: 'DOWNLOAD'
+#    code: 'classificationModel.py'
+#    build_function: 'model.build'
+#    fit_function: 'model.fit'
+#    predict_function: 'model.predict'
+#    save_function: 'model.save'
+#  -
+#    type: 'Sentiment'
+#    service_type: 'SERVICE'
+#    host: 'localhost'
+#    port: 8082
+#    api: '/my_sentiment_api/'
 storage:
   -
     type: 'MongoDB'
@@ -56,5 +59,5 @@ storage:
   -
     type: 'File'
     alias: 'My file'
-    # Note - the file does need to exist, the program only needs write permissions when saving to this file
+    # Note - the file doesn't need to exist, the program only needs write permissions when saving to this file
     save_filename: 'my-tmp-file.txt'
