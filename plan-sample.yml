@@ -7,7 +7,7 @@
   attribute: 'text'
 -
   type: 'Model'
-  alias: 'Hello World Keras Model'
+  alias: 'Text sentiment classifier'
 -
   type: 'Storage'
   alias: 'My file'

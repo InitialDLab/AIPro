@@ -16,14 +16,15 @@ class SocketStream(DataSource):
 		self.sock.connect((self.host, self.port))
 		print "Socket connected to host %s at port %i." % (self.host, self.port)
 
-	def read(self):
-		message = self.sock.recv(20)
+	def get_data(self):
+		# TODO: Need a more robust protocol here
+		message = self.sock.recv(2048)
 		return message
 
 	def write(self, msg):
 		self.sock.send(msg)
 
-	def close(self):
+	def close_gracefully(self):
 		# Shutdown is a more graceful way of closing the connection, it doesn't make the server think we're still working on a reply
 		print "Shutting down"
 		self.sock.shutdown(0)
@@ -51,6 +52,6 @@ if __name__ == '__main__':
 				s = SocketStream(source_config)
 				s.connect()
 				s.write("Hi there")
-				message = s.read()
+				message = s.get_data()
 				print message
-				s.close()
+				s.close_gracefully()

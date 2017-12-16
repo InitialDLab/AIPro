@@ -1,5 +1,6 @@
 import sys
 import os
+import yaml
 
 # Stored as a dictionary, with aliases as keys
 def get_data_sources_from_config(config):
@@ -15,6 +16,7 @@ def get_data_sources_from_config(config):
 			if 'data.socketStream' not in sys.modules:
 				from data.socketStream import SocketStream
 			data_sources[source_config['alias']] = SocketStream(source_config)
+			data_sources[source_config['alias']].connect()
 		
 		elif source_config['type'] == 'MessageQueue':
 			if 'data.messageStream' not in sys.modules:
@@ -50,7 +52,7 @@ def get_storage_from_config(config):
 
 	return storage
 
-def parse_plan(config, plan_file='../plan.yml'):
+def parse_plan(config, plan_file='plan.yml'):
 	# Initialize the plan, based on the plan file
 	if not os.path.isfile(plan_file):
 		print "Couldn't find plan file %s" % plan_file

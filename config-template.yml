@@ -1,12 +1,13 @@
-# Can be the following types: 'Socket', 'MessageQueue', 'StreamingAPI', 'HTTPAPI'
+# Can be the following types: 'Socket', 'MessageQueue', 'StreamingAPI'
 data_sources:
+ - 
+    # Socket stream incoming data is in JSON format
+    type: 'Socket'
+    alias: 'Local TCP Socket 123'
+    host: 'localhost'
+    port: 8081
+
 # NOT YET IMPLEMENTED
-# - 
-#    # Socket stream incoming data is in JSON format
-#    type: 'Socket'
-#    alias: 'Local TCP Socket 123'
-#    host: 'localhost'
-#    port: 8081
 #  - 
 #    type: 'MessageQueue'
 #    alias: 'My RabbitMQ message queue'
@@ -23,13 +24,11 @@ data_sources:
     access_token: 'XXXXXXXXXXX'
     access_token_secret: 'XXXXXXXXXXX'
 
-# Model types can be 'Classification', or 'Sentiment'
 # Model service type can be either 'SERVICE' or 'DOWNLOAD'
 models:
   -
     type: 'Keras-Saved'
-    method: 'Classification'
-    alias: "Hello World Keras Model"
+    alias: "Text sentiment classifier"
     model_file_path: 'mymodel.h5'
     service_type: 'DOWNLOAD'
 
