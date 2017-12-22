@@ -25,6 +25,20 @@ def get_data_sources_from_config(config):
 
 	return data_sources
 
+def get_data_cleaners_from_config(config):
+	cleaners = {}
+	# Data cleaners are optional, check to see if they're included
+	if 'cleaners' in config:
+		for source_config in config['cleaners']:
+			if source_config['type'] == 'TextToNumerical':
+				#if 'data.dataCleaner' not in sys.modules:
+				from data.dataCleaner import TextToNumerical
+				cleaners[source_config['alias']] = TextToNumerical()
+
+		# TODO: Add more robust cleaners here, specified by your own file
+
+	return cleaners
+
 def get_models_from_config(config):
 	models = {}
 	for source_config in config['models']:
@@ -52,6 +66,7 @@ def get_storage_from_config(config):
 
 	return storage
 
+
 def parse_plan(config, plan_file='plan.yml'):
 	# Initialize the plan, based on the plan file
 	if not os.path.isfile(plan_file):
@@ -59,6 +74,7 @@ def parse_plan(config, plan_file='plan.yml'):
 		sys.exit(1)
 
 	data_sources = get_data_sources_from_config(config)
+	data_cleaners = get_data_cleaners_from_config(config)
 	models = get_models_from_config(config)
 	storage_methods = get_storage_from_config(config)
 
@@ -67,22 +83,45 @@ def parse_plan(config, plan_file='plan.yml'):
 		plan = yaml.load(f)
 
 	# For now, plans will be serial sequences from data source to final database storage
-	datasource_aliases, model_aliases, storage_aliases = set(data_sources.keys()), set(models.keys()), set(storage_methods.keys())
+	datasource_aliases, data_cleaner_aliases, model_aliases, storage_aliases = set(data_sources.keys()), set(data_cleaners.keys()), set(models.keys()), set(storage_methods.keys())
 	modules = [None] * len(plan)
+	plan_err = False
 	for i, item in enumerate(plan):
 		if item['type'] == 'Data Source':
-			modules[i] = data_sources[item['alias']]
-			datasource_aliases.remove(item['alias'])
+			if item['alias'] not in data_sources:
+				print "Data source '%s' not found in config" % item['alias']
+				plan_err = True
+			else:
+				modules[i] = data_sources[item['alias']]
+				datasource_aliases.remove(item['alias'])
+		elif item['type'] == 'Data Cleaner':
+			if item['alias'] not in data_cleaners:
+				print "Data cleaner '%s' not found in config" % item['alias']
+				plan_err = True
+			else:
+				modules[i] = data_cleaners[item['alias']]
+				data_cleaner_aliases.remove(item['alias'])
 		elif item['type'] == 'Model':
-			modules[i] = models[item['alias']]
-			model_aliases.remove(item['alias'])
+			if item['alias'] not in models:
+				print "Model '%s' not found in config"
+				plan_err = True
+			else:
+				modules[i] = models[item['alias']]
+				model_aliases.remove(item['alias'])
 		elif item['type'] == 'Storage':
-			modules[i] = storage_methods[item['alias']]
-			storage_aliases.remove(item['alias'])
+			if item['alias'] not in storage_methods:
+				print "Storage method '%s' not found in config"
+				plan_err = True
+			else:
+				modules[i] = storage_methods[item['alias']]
+				storage_aliases.remove(item['alias'])
 
-	# Check to see if any data source, model, or storage method from the config file is unused in this plan
+	# Check to see if any data source, data cleaner, model, or storage method from the config file is unused in this plan
 	if len(datasource_aliases) > 0:
 		print "Unused data sources (by alias): %s" % ', '.join(list(datasource_aliases))
+
+	if len(data_cleaner_aliases) > 0:
+		print "Unused data cleaner (by alias): %s" % ', '.join(list(data_cleaner_aliases))
 
 	if len(model_aliases) > 0:
 		print "Unused models (by alias): %s" % ', '.join(list(model_aliases))
@@ -93,6 +132,11 @@ def parse_plan(config, plan_file='plan.yml'):
 	# Make sure a plan was actually loaded!
 	if not modules or any([entry is None for entry in modules]):
 		print "No valid plan was detected in the plan.yml file."
+		sys.exit(1)
+
+	# Make sure all plan entries were loaded
+	if plan_err:
+		print "Error loading plan - some modules were not loaded. See previous errors for details."
 		sys.exit(1)
 
 	return modules, plan

@@ -2,6 +2,7 @@ import yaml
 import sys
 import signal
 from data.data_source import DataSource
+from data.dataCleaner import DataCleaner
 from models.model import Model
 from utils.storage import Storage
 from utils.plan_parser import parse_plan
@@ -10,20 +11,27 @@ def run_plan_loop(modules, plan):
 	previous_output = []
 	assert(len(modules) == len(plan))
 	m = len(plan)
-	for i in xrange(m):
-		module, plan_entry = modules[i], plan[i]
-		if isinstance(module, DataSource):
-			print "Getting data from data source '%s'" % plan[i]['alias']
-			previous_output += module.get_data(plan_entry['attribute'])
-		elif isinstance(module, Model):
-			print "Processing data in model '%s'" % plan[i]['alias']
-			previous_output = module.process(previous_output)
-		elif isinstance(module, Storage):
-			print "Saving output with storage method '%s'" % plan[i]['alias']
-			module.save(previous_output)
-		else:
-			print "Unknown plan entry type: %s" % type(module)
-	print
+	try:
+		for i in xrange(m):
+			module, plan_entry = modules[i], plan[i]
+			if isinstance(module, DataSource):
+				print "Getting data from data source '%s'" % plan[i]['alias']
+				previous_output += module.get_data(plan_entry['attribute'])
+			elif isinstance(module, DataCleaner):
+				print "Cleaning data with cleaner '%s'" % plan[i]['alias']
+				previous_output = module.clean(previous_output)
+			elif isinstance(module, Model):
+				print "Processing data in model '%s'" % plan[i]['alias']
+				previous_output = module.process(previous_output)
+			elif isinstance(module, Storage):
+				print "Saving output with storage method '%s'" % plan[i]['alias']
+				module.save(previous_output)
+				previous_output = []
+			else:
+				print "Unknown plan entry type: %s" % type(module)
+		print
+	except:
+		close_gracefully(None, None)
 
 def close_gracefully(signal, frame):
 	print "Closing gracefully"

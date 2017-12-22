@@ -29,13 +29,6 @@ class Twitter(DataSource):
 		self.access_token = config['access_token']
 		self.access_token_secret = config['access_token_secret']
 		self.data = []
-		self.dictionary = {}
-		self.max_item = 0
-
-	def add_word_to_dictionary(self, word):
-		if word not in self.dictionary:
-			self.dictionary[word] = self.max_item
-			self.max_item += 1
 
 	def on_stream_error(self, auto_restart=True):
 		self.stream.disconnect()
@@ -48,18 +41,11 @@ class Twitter(DataSource):
 	# Seconds to wait - allow time for the stream to download new tweets
 	def get_data(self, attribute, seconds_to_wait=5):
 		sleep(seconds_to_wait)
-		data_to_return = []
-		for entry in self.data:
-			# Add words to the dictionary
-			if attribute in entry:
-				words = entry[attribute].split()
-				for word in words:
-					self.add_word_to_dictionary(word)
-				data_to_return.append([self.dictionary[word] for word in words if word in self.dictionary])
-
+		
 		# Clear our data buffer so we don't run out of memory
+		data_to_return = self.data
 		self.data = []
-		return data_to_return # [data[attribute] for data in data_to_return if attribute in data]
+		return [data[attribute] for data in data_to_return if attribute in data]
 
 	def start_stream(self, stream_filter='e'):
 		# Authorize with Twitter
