@@ -47,6 +47,12 @@ models:
 #    host: 'localhost'
 #    port: 8082
 #    api: '/my_sentiment_api/'
+  -
+    type: 'Custom'
+    alias: 'Custom text classifier'
+    module_file_path: 'path/to/custom_classifier.py'
+    module_classname: 'MyClassifier'
+    method_name: 'classify'
 storage:
   -
     type: 'MongoDB'
@@ -60,3 +66,7 @@ storage:
     alias: 'My file'
     # Note - the file doesn't need to exist, the program only needs write permissions when saving to this file
     save_filename: 'my-tmp-file.txt'
+cleaners:
+  -
+    type: 'TextToNumerical'
+    alias: 'Twitter text cleaner'

@@ -14,7 +14,7 @@ class FileStorage(Storage):
 				if hasattr(data[0], 'encode'):
 					f.write("\n".join([item.encode('UTF-8') for item in data]))
 				else:
-					f.write("\n".join(data))
+					f.write("\n".join([str(item) for item in data]))
 			else:
 				f.write(data)
 				f.write("\n")

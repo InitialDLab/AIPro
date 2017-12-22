@@ -1,6 +1,7 @@
 import sys
 import os
 import yaml
+from import_module import import_module_from_file
 
 # Stored as a dictionary, with aliases as keys
 def get_data_sources_from_config(config):
@@ -47,6 +48,14 @@ def get_models_from_config(config):
 				from models.kerasModel import KerasModel
 			models[source_config['alias']] = KerasModel(source_config)
 		
+		if source_config['type'] == 'Custom':
+			if 'models.customModel' not in sys.modules:
+				from models.customModel import CustomModel
+			custom_module = import_module_from_file(source_config['module_classname'], source_config['module_file_path'])
+			constructor = getattr(custom_module, source_config['module_classname'])
+			instance = constructor()
+			models[source_config['alias']] = CustomModel(getattr(instance, source_config['method_name']))
+
 		# TODO: More models
 	return models
 

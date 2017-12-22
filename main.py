@@ -30,7 +30,8 @@ def run_plan_loop(modules, plan):
 			else:
 				print "Unknown plan entry type: %s" % type(module)
 		print
-	except:
+	except Exception as e:
+		print e
 		close_gracefully(None, None)
 
 def close_gracefully(signal, frame):

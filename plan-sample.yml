@@ -6,6 +6,9 @@
   alias: "Twitter Streaming API"
   attribute: 'text'
 -
+  type: 'Data Cleaner'
+  alias: 'My data cleaner'
+-
   type: 'Model'
   alias: 'Text sentiment classifier'
 -

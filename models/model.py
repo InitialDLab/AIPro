@@ -1,3 +1,3 @@
 class Model(object):
 	def process(self, data):
-		pass
+		raise Exception('Not implemented in sub-class!')
