@@ -6,6 +6,7 @@ from data.dataCleaner import DataCleaner
 from models.model import Model
 from utils.storage import Storage
 from utils.plan_parser import parse_plan
+import argparse
 
 def run_plan_loop(modules, plan):
 	previous_output = []
@@ -43,20 +44,27 @@ def close_gracefully(signal, frame):
 				module.close_gracefully()
 	sys.exit(0)
 
-# Register that when the program is terminated, all threads must close gracefully as well
-signal.signal(signal.SIGTERM, close_gracefully)
-signal.signal(signal.SIGINT, close_gracefully)
+if __name__ == '__main__':
+	# Register that when the program is terminated, all threads must close gracefully as well
+	signal.signal(signal.SIGTERM, close_gracefully)
+	signal.signal(signal.SIGINT, close_gracefully)
 
-# Initialize data sources, models and storage methods based on the config
-config = {}
-with open('config.yml') as f:
-	config = yaml.load(f)
+	# Initialize data sources, models and storage methods based on the config
+	parser = argparse.ArgumentParser(description="Please specify the location of your config and plan files")
+	parser.add_argument('-c', '--config-file', type=str, help='The filepath to your config.yml file', default='config.yml', required=True)
+	parser.add_argument('-p', '--plan-file', type=str, help='The filepath to your plan.yml file', default='plan.yml', required=True)
+	args = parser.parse_args()
+	config = {}
+	print args
+	with open(args.config_file) as f:
+		config = yaml.load(f)
 
-modules, plan = parse_plan(config)
+	print config
+	modules, plan = parse_plan(config, args.plan_file)
 
-# Execute the plan on a loop, waiting for the keyboard interrupt to end the loop
-while True:
-	try:
-		run_plan_loop(modules, plan)
-	except KeyboardInterrupt as e:
-		close_gracefully(None, None)
+	# Execute the plan on a loop, waiting for the keyboard interrupt to end the loop
+	while True:
+		try:
+			run_plan_loop(modules, plan)
+		except KeyboardInterrupt as e:
+			close_gracefully(None, None)

@@ -112,14 +112,14 @@ def parse_plan(config, plan_file='plan.yml'):
 				data_cleaner_aliases.remove(item['alias'])
 		elif item['type'] == 'Model':
 			if item['alias'] not in models:
-				print "Model '%s' not found in config"
+				print "Model '%s' not found in config" % item['alias']
 				plan_err = True
 			else:
 				modules[i] = models[item['alias']]
 				model_aliases.remove(item['alias'])
 		elif item['type'] == 'Storage':
 			if item['alias'] not in storage_methods:
-				print "Storage method '%s' not found in config"
+				print "Storage method '%s' not found in config" % item['alias']
 				plan_err = True
 			else:
 				modules[i] = storage_methods[item['alias']]
