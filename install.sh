@@ -33,9 +33,10 @@ echo "          INITIALIZED VIRTUAL ENVIRONMENT,"
 echo "          INSTALLING PYTHON REQUIREMENTS"
 echo "==================================================="
 
-if [ ! -f "requirements.txt" ]; then
-	echo "Python requirements file missing: requirements.txt"
-	exit
-else
+# Install any additional python requirements provided by the user
+if [ -f "requirements.txt" ]; then
 	pip install -r requirements.txt
 fi
+
+# Install core python requirements
+pip install -r core-requirements.txt

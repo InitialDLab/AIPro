@@ -27,3 +27,9 @@
     * assets/
         * js
         * css
+
+
+## Notes on the new setup
+- Provide your own requirements.txt file if you have unique Python requirements
+- Your config file does the driving; any model, data source, data cleaner or storage method needs to be included
+- Each entry in your config's modules needs an output, unless it's a storage method. Otherwise, data will have nowhere to go once a module has processed it.

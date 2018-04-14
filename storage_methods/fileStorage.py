@@ -1,11 +1,17 @@
 from storage import Storage
 from numpy import ndarray # Keras outputs predictions to a numpy array
+import json
 
 class FileStorage(Storage):
-	def __init__(self, source_config):
+	def __init__(self, source_config, messenger):
 		self.save_filename = source_config['save_filename']
+		self.messenger = messenger
+
+	def run(self):
+		self.messenger.start(self.save)
 
 	def save(self, data):
+		print "Got new data: %r" % data
 		if not data:
 			return
 		with open(self.save_filename, "a") as f:
@@ -16,9 +22,5 @@ class FileStorage(Storage):
 				else:
 					f.write("\n".join([str(item) for item in data]))
 			else:
-				f.write(data)
+				f.write(str(data))
 				f.write("\n")
-
-	def load(self, filename):
-		with open(filename) as f:
-			return [line.strip() for line in f]
