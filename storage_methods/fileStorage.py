@@ -11,7 +11,6 @@ class FileStorage(Storage):
 		self.messenger.start(self.save)
 
 	def save(self, data):
-		print "Got new data: %r" % data
 		if not data:
 			return
 		with open(self.save_filename, "a") as f:

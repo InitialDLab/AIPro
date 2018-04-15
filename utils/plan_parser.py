@@ -2,7 +2,8 @@ import sys
 import os
 import yaml
 from import_module import import_module_from_file
-from messaging.messaging import Messenger
+from messaging import Messenger
+from compass_preprocessor import CompassPreprocessor
 
 def get_data_sources_from_config(config):
 	data_sources = []
@@ -25,44 +26,49 @@ def get_data_sources_from_config(config):
 def get_models_from_config(config):
 	models = []
 	if 'models' in config:
-		for source_config in config['models']:
+		for model_config in config['models']:
 			messenger = Messenger(config['messaging'])
-			messenger.set_incoming(source_config['alias'])
-			messenger.set_outgoing(source_config['outputs'])
+			messenger.set_incoming(model_config['alias'])
+			messenger.set_outgoing(model_config['outputs'])
 
-			if 'preprocessor' in source_config and 'preprocessors' in config:
+			if 'preprocessor' in model_config and 'preprocessors' in config:
 				for preprocess_config in config['preprocessors']:
-					if preprocess_config['alias'] == source_config['preprocessor']:
-						preprocessor = import_module_from_file(preprocess_config['module_classname'], config['base_path'] + '/' + source_config['module_file_path'])
+					if preprocess_config['alias'] == model_config['preprocessor']:
+						preprocessor = import_module_from_file(preprocess_config['module_classname'], config['base_path'] + '/' + preprocess_config['module_file_path'])
 						constructor = getattr(preprocessor, preprocess_config['module_classname'])
-						preprocessor = constructor()
+						instance = constructor(preprocess_config)
+						preprocessor = CompassPreprocessor(preprocess_config, instance)
+						break
 			
 			# No preprocessor provided? That's ok, we'll just use the default one.
 			else:
-				from data_preprocessors.defaultPreprocessor import DefaultPreprocessor
-				preprocessor = DefaultPreprocessor()
+				preprocessor = Preprocessor(None, None)
 
-			from models.customModel import CustomModel
-			custom_module = import_module_from_file(source_config['module_classname'], config['base_path'] + '/' + source_config['module_file_path'])
-			constructor = getattr(custom_module, source_config['module_classname'])
+			from model import Model
+			module = import_module_from_file(model_config['module_classname'], config['base_path'] + '/' + model_config['module_file_path'])
+			constructor = getattr(module, model_config['module_classname'])
 			instance = constructor()
-			models.append(CustomModel(getattr(instance, source_config['method_name']), messenger))
+			models.append(Model(model_config, instance, messenger, preprocessor))
 
 	return models
 
 def get_storage_from_config(config):
 	storage = []
 	if 'storage' in config:
-		for source_config in config['storage']:
+		for storage_config in config['storage']:
 			messenger = Messenger(config['messaging'])
-			messenger.set_incoming(source_config['alias'])
+			messenger.set_incoming(storage_config['alias'])
 			
-			if source_config['type'] == 'MongoDB':
+			if storage_config['type'] == 'MongoDB':
 				from storage_methods.databases import MongoDB
-				storage.append(MongoDB(source_config, messenger))
-			if source_config['type'] == 'File':
+				storage.append(MongoDB(storage_config, messenger))
+			if storage_config['type'] == 'File':
 				from storage_methods.fileStorage import FileStorage
-				storage.append(FileStorage(source_config, messenger))
+				storage.append(FileStorage(storage_config, messenger))
+
+			if storage_config['type'] == 'IO':
+				from storage_methods.IO import IO
+				storage.append(IO(messenger))
 
 	return storage
 
@@ -70,7 +76,6 @@ def get_storage_from_config(config):
 def init_modules(config):
 	modules = []
 	modules += get_data_sources_from_config(config)
-	modules += get_data_cleaners_from_config(config)
 	modules += get_models_from_config(config)
 	modules += get_storage_from_config(config)
 

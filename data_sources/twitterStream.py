@@ -23,21 +23,18 @@ class Twitter(DataSource):
 		assert('api_secret' in config)
 		assert('access_token' in config)
 		assert('access_token_secret' in config)
-		assert('json_attribute' in config)
 		self.api_key = config['api_key']
 		self.api_secret = config['api_secret']
 		self.access_token = config['access_token']
 		self.access_token_secret = config['access_token_secret']
 		self.messenger = messenger
-		self.json_attribute = config['json_attribute']
-		
+		self.projection = config['projection']
+
 		# Default to auto restart, unless overridden
 		if 'auto_restart' in config:
 			self.auto_restart = config['auto_restart']
 		else:
 			self.auto_restart = True
-
-		print "JSON Attribute: %r" % self.json_attribute
 
 	def on_stream_error(self):
 		self.stream.disconnect()
@@ -46,18 +43,27 @@ class Twitter(DataSource):
 		else:
 			self.close_gracefully()
 
-	def publish(self, data):
+	def publish(self, message):
 		try:
-			data = json.loads(data)
-			if self.json_attribute in data:
-				self.messenger.publish(data[self.json_attribute])
+			tmp = json.loads(message)
+			data = {}
+			if self.projection:
+				# Only take the tweet if it has our entire projection
+				if not all([key in tmp for key in self.projection]):
+					print "Not everybody was here"
+					for key in self.projection:
+						if key not in tmp:
+							print "%s not in tmp" % key
+					print "\n\n"
+					return
+				for key in self.projection:
+					if key in tmp:
+						data[key] = tmp[key]
 			else:
-				if not self.json_attribute:
-					print "JSON attribute missing"
-				else:
-					print "JSON attribute %s not in data" % self.json_attribute
-					print "Keys in data: %s" % (', '.join([str(key) for key in data]))
-					print "\n\n\n"
+				data = tmp
+			if not data:
+				return
+			self.messenger.publish(data)
 		except Exception as e:
 			print "Could not load streaming tweets."
 			print e
