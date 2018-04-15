@@ -9,6 +9,7 @@ from utils.plan_parser import init_modules
 import argparse
 import os
 import threading
+from time import sleep
 
 def run_thread(module, thread_num):
 	#print "Running thread %d" % thread_num
@@ -19,7 +20,10 @@ def run_pipeline(modules):
 		threads = [None] * len(modules)
 		for thread_num, module in enumerate(modules):
 			threads[thread_num] = threading.Thread(target=run_thread, args=(module, thread_num))
+			threads[thread_num].daemon = True
 			threads[thread_num].start()
+		while 1:
+			sleep(1)
 	except Exception as e:
 		print e
 		#close_gracefully(None, None)
@@ -31,7 +35,7 @@ def close_gracefully(signal, frame):
 			# Try to clean up resources, if we can (close the streaming thread used in the Twitter Stream, for example)
 			if hasattr(module, 'close_gracefully'):
 				module.close_gracefully()
-	#sys.exit(0)
+	sys.exit(0)
 
 if __name__ == '__main__':
 	# Register that when the program is terminated, all threads must close gracefully as well
