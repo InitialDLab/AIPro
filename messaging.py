@@ -11,7 +11,7 @@ class Messenger:
 		# TODO: Make connection params more robust
 		self.connection = pika.BlockingConnection(pika.ConnectionParameters(config['host']))
 		self.channel = self.connection.channel()
-		self.do_log = True
+		self.do_log = False
 
 	def set_incoming(self, incoming_alias):
 		self.channel.queue_declare(queue=incoming_alias, durable=True)

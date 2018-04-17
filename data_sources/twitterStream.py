@@ -36,9 +36,13 @@ class Twitter(DataSource):
 		else:
 			self.auto_restart = True
 
+		self.do_log = False
+
 	def on_stream_error(self):
 		self.stream.disconnect()
 		if self.auto_restart == True:
+			if self.do_log:
+				print "Restarting Twitter stream"
 			self.run()
 		else:
 			self.close_gracefully()
@@ -50,11 +54,12 @@ class Twitter(DataSource):
 			if self.projection:
 				# Only take the tweet if it has our entire projection
 				if not all([key in tmp for key in self.projection]):
-					print "Not everybody was here"
-					for key in self.projection:
-						if key not in tmp:
-							print "%s not in tmp" % key
-					print "\n\n"
+					if self.do_log:
+						print "Not all projection fields were present in data, skipping this Tweet:"
+						for key in self.projection:
+							if key not in tmp:
+								print "%s not in tmp" % key
+						print "\n\n"
 					return
 				for key in self.projection:
 					if key in tmp:
@@ -86,18 +91,3 @@ class Twitter(DataSource):
 	def close_gracefully(self):
 		print "Gracefully shutting down Twitter Stream..."
 		self.close_stream()
-
-if __name__ == '__main__':
-	class Messenger:
-		def publish(self, data):
-			pass
-	messenger = Messenger()
-	twitter_creds = {
-	    'api_key': 'OQEQBZDOOX6ByWpxT7QCUymcY',
-	    'api_secret': 'IfS6AK9i8JCFalaaeIs3mD2MVRe5pqNW6ABO8MbbYZjVW2yCzM',
-	    'access_token': '913791119770525702-tmOMfIEIgejuUV6W4maSLpLqTzFIFtp',
-	    'access_token_secret': 'Zt6PjCDAKIbmLLS4ucX26DDZSEGd5KdtWaSqltDw0l64t',
-	    'json_attribute': 'text'
-	}
-	twitter = Twitter(twitter_creds, messenger)
-	twitter.run()
