@@ -33,9 +33,9 @@ echo "          INITIALIZED VIRTUAL ENVIRONMENT,"
 echo "          INSTALLING PYTHON REQUIREMENTS"
 echo "==================================================="
 
+pip install --upgrade pip
 # Install any additional python requirements provided by the user
 if [ -f "requirements.txt" ]; then
-	pip install --upgrade pip
 	pip install -r requirements.txt
 fi
 
