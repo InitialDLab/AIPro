@@ -42,7 +42,7 @@ def get_models_from_config(config):
 			
 			# No preprocessor provided? That's ok, we'll just use the default one.
 			else:
-				preprocessor = Preprocessor(None, None)
+				preprocessor = CompassPreprocessor(None, None)
 
 			from model import Model
 			module = import_module_from_file(model_config['module_classname'], config['base_path'] + '/' + model_config['module_file_path'])

@@ -3,12 +3,11 @@ import json
 
 class Model:
 	def __init__(self, config, instance, messenger, preprocessor):
-		assert 'input_attribute' in config
-		assert 'output_attribute' in config
 		assert messenger is not None
 		assert preprocessor is not None
-		self.input_attribute = config['input_attribute']
-		self.output_attribute = config['output_attribute']
+		self.output_attribute = None
+		if 'output_attribute' in config:
+			self.output_attribute = config['output_attribute']
 		self.model_fn = getattr(instance, config['method_name'])
 		self.messenger = messenger
 		self.preprocessor = preprocessor
@@ -24,7 +23,10 @@ class Model:
 			return
 
 		# TODO: Make this handle more than just JSON
-		data[self.output_attribute] = self.model_fn(x)
+		if self.output_attribute:
+			data[self.output_attribute] = self.model_fn(x)
+		else:
+			data = self.model_fn(x)
 		if data:
 			self.publish(data)
 

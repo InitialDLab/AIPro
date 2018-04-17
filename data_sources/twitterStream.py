@@ -28,7 +28,9 @@ class Twitter(DataSource):
 		self.access_token = config['access_token']
 		self.access_token_secret = config['access_token_secret']
 		self.messenger = messenger
-		self.projection = config['projection']
+		self.projection = None
+		if 'projection' in config:
+			self.projection = config['projection']
 
 		# Default to auto restart, unless overridden
 		if 'auto_restart' in config:

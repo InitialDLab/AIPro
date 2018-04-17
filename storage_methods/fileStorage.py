@@ -21,5 +21,5 @@ class FileStorage(Storage):
 				else:
 					f.write("\n".join([str(item) for item in data]))
 			else:
-				f.write(str(data))
+				f.write(json.dumps((data)))
 				f.write("\n")
