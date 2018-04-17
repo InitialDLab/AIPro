@@ -1,72 +1,57 @@
-# Can be the following types: 'Socket', 'MessageQueue', 'StreamingAPI'
 data_sources:
- - 
-    # Socket stream incoming data is in JSON format
-    type: 'Socket'
-    alias: 'Local TCP Socket 123'
-    host: 'localhost'
-    port: 8081
-
-# NOT YET IMPLEMENTED
-#  - 
-#    type: 'MessageQueue'
-#    alias: 'My RabbitMQ message queue'
-#    host: 'localhost'
-#    queue_name: 'my_queue'
-#    ack_type: 'auto'
- #   durable: false
   -
-    # Twitter streaming is in JSON format
     type: 'StreamingAPI'
     alias: 'Twitter Streaming API'
-    api_key: 'XXXXXXXXXXX'
-    api_secret: 'XXXXXXXXXXX'
-    access_token: 'XXXXXXXXXXX'
-    access_token_secret: 'XXXXXXXXXXX'
-
-# Model service type can be either 'SERVICE' or 'DOWNLOAD'
+    api_key: 'XXXXXXXXXXXXXXXXXXXXXXXX'
+    api_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    access_token: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    access_token_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    auto_restart: True
+    projection:
+        - 'text'
+        - 'created_at'
+        - 'lang'
+    outputs:
+        - 'Streaming Sentiment Classifier'
+  -
+    type: 'FlatFile'
+    alias: 'Raw Tweets JSON File'
+    filename: 'examples/sentiment-analysis/data/raw_tweets.json'
+    outputs:
+        - 'Flat File Sentiment Classifier'
 models:
   -
-    type: 'Keras-Saved'
-    alias: "Text sentiment classifier"
-    model_file_path: 'mymodel.h5'
-    service_type: 'DOWNLOAD'
-
-# NOT YET IMPLEMENTED
-#  - 
-#    type: 'Classification'
-#    service_type: 'DOWNLOAD'
-#    code: 'classificationModel.py'
-#    build_function: 'model.build'
-#    fit_function: 'model.fit'
-#    predict_function: 'model.predict'
-#    save_function: 'model.save'
-#  -
-#    type: 'Sentiment'
-#    service_type: 'SERVICE'
-#    host: 'localhost'
-#    port: 8082
-#    api: '/my_sentiment_api/'
+    alias: 'Flat File Sentiment Classifier'
+    module_file_path: 'examples/sentiment-analysis/sentiment.py'
+    module_classname: 'SentimentClassifier'
+    method_name: 'predict'
+    output_attribute: 'sentiment_score'
+    preprocessor: 'Tweet Preprocessor'
+    outputs:
+        - 'Twitter Sentiment Predictions File'
   -
-    type: 'Custom'
-    alias: 'Custom text classifier'
-    module_file_path: 'path/to/custom_classifier.py'
-    module_classname: 'MyClassifier'
-    method_name: 'classify'
+    alias: 'Streaming Sentiment Classifier'
+    module_file_path: 'examples/sentiment-analysis/sentiment.py'
+    module_classname: 'SentimentClassifier'
+    method_name: 'predict'
+    output_attribute: 'sentiment_score'
+    preprocessor: 'Tweet Preprocessor'
+    outputs:
+        - 'IO'
 storage:
   -
-    type: 'MongoDB'
-    alias: 'My MongoDB Connection'
-    db_name: 'tweets'
-    host: 'localhost'
-    collection: 'tweet_sentiments'
-    port: 27017
-  -
     type: 'File'
-    alias: 'My file'
-    # Note - the file doesn't need to exist, the program only needs write permissions when saving to this file
-    save_filename: 'my-tmp-file.txt'
-cleaners:
+    alias: 'Twitter Sentiment Predictions File'
+    save_filename: 'sentiment_predictions.json'
   -
-    type: 'TextToNumerical'
-    alias: 'Twitter text cleaner'
+    type: 'IO'
+    alias: 'stdout'
+preprocessors:
+  -
+    alias: 'Tweet Preprocessor'
+    module_file_path: 'examples/sentiment-analysis/tweet_preprocessor.py'
+    module_classname: 'TweetPreprocessor'
+    json_attribute: 'text'
+    method_name: 'preprocess'
+messaging:
+    host: 'localhost'

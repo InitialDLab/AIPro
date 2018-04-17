@@ -19,6 +19,8 @@ def get_data_sources_from_config(config):
 
 			if source_config['type'] == 'FlatFile':
 				from data_sources.flatFile import FlatFile
+				# Include the base path (the location of the config file), in case the flat file's path is relative to the config file
+				source_config['base_path'] = config['base_path']
 				data_sources.append(FlatFile(source_config, messenger))
 
 	return data_sources
@@ -64,6 +66,7 @@ def get_storage_from_config(config):
 				storage.append(MongoDB(storage_config, messenger))
 			if storage_config['type'] == 'File':
 				from storage_methods.fileStorage import FileStorage
+				storage_config['base_path'] = config['base_path']
 				storage.append(FileStorage(storage_config, messenger))
 
 			if storage_config['type'] == 'IO':

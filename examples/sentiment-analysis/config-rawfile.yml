@@ -1,0 +1,31 @@
+data_sources:
+  -
+    type: 'FlatFile'
+    alias: 'Raw Tweets JSON File'
+    filename: 'data/raw_tweets.json'
+    outputs:
+        - 'Sentiment Classifier'
+models:
+  -
+    alias: 'Sentiment Classifier'
+    module_file_path: 'sentiment.py'
+    module_classname: 'SentimentClassifier'
+    method_name: 'predict'
+    output_attribute: 'sentiment_score'
+    preprocessor: 'Tweet Preprocessor'
+    outputs:
+        - 'Tweets with Sentiment Score'
+storage:
+  -
+    type: 'File'
+    alias: 'Tweets with Sentiment Score'
+    save_filename: 'tweets-with-sentiment.json'
+preprocessors:
+  -
+    alias: 'Tweet Preprocessor'
+    module_file_path: 'tweet_preprocessor.py'
+    module_classname: 'TweetPreprocessor'
+    json_attribute: 'text'
+    method_name: 'preprocess'
+messaging:
+    host: 'localhost'
