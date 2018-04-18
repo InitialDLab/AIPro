@@ -23,6 +23,7 @@ In order to get the config file set up, there are some things you'll need to pay
 	- The config-template.yml file in this main directory also contains every currently supported option, so a good place to start might be to copy this file and make adjustments of your own.
 - Different types of modules (data sources, models, data preprocessors, storage methods) have unique requirements, but many of them are optional.  The config-template.yml file has comments to let you know what's required and what's not
 - To get a walkthrough on specific config examples (i.e. like in examples/sentiment-analysis), take a look at the README.md that shows up in each example's directory for an explanation
+	- Sorry about the size of the repo in general, we have a larger-than-we'd-like model file for the sentiment analysis example
 
 ## Specific notes on different module types
 ### Data Sources
