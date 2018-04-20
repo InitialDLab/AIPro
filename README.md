@@ -9,7 +9,7 @@ Compass is meant to be used by providing your own (previously trained) models, d
     - Install Messaging Interface 
         - We use RabbitMQ as of now.
         - Start a RabbitMQ server instance, preferably your local machine.
-	    - If you don't have RabbitMQ installed, we highly recommend using Docker from [hub](https://hub.docker.com/_/rabbitmq/) to get one set up. 
+	    - If you don't have RabbitMQ installed, we highly recommend using [Docker](https://hub.docker.com/_/rabbitmq/). 
         - Once you have Docker installed, the `run.sh` script in this directory will start RabbitMQ with the proper settings.
     - Install Python virtual environment and core dependencies
         - `./install.sh` 
