@@ -1,9 +1,23 @@
 # Compass
 ### A primer
+`Compass` stands for `Compr`ehensive `A`nalytics on `S`entiment for `S`patiotemporal data. The project started with an aim to provide framework for running several machine learning models over spatiotempral data with a single configuration file. 
 
-Compass is meant to be used by providing your own (previously trained) models, data sources and storage methods.  Compass's job is to unite all of these components to form customizable pipelines, with the goal of providing Data Science as a Service (DSaaS)
+Presently `Compass` do much more. It act as a framework to unite `data sources`, `models` and `stores` components. 
 
-## [Quick Start on Ubuntu](#quick-start-on-ubuntu)
+	- Data Source types: 
+		- `API`
+		- `Socket`
+		- `File` 
+	- Models types:
+		- `API`
+		- `Downloadable` or `Local`
+	- Store types
+		- `Databases`
+		- `File`
+A pipeline with any combination of components can be created with just a configuration file. 
+`Compass`'s goal is to help you make your own Data Science as a Service (DSaaS) platform.
+
+## [Quick Start on Ubuntu](#quick-start-on-ubuntu):rocket:
 1. Clone this repository
 ``
 git clone https://github.com/debjyoti385/Compass.git
@@ -26,7 +40,7 @@ git clone https://github.com/debjyoti385/Compass.git
 4. To stop
 	- `ctrl+c` or `SIGKILL`
 
-## [Get started](#get-started)
+## [Get started](#get-started):octocat:
 1. Clone this repository
 2. Install dependencies
     - Install Messaging Interface 
