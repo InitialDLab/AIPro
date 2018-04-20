@@ -1,35 +1,31 @@
-## Compass
-### Comprehensive Analytics on Sentiment for Spatiotemporal Data
-------------
+# How to use Compass
+### A primer
 
-#### Structure 
-* install.sh - `Configures and Installs SONAR analytic engine, downloads models `
-* config-template.yml - ` Template YAML file for configuration of the system, Data Source, Plugin Models, Databases etc. Make sure to rename this to config.yml when setting up on your own system so that your private information doesn't get added to the repository. `
-* main.py   - ` Driver code `
-* data/   
-    * twitterStream.py - ` Twitter Stream as data source directly from API `
-    * socketStream.py - ` Stream from UDP/TCP socket; incoming data as JSON `
-    * messageStream.py - ` Stream from distributed message queue like RabbitMQ `
-* models/
-    * initializeModels.py - ` Based on configuration initializae models, two types of model service is available: Socket/API, Download Model ` 
-        * SERVICE - ` Service Oriented (Socket/API based) Model - host, port, api `
-        * DOWNLOAD - ` Downloaded Model - model, code, function `
-    * classificationModel - ` Example classification model `
-    * sentimentModel - ` Example sentiment model `
-* utils/
-    * geomapper.py - ` geomapping module lat-long to State and County `
-    * databases.py - ` Drivers for some databases `
-* analytics/
-    * api.py   - ` API to interact with analytics engine`
-    * server.py - ` Expose a server to interact with Web UI`
-* docs/ - Web UI 
-    * index.html
-    * assets/
-        * js
-        * css
+Compass is meant to be used by providing your own (previously trained) models, data sources and storage methods.  Compass's job is to unite all of these components to form customizable pipelines, with the goal of providing Data Science as a Service (DSaaS)
 
+## How to get started, the quick and dirty
+1. Clone this repository
+2. Start a RabbitMQ server instance, preferably locally
+	- If you don't have RabbitMQ installed, we highly recommend using Docker to get one set up. Once you have Docker installed, the run.sh script in this directory will start RabbitMQ with the proper settings.
+3. Run install.sh to install a virtual environment and core dependencies
+4. Create a config file based on the config-template.yml file with your pipeline requirements
+	- More on this to follow
+5. Install the Python requirements specific to your models, data sources and storage methods within the same virtual environment that was created in step 2
+	- This directory will be named "venv" and will reside in the directory where this repository was cloned
+6. While in the same virtual environment used in Steps 2 and 4, run main.py -c config-file, where config-file is the location of the config file you created in step 3.
+7. To stop a pipeline, just close out of the process with ctrl+c or SIGKILL
+	- By default, each Compass instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
 
-## Notes on the new setup
-- Provide your own requirements.txt file if you have unique Python requirements
-- Your config file does the driving; any model, data source, data cleaner or storage method needs to be included
-- Each entry in your config's modules needs an output, unless it's a storage method. Otherwise, data will have nowhere to go once a module has processed it.
+## Notes on the config file setup
+In order to get the config file set up, there are some things you'll need to pay attention to:
+- Every module besides storage methods needs an "outputs" section to specify the next module(s) in the pipeline. To output to another module with alias "My model", for example, add "My model" to the list of outputs.
+- Every module has an "alias" attribute, and is the unique identifier for that module.  This is the most important attribute for a module, so don't forget to include it with your module!
+- To get an idea of how to set up a config file correctly, check out the sentiment analysis example in the examples directory.  It not only includes the code necessary to run a pipeline, it also includes the configuration file to run the example so you can get a feel of how they work.
+	- The config-template.yml file in this main directory also contains every currently supported option, so a good place to start (and understand how config files work) might be to copy this file and make adjustments of your own.
+- Different types of modules (data sources, models, data preprocessors, storage methods) have unique requirements, but many of them are optional.  The config-template.yml file has comments to let you know what's required and what's not.
+- To get a walkthrough on specific config examples (i.e. like in examples/sentiment-analysis), take a look at the README.md that shows up in the sentiment analysis's directory for an explanation.
+	- Sorry about the size of the repo in general, we have a larger-than-we'd-like model file for the sentiment analysis example
+- If you have an instance of RabbitMQ you want to connect to, you can provide the host name in the config file. The default host name is localhost.
+
+## Specific notes on Data Preprocessors
+Data Preprocessors are important for massaging the data when necessary.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
