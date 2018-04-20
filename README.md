@@ -6,18 +6,19 @@ Compass is meant to be used by providing your own (previously trained) models, d
 ## How to get started, the quick and dirty
 1. Clone this repository
 2. Start a RabbitMQ server instance, preferably locally
-	- If you don't have RabbitMQ installed, we highly recommend using Docker to get one set up. Once you have Docker installed, the run.sh script in this directory will start RabbitMQ with the proper settings.
+	- If you don't have RabbitMQ installed, we highly recommend using Docker from [here](https://hub.docker.com/_/rabbitmq/) to get one set up. Once you have Docker installed, the run.sh script in this directory will start RabbitMQ with the proper settings.
 3. Run install.sh to install a virtual environment and core dependencies
 4. Create a config file based on the config-template.yml file with your pipeline requirements
-	- More on this to follow
+	- More on config file setup [here](#config-file-setup)
 5. Install the Python requirements specific to your models, data sources and storage methods within the same virtual environment that was created in step 2
 	- Example: `source venv/bin/activate && pip install -r path_to_your_requirements.txt_file`
 	- This directory will be named "venv" and will reside in the directory where this repository was cloned
-6. While in the same virtual environment used in Steps 2 and 4, run main.py -c config-file, where config-file is the location of the config file you created in step 3.
+6. While in the same virtual environment used in Steps 2 and 4, run
+    `python main.py -c config-file`, where config-file is the location of the config file you created in step 3.
 7. To stop a pipeline, just close out of the process with ctrl+c or SIGKILL
 	- By default, each Compass instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
 
-## Notes on the config file setup
+## [Notes on the config file setup](#config-file-setups)
 In order to get the config file set up, there are some things you'll need to pay attention to:
 - Every module besides storage methods needs an "outputs" section to specify the next module(s) in the pipeline. To output to another module with alias "My model", for example, add "My model" to the list of outputs.
 - Every module has an "alias" attribute, and is the unique identifier for that module.  This is the most important attribute for a module, so don't forget to include it with your module!
