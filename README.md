@@ -1,8 +1,8 @@
 # Compass
 ### A primer
-`Compass` stands for `Compr`ehensive `A`nalytics on `S`entiment for `S`patiotemporal data. The project started with an aim to provide framework for running several machine learning models over spatiotempral data with a single configuration file. 
+**Compass** stands for **Compr**ehensive **A**nalytics on **S**entiment for **S**patiotemporal data. The project started with an aim to provide framework for running several machine learning models over spatiotempral data with a single configuration file. 
 
-Presently `Compass` do much more. It act as a framework to unite `data sources`, `models` and `stores` components. 
+Presently **Compass** do much more. It act as a framework to unite `data sources`, `models` and `stores` components. 
 
 	- Data Source types: 
 		- `API`
@@ -15,7 +15,7 @@ Presently `Compass` do much more. It act as a framework to unite `data sources`,
 		- `Databases`
 		- `File`
 A pipeline with any combination of components can be created with just a configuration file. 
-`Compass`'s goal is to help you make your own Data Science as a Service (DSaaS) platform.
+**Compass**'s goal is to help you make your own Data Science as a Service (DSaaS) platform.
 
 ## [Quick Start on Ubuntu](#quick-start-on-ubuntu):rocket:
 1. Clone this repository
