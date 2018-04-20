@@ -61,8 +61,6 @@ In order to get the config file set up, there are some things you'll need to pay
 	- Sorry about the size of the repo in general, we have a larger-than-we'd-like model file for the sentiment analysis example
 - If you have an instance of RabbitMQ you want to connect to, you can provide the host name in the config file. The default host name is localhost.
 
-## []]
-
 
 ## [Data Preprocessor Notes](#data-preprocessor-notes)
 Data Preprocessors are important for massaging the data when necessary.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
