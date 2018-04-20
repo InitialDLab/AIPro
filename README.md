@@ -11,6 +11,7 @@ Compass is meant to be used by providing your own (previously trained) models, d
 4. Create a config file based on the config-template.yml file with your pipeline requirements
 	- More on this to follow
 5. Install the Python requirements specific to your models, data sources and storage methods within the same virtual environment that was created in step 2
+	- Example: `source venv/bin/activate && pip install -r path_to_your_requirements.txt_file`
 	- This directory will be named "venv" and will reside in the directory where this repository was cloned
 6. While in the same virtual environment used in Steps 2 and 4, run main.py -c config-file, where config-file is the location of the config file you created in step 3.
 7. To stop a pipeline, just close out of the process with ctrl+c or SIGKILL
