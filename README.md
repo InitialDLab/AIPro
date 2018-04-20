@@ -14,7 +14,7 @@ Compass is meant to be used by providing your own (previously trained) models, d
     - Install Python virtual environment and core dependencies
         - `./install.sh` 
 3. Create a config file based on the config-template.yml file with your pipeline requirements
-	- More on config file setup [here](#config-file-setup)
+	- More on config file setup in [next section](#config-file-setup)
 4. [Optional] Install all the Python requirements specific to your models, data sources and storage methods within the same virtual environment that was created in step 2.
 	- Example: `source venv/bin/activate && pip install -r path_to_your_requirements.txt_file`.
 	- This directory will be named `venv` and will reside in the directory where this repository was cloned.
@@ -25,7 +25,7 @@ Compass is meant to be used by providing your own (previously trained) models, d
     - ctrl+c or SIGKILL
 	- By default, each Compass instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
 
-## [Notes on the config file setup](#config-file-setup)
+## Config file setup
 In order to get the config file set up, there are some things you'll need to pay attention to:
 - Every module besides storage methods needs an "outputs" section to specify the next module(s) in the pipeline. To output to another module with alias "My model", for example, add "My model" to the list of outputs.
 - Every module has an "alias" attribute, and is the unique identifier for that module.  This is the most important attribute for a module, so don't forget to include it with your module!
@@ -36,5 +36,5 @@ In order to get the config file set up, there are some things you'll need to pay
 	- Sorry about the size of the repo in general, we have a larger-than-we'd-like model file for the sentiment analysis example
 - If you have an instance of RabbitMQ you want to connect to, you can provide the host name in the config file. The default host name is localhost.
 
-## [Specific notes on Data Preprocessors](#data-preprocessor)
+## Data Preprocessors Notes
 Data Preprocessors are important for massaging the data when necessary.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
