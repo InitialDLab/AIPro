@@ -1,57 +1,61 @@
+# Currently supported data source types are StreamingAPI, FlatFile
+# StreamingAPI is the Twitter Streaming API
 data_sources:
   -
-    type: 'StreamingAPI'
-    alias: 'Twitter Streaming API'
-    api_key: 'XXXXXXXXXXXXXXXXXXXXXXXX'
-    api_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-    access_token: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-    access_token_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-    auto_restart: True
-    projection:
+    type: 'StreamingAPI' # Required
+    alias: 'Twitter Streaming API' # Required
+    api_key: 'XXXXXXXXXXXXXXXXXXXXXXXX' # Required
+    api_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' # Required
+    access_token: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' # Required
+    access_token_secret: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' # Required
+    auto_restart: True # Optional
+    projection: # Optional (this will restrict the JSON attributes returned from the streamed tweets, helpful for bandwidth optimization and simplification). All attributes must be present in the JSON object, or it will be dropped here in the pipeline.
         - 'text'
         - 'created_at'
         - 'lang'
-    outputs:
+    
+    outputs: # Required (at least one entry)
         - 'Streaming Sentiment Classifier'
   -
-    type: 'FlatFile'
-    alias: 'Raw Tweets JSON File'
-    filename: 'examples/sentiment-analysis/data/raw_tweets.json'
-    outputs:
+    type: 'FlatFile' # Required
+    alias: 'Raw Tweets JSON File' # Required
+    filename: 'examples/sentiment-analysis/data/raw_tweets.json' # Required (Can be either the full path, or path relative to the config file you pass to main.py)
+    
+    outputs: # Required (at least one entry)
         - 'Flat File Sentiment Classifier'
+
+# All models must be custom, no built-in models currently supported
 models:
   -
-    alias: 'Flat File Sentiment Classifier'
-    module_file_path: 'examples/sentiment-analysis/sentiment.py'
-    module_classname: 'SentimentClassifier'
-    method_name: 'predict'
-    output_attribute: 'sentiment_score'
-    preprocessor: 'Tweet Preprocessor'
-    outputs:
+    alias: 'Flat File Sentiment Classifier' # Required
+    module_file_path: 'examples/sentiment-analysis/sentiment.py' # Required (Can be either the full path, or path relative to the config file you pass to main.py)
+    module_classname: 'SentimentClassifier' # Required
+    method_name: 'predict' # Required, method name on the class instance
+    output_attribute: 'sentiment_score' # Optional, useful for JSON 
+    preprocessor: 'Tweet Preprocessor' # Optional
+    
+    outputs: # Required (at least one entry)
         - 'Twitter Sentiment Predictions File'
-  -
-    alias: 'Streaming Sentiment Classifier'
-    module_file_path: 'examples/sentiment-analysis/sentiment.py'
-    module_classname: 'SentimentClassifier'
-    method_name: 'predict'
-    output_attribute: 'sentiment_score'
-    preprocessor: 'Tweet Preprocessor'
-    outputs:
         - 'IO'
+
+# Current storage types supported: File, IO 
 storage:
   -
-    type: 'File'
-    alias: 'Twitter Sentiment Predictions File'
-    save_filename: 'sentiment_predictions.json'
+    type: 'File' # Required
+    alias: 'Twitter Sentiment Predictions File' # Required
+    save_filename: 'sentiment_predictions.json' # Required
   -
-    type: 'IO'
-    alias: 'stdout'
+    type: 'IO' # Required
+    alias: 'stdout' # Required
+
+# Preprocessors are custom, but feel free to use and modify the tweet preprocessor in the sentiment analysis example
 preprocessors:
   -
-    alias: 'Tweet Preprocessor'
-    module_file_path: 'examples/sentiment-analysis/tweet_preprocessor.py'
-    module_classname: 'TweetPreprocessor'
-    json_attribute: 'text'
-    method_name: 'preprocess'
+    alias: 'Tweet Preprocessor' # Required
+    module_file_path: 'examples/sentiment-analysis/tweet_preprocessor.py' # Required
+    module_classname: 'TweetPreprocessor' # Required
+    method_name: 'preprocess' # Required
+
+# Connection information for the RabbitMQ instance (Currently only host name supported)
 messaging:
-    host: 'localhost'
+    host: 'localhost' # Required
