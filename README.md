@@ -33,7 +33,7 @@ git clone https://github.com/debjyoti385/Compass.git
 	- Install model dependencies
 		- `source venv/bin/activate && pip install -r examples/sentiment-analysis/requirements.txt`
 	- Run Compass
-		- `python main.py -c examples/sentiment-analysis/config-raw.yml`
+		- `python main.py -c examples/sentiment-analysis/config-rawfile.yml`
 	- Output
 		- JSON file contaiining tweets with sentiment scores 
 		- `examples/sentiment-analysis/tweets-with-sentiment.json`
