@@ -40,7 +40,7 @@ git clone https://github.com/debjyoti385/Compass.git
 4. To stop
 	- `ctrl+c` or `SIGKILL`
 
-## :octocat:[Get started](#octocatget-started):
+## :octocat:[Get started](#octocatget-started)
 1. Clone this repository
 2. Install dependencies
     - Install Messaging Interface 
