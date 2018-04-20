@@ -1,4 +1,4 @@
-# How to use Compass
+# Compass
 ### A primer
 
 Compass is meant to be used by providing your own (previously trained) models, data sources and storage methods.  Compass's job is to unite all of these components to form customizable pipelines, with the goal of providing Data Science as a Service (DSaaS)
@@ -25,7 +25,7 @@ Compass is meant to be used by providing your own (previously trained) models, d
     - ctrl+c or SIGKILL
 	- By default, each Compass instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
 
-## Config file setup
+## [Config file setup](#config-file-setup)
 In order to get the config file set up, there are some things you'll need to pay attention to:
 - Every module besides storage methods needs an "outputs" section to specify the next module(s) in the pipeline. To output to another module with alias "My model", for example, add "My model" to the list of outputs.
 - Every module has an "alias" attribute, and is the unique identifier for that module.  This is the most important attribute for a module, so don't forget to include it with your module!
@@ -36,5 +36,5 @@ In order to get the config file set up, there are some things you'll need to pay
 	- Sorry about the size of the repo in general, we have a larger-than-we'd-like model file for the sentiment analysis example
 - If you have an instance of RabbitMQ you want to connect to, you can provide the host name in the config file. The default host name is localhost.
 
-## Data Preprocessors Notes
+## [Data Preprocessors Notes](#data-preprocessor-notes)
 Data Preprocessors are important for massaging the data when necessary.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
