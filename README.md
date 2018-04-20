@@ -17,7 +17,7 @@ Presently **Compass** do much more. It act as a framework to unite `data sources
 A pipeline with any combination of components can be created with just a configuration file. 
 **Compass**'s goal is to help you make your own **Data Science as a Service (DSaaS)** platform.
 
-## [Quick Start on Ubuntu:rocket:](#quick-start-on-ubuntu:rocket:)
+## :rocket:[Quick Start on Ubuntu](#quick-start-on-ubuntu)
 1. Clone this repository
 ``
 git clone https://github.com/debjyoti385/Compass.git
@@ -40,7 +40,7 @@ git clone https://github.com/debjyoti385/Compass.git
 4. To stop
 	- `ctrl+c` or `SIGKILL`
 
-## [Get started](#get-started):octocat:
+## [Get started](#get-started):
 1. Clone this repository
 2. Install dependencies
     - Install Messaging Interface 
