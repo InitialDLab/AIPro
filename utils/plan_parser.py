@@ -36,7 +36,9 @@ def get_models_from_config(config):
 			if 'preprocessor' in model_config and 'preprocessors' in config:
 				for preprocess_config in config['preprocessors']:
 					if preprocess_config['alias'] == model_config['preprocessor']:
-						preprocessor = import_module_from_file(preprocess_config['module_classname'], config['base_path'] + '/' + preprocess_config['module_file_path'])
+						preprocessor_path = config['base_path'] + '/' + preprocess_config['module_file_path']
+						print('Loading preprocessor from path "%s"' % preprocessor_path)
+						preprocessor = import_module_from_file(preprocess_config['module_classname'], preprocessor_path)
 						constructor = getattr(preprocessor, preprocess_config['module_classname'])
 						instance = constructor(preprocess_config)
 						preprocessor = CompassPreprocessor(preprocess_config, instance)

@@ -1,6 +1,12 @@
 #!/bin/bash
 INITIAL_ENV=venv
-if [ ! -d "$INITIAL_ENV" ]; then
+
+if which virtualenv > /dev/null; then
+	echo "==================================================="
+	echo "    VIRTUALENV ALREADY INSTALLED"
+	echo "==================================================="
+	virtualenv $INITIAL_ENV
+else
 	echo "==================================================="
 	echo "INSTALL AND INITIALIZE A PYTHON VIRTUAL ENVIRONMENT"
 	echo "==================================================="
@@ -17,6 +23,18 @@ if [ ! -d "$INITIAL_ENV" ]; then
 	$PYTHON virtualenv-$VERSION/virtualenv.py $INITIAL_ENV
 	# Don't need this anymore.
 	rm -rf virtualenv-$VERSION
+fi
+
+# Add folders to hold installation files for custom jobs
+if [ ! -d "uploads" ]; then
+	mkdir uploads
+fi
+
+if [ ! -d "uploads/custom_install_files" ]; then
+	mkdir uploads/custom_install_files
+fi
+
+if [ ! -d "$INITIAL_ENV" ]; then
 	# Install virtualenv into the environment.
 	$INITIAL_ENV/bin/pip install virtualenv-$VERSION.tar.gz
 	rm -rf virtualenv-$VERSION.tar.gz
@@ -33,7 +51,14 @@ echo "          INITIALIZED VIRTUAL ENVIRONMENT,"
 echo "          INSTALLING PYTHON REQUIREMENTS"
 echo "==================================================="
 
+echo "==================================================="
+echo "           UPGRADING PIP..."
+echo "==================================================="
 pip install --upgrade pip
+
+echo "==================================================="
+echo "           PIP UPGRADED"
+echo "==================================================="
 # Install any additional python requirements provided by the user
 if [ -f "requirements.txt" ]; then
 	pip install -r requirements.txt
