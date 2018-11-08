@@ -8,12 +8,11 @@ import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import './App.css';
+import ProjectList from './ProjectList';
+import TwitterAccountForm from './AccountForms';
 
-const Index = () => <h2>Home</h2>;
-const About = () => <h2>About</h2>;
-const Users = () => <h2>Users</h2>;
+// TODO: CssBaseline makes your CSS look the same across browsers
 
 class App extends Component {
   state = {
@@ -43,6 +42,13 @@ class App extends Component {
       {'text': 'Open Project', 'action': this.actionOpen, 'link': '/open'},
       {'text': 'Save Current Project', 'action': this.actionSave},
       {'text': 'Run Current Project', 'action': this.actionRun}
+    ];
+
+    const projects = [
+      {'name': 'Political tweets sentiment', 'status': 'running'},
+      {'name': 'Image classification v1', 'status': 'paused'},
+      {'name': 'Facial recognition project', 'status': 'done'},
+      {'name': 'Sports articles', 'status': 'done'}
     ];
     
     const menuList = (
@@ -79,6 +85,9 @@ class App extends Component {
           {/*<Button color="inherit">Login</Button>*/}
           </Toolbar>
         </AppBar>
+        
+        <ProjectList projects={projects} />
+        <TwitterAccountForm />
       </div>
     );
   }
