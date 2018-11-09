@@ -56,7 +56,7 @@ def handle_get_account(account_type, username):
     if account:
         return json.dumps(account)
     else:
-        return json.dumps({'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
+        return json.dumps({'error': True, 'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
 
 @app.route('/account/<account_type>', methods=['POST'])
 def handle_account(account_type):
