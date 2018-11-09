@@ -10,15 +10,18 @@ class TwitterAccountForm extends Component {
         api_key: '',
         api_secret: '',
         access_token: '',
-        access_token_secret: '',
-        account_type: 'Twitter streaming',
-        username: 'rsfrost' // TODO: Make this real
+        access_token_secret: ''
     };
 
     api = new API();
 
     handleFormSubmit = async () => {
-        await this.api.post('/account/twitter', this.state);
+        const requestBody = {
+            account_type: 'Twitter streaming',
+            username: this.props.username   
+        };
+        Object.assign(requestBody, this.state);
+        await this.api.post('/account/twitter', requestBody);
     }
 
     handleChange = event => {
@@ -26,15 +29,19 @@ class TwitterAccountForm extends Component {
     }
 
     async componentDidMount() {
-        console.log('Entering event');
         const account_type = 'Twitter streaming';
-        const username = this.state.username;
+        const username = this.props.username;
         const url = encodeURI(`/account/${account_type}/${username}`);
         const account_info = await this.api.get(url);
-        console.log(account_info);
-        const tempState = this.state;
-        Object.assign(tempState, account_info);
-        this.setState(tempState);
+        
+        if (account_info.error) {
+            console.error(account_info.message);
+        }
+        else {
+            const tempState = this.state;
+            Object.assign(tempState, account_info);
+            this.setState(tempState);
+        }
     }
 
     render() {

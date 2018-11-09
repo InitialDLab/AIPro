@@ -12,7 +12,8 @@ class FlatFile(DataSource):
 		elif os.path.isfile(full_file_path):
 			self.filename = full_file_path
 		else:
-			raise Exception("File for alias %s not found. File path must be either relative to config file or the full path of the file." % config['alias'])
+			msg = "File for alias %s not found. File path must be either relative to config file or the full path of the file." % config['alias']
+			raise Exception(msg)
 		
 	def run(self):
 		with open(self.filename) as f:
