@@ -1,4 +1,3 @@
-import pika
 import json
 
 class Model:
@@ -20,6 +19,7 @@ class Model:
 
 		# If there was an issue preprocessing (i.e. the JSON attribute was missing from the data), just discard this instance.
 		if x == None:
+			print('Error while preprocessing')
 			return
 
 		# TODO: Make this handle more than just JSON
@@ -30,5 +30,5 @@ class Model:
 		if data:
 			self.publish(data)
 
-	def publish(self, message):
-		self.messenger.publish(message)
+	def publish(self, data):
+		self.messenger.publish(data)

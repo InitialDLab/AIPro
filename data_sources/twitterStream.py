@@ -32,6 +32,11 @@ class Twitter(DataSource):
 		if 'projection' in config:
 			self.projection = config['projection']
 
+		if 'filters' in config:
+			self.filters = config['filters']
+		else:
+			self.filters = None
+
 		# Default to auto restart, unless overridden
 		if 'auto_restart' in config:
 			self.auto_restart = config['auto_restart']
@@ -84,8 +89,11 @@ class Twitter(DataSource):
 		
 		# Open the stream (on_data in TwitterStream decides what to do with incoming data)
 		self.stream = Stream(self.api.auth, listener=TwitterStream(self))
-		self.stream.sample(async=False)
-
+		if self.filters is not None:
+			self.stream.filter(track=self.filters, async=False)
+		else:
+			self.stream.sample(async=False)
+		
 	def close_stream(self):
 		print "Closing twitter stream"
 		self.stream.disconnect()
