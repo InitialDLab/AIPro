@@ -16,6 +16,8 @@ class API {
             const response = await fetch(url, options);
             if (response.ok)
                 return true;
+            else
+                return false;
 
         } catch(err) {
             console.error(`Problem with POST request to ${resource}`);

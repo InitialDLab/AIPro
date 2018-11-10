@@ -33,6 +33,7 @@ models:
     method_name: 'predict' # Required, method name on the class instance
     output_attribute: 'sentiment_score' # Optional, useful for JSON 
     preprocessor: 'Tweet Preprocessor' # Optional
+    json_attribute: 'fasdf' # Optional, depending on data type
     
     outputs: # Required (at least one entry)
         - 'Twitter Sentiment Predictions File'

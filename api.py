@@ -6,6 +6,10 @@ import subprocess
 import random
 import json
 from pymongo import MongoClient
+import pyaml
+
+ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml'])
+RANDOM_PREFIX_LENGTH = 10
 
 mongo = MongoClient('localhost', 27017)
 db = mongo['compass']
@@ -14,7 +18,6 @@ app = Flask(__name__)
 CORS(app)
 
 def log(message):
-    # TODO: Make this log to a database of some sort
     print(message)
 
 def allowed_file(filename):
@@ -37,13 +40,13 @@ def check_file_request(request):
         return json.dumps({'message': 'Missing file in upload'})
 
     if not (file and allowed_file(file.filename)):
-        return json.dumps({'message': 'Invalid installation file: \'%s\'' % file.filename})
+        return json.dumps({'message': 'Invalid file type: \'%s\'' % file.filename})
 
-def save_file(file):
+def save_file(file, directory):
     random_string = generate_random_string(RANDOM_PREFIX_LENGTH)
     filename = secure_filename(file.filename)
     filename_to_save = '%s__%s' % (random_string, filename) # Make this string uniquely identifiable
-    uploaded_file = os.path.join(app.config['CONFIG_FILE_UPLOAD_FOLDER'], filename_to_save)
+    uploaded_file = os.path.join(directory, filename_to_save)
     file.save(uploaded_file)
 
     return uploaded_file
@@ -59,27 +62,17 @@ def handle_get_account(account_type, username):
         return json.dumps({'error': True, 'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
 
 @app.route('/account/<account_type>', methods=['POST'])
-def handle_account(account_type):
+def handle_save_account(account_type):
     data = request.json
     accounts_collection = db['accounts']
 
-    assert 'alias' in data
     assert 'account_type' in data
     if data['account_type'] == 'Twitter streaming':
-        assert 'username' in data
-        assert 'api_key' in data
-        assert 'api_secret' in data
-        assert 'access_token' in data
-        assert 'access_token_secret' in data
+        required_keys = ['username', 'account_type', 'api_key', 'api_secret', 'access_token', 'access_token_secret']
+        for key in required_keys:
+            assert key in data
         
-        account_data = {
-            'username': data['username'],
-            'api_key': data['api_key'],
-            'api_secret': data['api_secret'],
-            'access_token': data['access_token'],
-            'access_token_secret': data['access_token_secret'],
-            'account_type': data['account_type']
-        }
+        account_data = {key: data[key] for key in required_keys}
         
         new_account_info = accounts_collection.replace_one(
             {
@@ -89,50 +82,57 @@ def handle_account(account_type):
             account_data, upsert=True)
 
         if new_account_info.matched_count:
-            log('%s account for %s modified' % (data['account_type'], data['username']))
+            log('\'%s\' account modified for \'%s\'' % (data['account_type'], data['username']))
+            return json.dumps({'message': 'Account modified successfully'})
         else:
-            log('New accounts created: \'%s\'' % new_account_info.modified_count)
-        log('Account type: %s' % data['account_type'])
-        log('Account username: %s' % data['username'])
+            log('New \'%s\' account created for: \'%s\'' % (data['account_type'], data['username']))
+            return json.dumps({'message': 'Account created successfully'})    
 
-        return json.dumps({'message': 'Account created successfully'})
+@app.route('/pipeline', methods=['POST'])
+def save_pipeline():
+    data = request.json
+
+    pipelines_collection = db['pipelines']
+    saved_pipeline_info = pipelines_collection.replace_one(
+        {
+            'username': data['username'],
+            'pipeline_alias': data['pipeline_alias']
+        },
+        data, upsert=True)
+
+    if saved_pipeline_info.matched_count:
+        message = '\'%s\' pipeline modified for \'%s\'' % (data['pipeline_alias'], data['username'])
+        log(message)
+        return json.dumps({'message': message})
+    else:
+        message = 'New pipeline \'%s\' created for \'%s\'' % (data['pipeline_alias'], data['username'])
+        log(message)
+        return json.dumps({'message': message})
     
 
-@app.route('/start/<project_alias>')
-def handle_start_project(project_alias):
+@app.route('/start/<pipeline_alias>')
+def handle_start_pipeline(pipeline_alias):
     pass
 
-@app.route('/pause/<project_alias>')
-def handle_pause_project(project_alias):
+@app.route('/pause/<pipeline_alias>')
+def handle_pause_pipeline(pipeline_alias):
     pass
 
-@app.route('/diagnostics/<project_alias>')
-def handle_project_diagnostics(project_alias):
-    if project_alias == 'richie':
-        return json.dumps({'message': 'Project diagnostics for alias \'Richie\''})
-    return json.dumps({'message': 'Generic project diagnostics for \'%s\'' % project_alias})     
+@app.route('/diagnostics/<pipeline_alias>')
+def handle_pipeline_diagnostics(pipeline_alias):
+    if pipeline_alias == 'richie':
+        return json.dumps({'message': 'pipeline diagnostics for alias \'Richie\''})
+    return json.dumps({'message': 'Generic pipeline diagnostics for \'%s\'' % pipeline_alias})     
 
-@app.route('/install/custom', methods=['GET', 'POST'])
+@app.route('/install/custom', methods=['POST'])
 def install():
-    log('Current directory:\n%s' % os.getcwd())
-    if request.method == 'POST':
-        check_file_request(request)
-        uploaded_file = save_file(request.files['file'])
+    check_file_request(request)
+    uploaded_file = save_file(request.files['file'], app.config['CONFIG_FILE_UPLOAD_FOLDER'])
 
-        # TODO: Check this file to make sure it's safe first?
-        subprocess.call(['./install_custom.sh', uploaded_file])
+    # TODO: Check this file to make sure it's safe first?
+    subprocess.call(['./install_custom.sh', uploaded_file])
 
-        return json.dumps({'message': 'Custom requirements file \'%s\' installed' % request.files['file'].filename})
-
-    return '''
-    <!doctype html>
-    <title>Upload new requirements file</title>
-    <h1>Upload new requirements file</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    return json.dumps({'message': 'Custom requirements file \'%s\' installed' % request.files['file'].filename})
 
 if __name__ == '__main__':
     app.config.update({
@@ -140,6 +140,4 @@ if __name__ == '__main__':
         'CONFIG_FILE_UPLOAD_FOLDER': 'uploads/config_files'
     })
 
-    ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml'])
-    RANDOM_PREFIX_LENGTH = 10
     app.run()

@@ -1,6 +1,5 @@
 import sys
 import os
-import yaml
 from import_module import import_module_from_file
 from messaging import Messenger
 from compass_preprocessor import CompassPreprocessor
