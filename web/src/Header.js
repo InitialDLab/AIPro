@@ -54,7 +54,7 @@ class Header extends Component {
                 <IconButton onClick={this.toggleMenu(!this.state.menuOpen)} style={{marginLeft: -12, marginRight: 20}} color="inherit" aria-label="Menu">
                 <MenuIcon />
                 </IconButton>
-                <Typography variant="h4" color="inherit" style={{flexGrow: 1}}>
+                <Typography variant="h6" color="inherit" style={{flexGrow: 1}}>
                 AI Pro
                 </Typography>
                 {/*<Button color="inherit">Login</Button>*/}

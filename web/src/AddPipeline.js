@@ -7,6 +7,16 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
+import Divider from '@material-ui/core/Divider';
+import Avatar from '@material-ui/core/Avatar';
+import pink from '@material-ui/core/colors/pink';
+import PipelineSidebar from './PipelineSidebar';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import IconButton from '@material-ui/core/IconButton';
 
 class NodeLabel extends Component {
     render() {
@@ -14,12 +24,66 @@ class NodeLabel extends Component {
             minWidth: 'inherit', 
             margin: '3px',
             width: 'inherit',
-            height: 'inherit'
+            height: 'inherit',
+            marginLeft: 'auto',
+            color: '#fff',
+            backgroundColor: pink[500]
         };
+
+        let iconName = '';
+        switch(this.props.nodeData.type) {
+            case 'data_source_api':
+            case 'data_sources':
+                iconName = 'cloud_queue';
+                break;
+            case 'data_source_file':
+                iconName = 'attach_file'
+                break;
+            case 'models':
+            case 'model_custom':
+                iconName = 'code';
+                break;
+            case 'model_prebuilt':
+                iconName = 'memory';
+                break;
+            case 'filters':
+                iconName = 'filter_list';
+                break;
+            case 'storage':
+            case 'storage_flat_file':
+                iconName = 'folder_open';
+                break;
+            case 'storage_database':
+                iconName = '';
+                break;
+            default:
+                iconName = 'computer';
+                break;
+        }
+
+        const nodeTypeAvatar = (
+            <Avatar style={{backgroundColor: pink[500]}}><Icon>{iconName}</Icon></Avatar>
+        );
+
+        const nodeTypeMap = {
+            'storage': 'Storage',
+            'models': 'Model',
+            'data_sources': 'Data source',
+            'filters': 'Filter module'
+        }
         return (
-            <Paper style={{padding: '5px'}}>
-                <Typography style={{textAlign: 'center'}} variant='body1'>{this.props.nodeData.alias}</Typography>
-            </Paper>
+            <Card>
+                <CardHeader
+                    avatar={nodeTypeAvatar}
+                    title={this.props.nodeData.alias}
+                    subheader={nodeTypeMap[this.props.nodeData.type]}
+                    action={
+                        <IconButton>
+                          <MoreVertIcon style={{stroke: 'none'}} />
+                        </IconButton>
+                      }
+                />
+            </Card>
         );
     }
 }
@@ -56,11 +120,12 @@ class AddPipeline extends Component {
         for (let i = 0; i < tmpState.pipeline[data.type].length; i++) {
             if (tmpState.pipeline[data.type][i].alias === data.alias) {
                 // Found the right node - highlight it, show that it's selected
-                //tmpState.pipeline[data.type][i].outputs.push('Blah blah blah');
+                tmpState.pipeline[data.type][i].outputs.push('Blah blah blah');
+                tmpState.pipeline['storage'].push({'alias': 'Blah blah blah'})
             }
         }
         console.log(tmpState);
-        //this.setState(tmpState);
+        this.setState(tmpState);
     }
 
     getTreeData() {
@@ -126,6 +191,7 @@ class AddPipeline extends Component {
         
         const treeThing = (
             <div id="treeWrapper" style={{width: '100%', height:'100vh'}} >
+                <PipelineSidebar type={'Data Source'} />
                 <Tree 
                     scaleExtent={{min: 0.1, max:10}} 
                     collapsible={false} 
@@ -135,8 +201,10 @@ class AddPipeline extends Component {
                     onClick={this.handleNodeClick} 
                     orientation='vertical'
                     allowForeignObjects={true}
+                    nodeSize={{x: 300, y: 150}}
+                    zoom={0.6}
                     textLayout={{textAnchor: 'middle', x: 0, y: 0}}
-                    nodeLabelComponent={{render: <NodeLabel />, foreignObjectWrapper: {x: -57, y: -20, width: 120}}}
+                    nodeLabelComponent={{render: <NodeLabel />, foreignObjectWrapper: {x: -135, y: -20, width: 280}}}
                     nodeSvgShape={{shape: 'rect', shapeProps: {width: 0, height: 0, x: -50, y: -10}}}
                 />
             </div>
