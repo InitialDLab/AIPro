@@ -1,130 +1,25 @@
 import React, { Component } from 'react';
 import defaultPipeline from './defaultPipeline';
 import API from './API';
-import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Tree from 'react-d3-tree';
+import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import Chip from '@material-ui/core/Chip';
+import Icon from '@material-ui/core/Icon';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
-const classes = theme => ({
-    root: {
-        width: '100%',
-        },
-        heading: {
-        fontSize: theme.typography.pxToRem(15),
-        },
-        secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-        },
-        icon: {
-        verticalAlign: 'bottom',
-        height: 20,
-        width: 20,
-        },
-        details: {
-        alignItems: 'center',
-        },
-        column: {
-        flexBasis: '33.33%',
-        },
-        helper: {
-        borderLeft: `2px solid ${theme.palette.divider}`,
-        padding: `${theme.spacing.unit}px ${theme.spacing.unit * 2}px`,
-        },
-        link: {
-        color: theme.palette.primary.main,
-        textDecoration: 'none',
-        '&:hover': {
-            textDecoration: 'underline',
-        },
-        },
-});
-
-class TwitterPanel extends Component {
-    state = {
-        outputs: [
-            'Flat File Sentiment Classifier'
-        ]
-    }
-
-    updateFromEvent = event => {
-        this.props.updateFn(this.props.type, this.props.key, event.target.name, event.target.value);
-    }
-
-    updateOutputs = event => {
-        if (event.key === 'Enter'){
-            const newAlias = event.target.value;
-            const outputs = this.props.outputs;
-            if (outputs.indexOf(newAlias) === -1)
-                outputs.push(newAlias);
-            this.props.updateFn(this.props.type, this.props.array_position, 'outputs', outputs);
-        }
-    }
-
-    handleDeleteOutput = output_alias => () => {
-        const outputs = this.props.outputs;
-        const outputToDelete = outputs.indexOf(output_alias);
-        outputs.splice(outputToDelete, 1);
-        this.props.updateFn(this.props.type, this.props.array_position, 'outputs', outputs);
-    }
-
+class NodeLabel extends Component {
     render() {
+        const buttonStyle = {
+            minWidth: 'inherit', 
+            margin: '3px',
+            width: 'inherit',
+            height: 'inherit'
+        };
         return (
-            <ExpansionPanel>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <div style={{flexBasis: '33.33%'}}>
-                        <Typography variant='h6'>Data Source</Typography>
-                    </div>
-                    <div style={{flexBasis: '33.33%'}}>
-                        <Typography variant='h6'>Type: Twitter Streaming</Typography>
-                    </div>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                    <div style={{flexBasis: '33.33%'}}>
-                        <Typography>Settings:</Typography>
-                        <TextField name='account_alias' label='Account alias' />
-                    </div>
-                    <div style={{flexBasis: '33.33%'}}>
-                        <Typography>Output(s):</Typography>
-                        <TextField style={{marginBottom: '15px'}} name='outputs' onKeyPress={this.updateOutputs} label='Output Alias(es)' onChange={this.updateOutput} />
-                        {this.props.outputs.map(output_alias => {
-                            // TODO: Icons
-                            return (
-                                <Chip
-                                    style={{margin: '5px'}}
-                                    key={output_alias}
-                                    label={output_alias}
-                                    onDelete={this.handleDeleteOutput(output_alias)}
-                                />
-                            );
-                        })}
-                    </div>
-                    <div style={{flexBasis: '33.33%', borderLeft: '2px solid #ccc', padding: '5px 10px'}}>
-                        <Typography variant='caption'>
-                            The Twitter Streaming data source reads live tweets directly from Twitter. 
-                            You can filter on user handles, hashtags, and key words.
-                            Make sure you have you Twitter credentials saved in this system order for this data source to work properly.
-                            <br />
-                            <a href="/#" style={{textDecoration: 'none'}}>
-                            Learn more
-                            </a>
-                        </Typography>
-                    </div>
-
-                </ExpansionPanelDetails>
-                <Divider />
-                <ExpansionPanelActions>
-                    <Button size='small' color='primary'>Save</Button>
-                </ExpansionPanelActions>
-            </ExpansionPanel>
+            <Paper style={{padding: '5px'}}>
+                <Typography style={{textAlign: 'center'}} variant='body1'>{this.props.nodeData.alias}</Typography>
+            </Paper>
         );
     }
 }
@@ -155,30 +50,102 @@ class AddPipeline extends Component {
         this.setState(tmpState);
     }
 
-    startLoading() {
-        console.log('Start loading');
+    handleNodeClick = (data, event) => {
+        const tmpState = this.state;
+        if (data.type === 'storage') return;
+        for (let i = 0; i < tmpState.pipeline[data.type].length; i++) {
+            if (tmpState.pipeline[data.type][i].alias === data.alias) {
+                // Found the right node - highlight it, show that it's selected
+                //tmpState.pipeline[data.type][i].outputs.push('Blah blah blah');
+            }
+        }
+        console.log(tmpState);
+        //this.setState(tmpState);
     }
 
-    stopLoading() {
-        console.log('Done loading');
+    getTreeData() {
+        const data = [];
+        // Start with data sources
+        for (let i = 0; i < this.state.pipeline['data_sources'].length; i++) {
+            let data_source = this.state.pipeline['data_sources'][i];
+            data.push({alias: data_source.alias, name: data_source.alias, type: 'data_sources', array_position: i});
+
+            this.getChildrenRec(data[data.length - 1]);
+        }
+        return data;
+    }
+
+    getChildrenRec(node) {
+        const nodeName = node.alias;
+
+        // Look in data sources
+        for (let [index, data_source] of this.state.pipeline.data_sources.entries()) {
+            if (data_source.alias === nodeName) {
+                node.type = 'data_sources';
+                node.array_position = index;
+                if (data_source.outputs) {
+                    node.children = data_source.outputs.map(outputName => {
+                        return {alias: outputName, name: outputName}
+                    });
+
+                    for (let i = 0; i < node.children.length; i++) {
+                        this.getChildrenRec(node.children[i]);
+                    }
+                }
+            }
+        }
+
+        // Look in models
+        for (let [index, model] of this.state.pipeline.models.entries()) {
+            if (model.alias === nodeName) {
+                node.type = 'models';
+                node.array_position = index;
+                if (model.outputs) {
+                    node.children = model.outputs.map(outputName => {
+                        return {alias: outputName, name: outputName}
+                    });
+                    
+                    for (let i = 0; i < node.children.length; i++) {
+                        this.getChildrenRec(node.children[i])
+                    }
+                }
+            }
+        }
+
+        // Look in storage
+        for (let [index, storage] of this.state.pipeline.storage.entries()) {
+            if (storage.alias === nodeName){    
+                node.type = 'storage';
+                node.array_position = index;
+            }
+        }
     }
 
     render() {
-        const dataSources = this.state.pipeline['data_sources'].map((data_source, i) => {
-            switch(data_source.type) {
-                case 'StreamingAPI':
-                    return (<TwitterPanel outputs={data_source.outputs} type={'data_sources'} updateFn={this.update} key={i} array_position={i} />);
-                case 'FlatFile':
+        const treeData = this.getTreeData();
+        
+        const treeThing = (
+            <div id="treeWrapper" style={{width: '100%', height:'100vh'}} >
+                <Tree 
+                    scaleExtent={{min: 0.1, max:10}} 
+                    collapsible={false} 
+                    onMouseOver={data => console.log(data)} 
+                    data={treeData} 
+                    translate={{x: 500, y: 100}} 
+                    onClick={this.handleNodeClick} 
+                    orientation='vertical'
+                    allowForeignObjects={true}
+                    textLayout={{textAnchor: 'middle', x: 0, y: 0}}
+                    nodeLabelComponent={{render: <NodeLabel />, foreignObjectWrapper: {x: -57, y: -20, width: 120}}}
+                    nodeSvgShape={{shape: 'rect', shapeProps: {width: 0, height: 0, x: -50, y: -10}}}
+                />
+            </div>
+        );
 
-                    break;
-                default:
-                    console.error(`Unknown data source type '${data_source.type}'`);
-            }
-        })
         return (
             <div>
-                {dataSources}
-                <Button label='Save' onClick={this.handleSubmit} />
+                {treeThing}
+                
             </div>
         );
     }
