@@ -1,4 +1,6 @@
 const defaultPipeline = {
+    username: 'rsfrost',
+    pipeline_alias: 'Default pipeline',
     data_sources: [
         {
             type: 'StreamingAPI',

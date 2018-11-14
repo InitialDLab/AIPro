@@ -3,11 +3,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import { Link } from 'react-router-dom';
+import Divider from '@material-ui/core/Divider';
 
 class Header extends Component {
     state = {
@@ -22,16 +25,17 @@ class Header extends Component {
 
     render() {
         const menuConfig = [
-            {'text': 'View Projects', 'link': '/projects'},
-            {'text': 'Create New Project', 'link': '/projects/new'},
+            {'text': 'View Pipelines', 'link': '/pipelines'},
+            {'text': 'Create New Pipeline', 'link': '/pipelines/new'},
         ];
         
         const menuList = (
             <div style={{width: 250}}>
             <List>
                 {menuConfig.map(config => (
-                <ListItem key={config.text} >
+                <ListItem component={Link} to={config.link} key={config.text} >
                     <ListItemText primary={config.text} />
+                    <Divider />
                 </ListItem>
                 ))}
             </List>
@@ -54,10 +58,14 @@ class Header extends Component {
                 <IconButton onClick={this.toggleMenu(!this.state.menuOpen)} style={{marginLeft: -12, marginRight: 20}} color="inherit" aria-label="Menu">
                 <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" color="inherit" style={{flexGrow: 1}}>
-                AI Pro
+                
+                <Typography component={Link} to='/' style={{flexGrow: 1, textDecoration: 'none'}} variant="h6" color="inherit">
+                    AI Pro
                 </Typography>
-                {/*<Button color="inherit">Login</Button>*/}
+                
+                <IconButton component={Link} to='/settings'>
+                    <Icon>settings</Icon>
+                </IconButton>
                 </Toolbar>
             </AppBar>
             </div>

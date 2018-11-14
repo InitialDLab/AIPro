@@ -88,6 +88,14 @@ def handle_save_account(account_type):
             log('New \'%s\' account created for: \'%s\'' % (data['account_type'], data['username']))
             return json.dumps({'message': 'Account created successfully'})    
 
+@app.route('/pipelines/<username>', methods=['GET'])
+def get_pipelines(username):
+    pipelines_collection = db['pipelines']
+    pipelines = pipelines_collection.find({'username': username}, {'_id': 0})
+    result = list(pipelines)
+
+    return json.dumps(result)
+
 @app.route('/pipeline', methods=['POST'])
 def save_pipeline():
     data = request.json

@@ -1,6 +1,7 @@
 class API {
-    method = 'http'
-    urlBase = 'localhost:5000'
+    method = 'http';
+    urlBase = 'localhost:5000';
+
     async post(resource, body) {
         const options = {
             body: JSON.stringify(body),

@@ -46,16 +46,14 @@ class TwitterAccountForm extends Component {
 
     render() {
         return (
-            <form>
-                <FormControl style={{width: 300}}>
-                    <Typography variant='h6'>Twitter Account Credentials</Typography>
-                    <TextField value={this.state['api_key']} style={{paddingBottom: 10}} onChange={this.handleChange} name='api_key' required label='API Key' />
-                    <TextField value={this.state['api_secret']} style={{paddingBottom: 10}} onChange={this.handleChange} name='api_secret' required label='API Secret' />
-                    <TextField value={this.state['access_token']} style={{paddingBottom: 10}} onChange={this.handleChange} name='access_token' required label='Access Token' />
-                    <TextField value={this.state['access_token_secret']} style={{paddingBottom: 10}} onChange={this.handleChange} name='access_token_secret' required label='Access Token Secret' />
-                    <Button onClick={this.handleFormSubmit} variant='contained' color='primary' >Save</Button>
-                </FormControl>
-            </form>
+            <FormControl style={{margin: '20px'}}>
+                <Typography variant='h6'>Twitter Account Credentials</Typography>
+                <TextField value={this.state['api_key']} style={{paddingBottom: 10}} onChange={this.handleChange} name='api_key' required label='API Key' />
+                <TextField value={this.state['api_secret']} style={{paddingBottom: 10}} onChange={this.handleChange} name='api_secret' required label='API Secret' />
+                <TextField value={this.state['access_token']} style={{paddingBottom: 10}} onChange={this.handleChange} name='access_token' required label='Access Token' />
+                <TextField value={this.state['access_token_secret']} style={{paddingBottom: 10}} onChange={this.handleChange} name='access_token_secret' required label='Access Token Secret' />
+                <Button onClick={this.handleFormSubmit} variant='contained' color='primary' >Save</Button>
+            </FormControl>
         );
     }
 }
