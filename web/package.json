@@ -5,12 +5,18 @@
   "dependencies": {
     "@material-ui/core": "^3.4.0",
     "@material-ui/icons": "^3.0.1",
+    "ajv": "^6.5.5",
     "create-react-app": "^2.1.1",
     "react": "^16.6.0",
+    "react-cookie": "^3.0.4",
     "react-d3-tree": "^1.12.0",
     "react-dom": "^16.6.0",
+    "react-redux": "^5.1.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

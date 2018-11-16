@@ -21,7 +21,11 @@ class TwitterAccountForm extends Component {
             username: this.props.username   
         };
         Object.assign(requestBody, this.state);
-        await this.api.post('/account/twitter', requestBody);
+        try {
+            await this.api.post('/account/twitter', requestBody);
+        } catch(err) {
+            console.error('Problem posting to get twitter account, gonna remove this');
+        }
     }
 
     handleChange = event => {
@@ -32,15 +36,18 @@ class TwitterAccountForm extends Component {
         const account_type = 'Twitter streaming';
         const username = this.props.username;
         const url = encodeURI(`/account/${account_type}/${username}`);
-        const account_info = await this.api.get(url);
-        
-        if (account_info.error) {
-            console.error(account_info.message);
-        }
-        else {
-            const tempState = this.state;
-            Object.assign(tempState, account_info);
-            this.setState(tempState);
+        try{
+            const account_info = await this.api.get(url);
+            if (account_info.error) {
+                console.error(account_info.message);
+            }
+            else {
+                const tempState = this.state;
+                Object.assign(tempState, account_info);
+                this.setState(tempState);
+            }
+        } catch(err) {
+            console.error('Error with getting Twitter account credentials, removing this');
         }
     }
 

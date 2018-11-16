@@ -16,13 +16,17 @@ class API {
             const url = `${this.method}://${this.urlBase}${resource}`;
             const response = await fetch(url, options);
             if (response.ok)
-                return true;
-            else
+                return response.json();
+            else {
+                console.error(`POST request returned sad response: ${response.status}`);
                 return false;
+            }
+                
 
         } catch(err) {
             console.error(`Problem with POST request to ${resource}`);
             console.error(err);
+            return false;
         }
         
     }
@@ -32,9 +36,20 @@ class API {
             method: 'GET'
         };
         
-        const url = `${this.method}://${this.urlBase}${resource}`;
-        const response = await fetch(url, options);
-        return response.json();
+        try{
+            const url = `${this.method}://${this.urlBase}${resource}`;
+            const response = await fetch(url, options);
+            if (response.ok)
+            return response.json();
+            else {
+                console.error(`GET request returned sad response: ${response.status}`);
+                return false;
+            }
+        } catch(err) {
+            console.error(`Problem with GET request to ${resource}`);
+            console.error(err);
+            return false;
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import API from './API';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
 import defaultPipeline from './defaultPipeline';
@@ -9,28 +8,13 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import { loadAllPipelines } from './actions/pipelineActions';
+import { connect } from 'react-redux';
 
 class AllPipelines extends Component {
-    state = {
-        loading: false,
-        pipelines: []
-    };
-
-    api = new API();
-
-    async componentDidMount() {
-        console.log('API');
-        const pipelines = await this.api.get(`/pipelines/${this.props.username}`);
-        if (pipelines.length > 0) {
-            console.log(pipelines);
-            this.setState({...this.state, pipelines: pipelines});
-        }
-        else {
-            console.log(`No pipelines for ${this.props.username}. Adding default now...`);
-            await this.api.post('/pipeline', defaultPipeline);
-            const pipelines = await this.api.get(`/pipelines/${this.props.username}`);
-            this.setState({...this.state, pipelines: pipelines});
-        }
+    constructor(props) {
+        super(props);
+        this.props.loadAllPipelines(this.props.currentUsername);
     }
 
     getAvatarText(text) {
@@ -38,9 +22,12 @@ class AllPipelines extends Component {
     }
 
     render() {
-        let pipelines = '';
-        if (this.state.pipelines.length > 0) {
-            pipelines = this.state.pipelines.map((pipeline, i) => {
+        if (this.props.isLoading === true)
+            return '';
+        
+        let pipelines;
+        if ( this.props.pipelines.length > 0) {
+            pipelines = this.props.pipelines.map((pipeline, i) => {
                 const dataSources = pipeline.data_sources ? <Typography>{pipeline.data_sources.length} data source{pipeline.data_sources.length > 1 ? 's' : ''}</Typography> : '';
                 const models = pipeline.models ? <Typography>{pipeline.models.length} model{pipeline.models.length > 1 ? 's' : ''}</Typography> : '';
                 const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filters{pipeline.filters.length > 1 ? 's' : ''}</Typography> : '';
@@ -85,4 +72,19 @@ class AllPipelines extends Component {
     }
 }
 
-export default AllPipelines;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        pipelines: state.pipelines,
+        isLoading: state.isLoading,
+        currentUsername: state.currentUser.username
+    }
+}
+
+const mapDispatchToProps = {
+    loadAllPipelines
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AllPipelines);

@@ -59,13 +59,15 @@ class Header extends Component {
                 <MenuIcon />
                 </IconButton>
                 
-                <Typography component={Link} to='/' style={{flexGrow: 1, textDecoration: 'none'}} variant="h6" color="inherit">
-                    AI Pro
+                <Typography component={Link} to='/' style={{textDecoration: 'none'}} variant="h6" color="inherit">
+                    Handoff
                 </Typography>
                 
-                <IconButton component={Link} to='/settings'>
-                    <Icon>settings</Icon>
-                </IconButton>
+                <div style={{flexGrow: 1, textAlign: 'right'}}>
+                    <IconButton style={{color: '#fff'}} component={Link} to='/settings'>
+                        <Icon >settings</Icon>
+                    </IconButton>
+                </div>
                 </Toolbar>
             </AppBar>
             </div>

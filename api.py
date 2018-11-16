@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, make_response
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
@@ -51,6 +51,56 @@ def save_file(file, directory):
 
     return uploaded_file
 
+@app.route('/login', methods=['POST'])
+def handle_login():
+    data = request.json
+    username, password = data['username'], data['password']
+    users_collection = db['users']
+
+    result = users_collection.find_one({'username': username, 'password': password}, {'_id': 0})
+    log('User record for %s: %r' % (username, result))
+
+    if result:
+        response = make_response()
+        response.set_cookie('current_user', username)
+        return json.dumps({'success': True})
+    else:
+        return json.dumps({'success': False})
+
+@app.route('/logout', methods=['GET'])
+def handle_logout():
+    response = make_response()
+    response.set_cookie('current_user', '')
+    return json.dumps({'success': True})
+
+@app.route('/user', methods=['POST'])
+def handle_create_user():
+    data = request.json
+    if 'username' not in data or 'password' not in data:
+        return json.dumps({'success': False})
+
+    username, password, email = data['username'], data['password'], data['email']
+    users_collection = db['users']
+
+    insert_result = users_collection.replace_one({
+        'username': username
+    },
+    {
+        'username': username,
+        'password': password,
+        'email': email
+    }, upsert=True)
+
+    if insert_result:
+        if insert_result.matched_count == 1:
+            log('Updated user login for %s' % username)
+        else:
+            log('New user created: %s' % username)
+
+        return json.dumps({'success': True})
+    else:
+        return json.dumps({'success': False})
+
 @app.route('/account/<account_type>/<username>', methods=['GET'])
 def handle_get_account(account_type, username):
     accounts_collection = db['accounts']
@@ -88,13 +138,24 @@ def handle_save_account(account_type):
             log('New \'%s\' account created for: \'%s\'' % (data['account_type'], data['username']))
             return json.dumps({'message': 'Account created successfully'})    
 
-@app.route('/pipelines/<username>', methods=['GET'])
+@app.route('/<username>/pipelines/<pipeline_alias>', methods=['GET'])
+def get_single_pipeline(username, pipeline_alias):
+    pipelines_collection = db['pipelines']
+    pipeline = pipelines_collection.findOne({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
+    
+    # TODO: Check to make sure pipeline is OK, not an error
+    
+    return json.dumps({'pipeline': pipeline})
+
+@app.route('/<username>/pipelines/', methods=['GET'])
 def get_pipelines(username):
     pipelines_collection = db['pipelines']
     pipelines = pipelines_collection.find({'username': username}, {'_id': 0})
+    
+    # TODO: Check to make sure that pipelines is OK, not an error
     result = list(pipelines)
 
-    return json.dumps(result)
+    return json.dumps({'pipelines': result})
 
 @app.route('/pipeline', methods=['POST'])
 def save_pipeline():
