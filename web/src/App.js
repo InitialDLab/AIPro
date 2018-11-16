@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Header from './Header';
-import AddPipeline from './AddPipeline';
+import Pipeline from './Pipeline';
 import { BrowserRouter as Router, Route, Redirect} from 'react-router-dom'
 import Settings from './Settings';
 import LoginPage from './LoginPage';
@@ -13,6 +13,17 @@ import { CookiesProvider, withCookies } from 'react-cookie';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import { MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: blue,
+  },
+  typography: {
+    useNextVariants: true
+  }
+});
 
 class App extends Component {
   constructor(props) {
@@ -38,58 +49,60 @@ class App extends Component {
 
     return (
       <CookiesProvider>
-        <Router>
-          <div style={{width: '100%', height: '100%'}}>
-            <Header />
-            <Route exact path='/' render={() => 
-              this.props.loggedIn ? 
-              <AddPipeline /> 
-              : <Redirect to='/login' />} 
+        <MuiThemeProvider theme={theme}>
+          <Router>
+            <div style={{width: '100%', height: '100%'}}>
+              <Header />
+              <Route exact path='/' render={() => 
+                this.props.loggedIn ? 
+                <Pipeline /> 
+                : <Redirect to='/login' />} 
+                />
+              <Route path='/settings' render={() => 
+                this.props.loggedIn ? 
+                <Settings currentUser={this.props.currentUser} /> 
+                : <Redirect to='/login' />}
+                />
+              <Route exact path='/pipelines/new' render={() => 
+                this.props.loggedIn ? 
+                <Pipeline /> 
+                : <Redirect to='/login' />}
+                />
+              <Route exact path='/pipelines' render={() => 
+                this.props.loggedIn ? 
+                <AllPipelines username={this.props.currentUser} /> 
+                : <Redirect to='/login' />} 
+                />
+              <Route path='/login' render={() => <LoginPage />} 
               />
-            <Route path='/settings' render={() => 
-              this.props.loggedIn ? 
-              <Settings currentUser={this.props.currentUser} /> 
-              : <Redirect to='/login' />}
-              />
-            <Route exact path='/pipelines/new' render={() => 
-              this.props.loggedIn ? 
-              <AddPipeline /> 
-              : <Redirect to='/login' />}
-              />
-            <Route exact path='/pipelines' render={() => 
-              this.props.loggedIn ? 
-              <AllPipelines username={this.props.currentUser} /> 
-              : <Redirect to='/login' />} 
-              />
-            <Route path='/login' render={() => <LoginPage />} 
-            />
-            <Route path='/signup' render={() => 
-              this.props.loggedIn ?
-              <Redirect to='/' />
-              : <SignupPage />}
-              />
-              <Snackbar 
-                open={isOpen}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center'
-                }}
-                onClose={this.handleSnackbarClose}
-                message={this.props.message || this.props.errorMessage}
-                action={[
-                  <IconButton
+              <Route path='/signup' render={() => 
+                this.props.loggedIn ?
+                <Redirect to='/' />
+                : <SignupPage />}
+                />
+                <Snackbar 
+                  open={isOpen}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                  }}
+                  onClose={this.handleSnackbarClose}
+                  message={this.props.message || this.props.errorMessage}
+                  action={[
+                    <IconButton
                     key='close'
                     aria-label='Close'
                     color='inherit'
                     style={{padding: '10px'}}
                     onClick={this.handleSnackbarClose}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                ]}
-              />
-          </div>
-        </Router>
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  ]}
+                  />
+            </div>
+          </Router>
+        </MuiThemeProvider>
       </CookiesProvider>
     )
   }

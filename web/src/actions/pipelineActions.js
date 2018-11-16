@@ -1,5 +1,5 @@
 import API from '../API';
-import { setError, START_LOADING, STOP_LOADING } from './utilActions';
+import { setError, START_LOADING, STOP_LOADING, setMessage } from './utilActions';
 const api = new API();
 
 export const selectModule = (moduleType, index) => {
@@ -24,6 +24,14 @@ export const addModule = (moduleType) => {
     return {
         type: 'ADD_MODULE',
         moduleType
+    };
+}
+
+export const deleteModule = (moduleType, index) => {
+    return {
+        type: 'DELETE_MODULE',
+        moduleType,
+        index
     };
 }
 
@@ -62,10 +70,6 @@ export const CREATE_NEW_PIPELINE = {
     type: 'CREATE_NEW_PIPELINE'
 };
 
-export const SAVE_CURRENT_PIPELINE = {
-    type: 'SAVE_CURRENT_PIPELINE'
-};
-
 export const loadPipeline = (username, alias) => {
     return async function(dispatch) {
         dispatch(START_LOADING);
@@ -92,6 +96,38 @@ export const loadAllPipelines = (username) => {
         }
         else {
             dispatch(setError)
+        }
+    }
+}
+
+export const savePipeline = (username, pipeline) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const response = await api.post(`/${username}/pipeline`, pipeline);
+        dispatch(STOP_LOADING);
+        if (response !== false) {
+            const saveResult = response.success;
+            if (saveResult === true) {
+                dispatch(setMessage('Pipeline successfully saved'));
+            }
+        }
+    }
+}
+
+export const deletePipeline = (username, pipeline) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const response = await api.delete(`/${username}/pipeline`, pipeline);
+        dispatch(STOP_LOADING);
+        if (response !== false) {
+            const deleteResult = response.success;
+            if (deleteResult === true) {
+                dispatch(setMessage('Pipeline successfully deleted'));
+                dispatch(CREATE_NEW_PIPELINE);
+            }
+            else {
+                dispatch(setError(`Pipeline could not be deleted: ${response.message || 'unknown error'}`));
+            }
         }
     }
 }

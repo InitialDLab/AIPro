@@ -75,3 +75,22 @@ export const pipelineListReducer = (state = [], action) => {
             return state;
     }
 }
+
+const initialCurrentModuleState = {
+    type: '',
+    subtype: '',
+    index: 0
+}
+
+export const currentModuleReducer = (state = initialCurrentModuleState, action) => {
+    let tmpState = Object.assign({}, state);
+    switch(action.type) {
+        case 'SET_CURRENT_MODULE':
+            tmpState.type = action.moduleType;
+            tmpState.subtype = action.moduleSubType;
+            tmpState.index = action.index;
+            return tmpState;
+        default:
+            return state;
+    }
+}

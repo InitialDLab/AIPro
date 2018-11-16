@@ -157,27 +157,56 @@ def get_pipelines(username):
 
     return json.dumps({'pipelines': result})
 
-@app.route('/pipeline', methods=['POST'])
-def save_pipeline():
-    data = request.json
-
-    pipelines_collection = db['pipelines']
-    saved_pipeline_info = pipelines_collection.replace_one(
-        {
-            'username': data['username'],
-            'pipeline_alias': data['pipeline_alias']
-        },
-        data, upsert=True)
-
-    if saved_pipeline_info.matched_count:
-        message = '\'%s\' pipeline modified for \'%s\'' % (data['pipeline_alias'], data['username'])
-        log(message)
-        return json.dumps({'message': message})
-    else:
-        message = 'New pipeline \'%s\' created for \'%s\'' % (data['pipeline_alias'], data['username'])
-        log(message)
-        return json.dumps({'message': message})
+@app.route('/<username>/pipeline', methods=['POST, DELETE'])
+def save_or_delete_pipeline(username):
+    if not username:
+        log('Invalid username, username cannot be empty')
+        return json.dumps({'success': False, 'message': 'Invalid username, username cannot be empty'})
     
+    if request.method == 'POST':
+        data = request.json
+
+        pipelines_collection = db['pipelines']
+        saved_pipeline_info = pipelines_collection.replace_one(
+            {
+                'username': username,
+                'pipeline_alias': data['pipeline_alias']
+            },
+            data, upsert=True)
+
+        if saved_pipeline_info.matched_count:
+            message = '\'%s\' pipeline modified for \'%s\'' % (data['pipeline_alias'], data['username'])
+            log(message)
+            return json.dumps({'message': message})
+        else:
+            message = 'New pipeline \'%s\' created for \'%s\'' % (data['pipeline_alias'], data['username'])
+            log(message)
+            return json.dumps({'message': message})
+    elif request.method == 'DELETE':
+        data = request.json
+
+        pipelines_collection = db['pipelines']
+        filterObj = {
+            'username': username,
+            'pipeline_alias': data['pipeline_alias']
+        }
+
+        # Prepare to delete a pipeline, make sure there is one there
+        num_pipelines = pipelines_collection.count_documents(filterObj)
+        if num_pipelines == 0:
+            message = 'No pipelines to delete for username %s and pipeline alias %s' % (username, data['pipeline_alias'])
+            log(message)
+            return json.dumps({'success': True, 'message': message})
+        else:
+            log('%d pipelines with username %s and pipeline alias %s about to be deleted' % (username, data['pipeline_alias']))
+            delete_result = pipelines_collection.delete_one(filterObj)
+            message = 'Deleted count %d' % delete_result.deleted_count
+            log(message)
+            return json.dumps({'success': True, 'message': message})
+    else:
+        return json.dumps({'success': False, 'message': 'Unsupported request type %s' % request.method})
+
+
 
 @app.route('/start/<pipeline_alias>')
 def handle_start_pipeline(pipeline_alias):

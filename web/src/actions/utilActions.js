@@ -17,6 +17,14 @@ export const setCredentialAttribute = (credentialsType, credentialAttribute, cre
     };
 }
 
+export const setCurrentModule = (moduleType, moduleSubType, index) => {
+    return {
+        moduleType,
+        moduleSubType,
+        index
+    };
+}
+
 export const setCurrentUsername = (username) => {
     return {
         type: 'SET_CURRENT_USERNAME',

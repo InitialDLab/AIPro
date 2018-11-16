@@ -1,4 +1,6 @@
 const initialState = {
+    pipeline_alias: '',
+    username: '',
     data_sources: [],
     models: [],
     filters: [],
@@ -22,8 +24,7 @@ const pipelineReducer = (state = initialState, action) => {
     const tmpModules = tmpState[moduleType];
     switch(action.type) {
         case 'CREATE_NEW_PIPELINE':
-            // TODO: Create new pipeline
-            break;
+            return initialState;
         case 'ADD_MODULE':
             return {
                 ...tmpState,

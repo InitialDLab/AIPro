@@ -1,7 +1,15 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
-import { loadingReducer, userReducer, errorReducer, messageReducer, loggedInReducer, pipelineListReducer } from './reducers/utilReducers';
+import { 
+    loadingReducer, 
+    userReducer, 
+    errorReducer, 
+    messageReducer, 
+    loggedInReducer, 
+    pipelineListReducer,
+    currentModuleReducer,
+} from './reducers/utilReducers';
 import pipelineReducer from './reducers/pipelineReducer';
 
 const loggerMiddleware = createLogger();
@@ -13,7 +21,8 @@ const rootReducer = combineReducers({
     isLoading: loadingReducer,
     currentUser: userReducer,
     currentPipeline: pipelineReducer,
-    pipelines: pipelineListReducer
+    pipelines: pipelineListReducer,
+    currentModule: currentModuleReducer
 });
 
 const store = createStore(

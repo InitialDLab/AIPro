@@ -19,9 +19,11 @@ state = {
     isLoading: false,
     currentModule: {
         type: 'data_sources',
+        subtype: 'StreamingAPI',
         index: 0
     },
     currentPipeline: {
+        pipeline_alias: 'My pipeline',
         data_sources: [
             {
                 alias: 'Test alias',
@@ -111,5 +113,16 @@ state = {
                 preprocessor_function: 'clean'
             }
         ],
+        custom_entities: [
+            {
+                alias: 'My Custom entity',
+                classname: '',
+                filename: '',
+                function: '',
+                input_attribute: '',
+                output_attribute: '',
+                outputs: []
+            }
+        ]
     }
 }

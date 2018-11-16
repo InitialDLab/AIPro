@@ -1,4 +1,4 @@
-export const defaultStorageAttributes = {
+const defaultStorageAttributes = {
     FlatFile: {
         alias: 'My flat file',
         filename: '',
@@ -16,7 +16,7 @@ export const defaultStorageAttributes = {
     }
 };
 
-export const defaultDataSourceAttributes = {
+const defaultDataSourceAttributes = {
     StreamingAPI: {
         alias: 'Twitter Streaming API',
         auto_restart: true,
@@ -42,7 +42,7 @@ export const defaultDataSourceAttributes = {
     }
 }
 
-export const defaultModelAttributes = {
+const defaultModelAttributes = {
     Custom: {
         alias: 'My custom model',
         module_file_path: '',
@@ -62,7 +62,17 @@ export const defaultModelAttributes = {
     }
 }
 
-export const defaultPreprocessorAttributes = {
+const defaultCustomEntityAttributes = {
+    alias: 'My Custom entity',
+    classname: '',
+    filename: '',
+    function: '',
+    input_attribute: '',
+    output_attribute: '',
+    outputs: []
+}
+
+const defaultPreprocessorAttributes = {
     Custom: {
         alias: 'My custom preprocessor',
         module_file_path: '',
@@ -74,6 +84,17 @@ export const defaultPreprocessorAttributes = {
     }
 }
 
+const defaultFilterAttributes = {
+    alias: 'Language filter',
+    attribute: 'lang',
+    condition: '==',
+    value: 'en',
+    outputs: [
+        'Sentiment classifier'
+    ],
+    projection: []
+}
+
 export const defaultCredentialAttributes = {
     twitter: {
         api_key: '',
@@ -81,4 +102,13 @@ export const defaultCredentialAttributes = {
         access_token: '',
         access_token_secret: ''
     }
+}
+
+export const defaultModuleAttributes = {
+    data_sources: defaultDataSourceAttributes,
+    preprocessors: defaultPreprocessorAttributes,
+    models: defaultModelAttributes,
+    filters: defaultFilterAttributes,
+    storage: defaultStorageAttributes,
+    custom_entities: defaultCustomEntityAttributes,
 }
