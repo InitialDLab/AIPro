@@ -1,4 +1,4 @@
-state = {
+const defaultState = {
     error: '',
     message: '',
     loggedIn: true,
@@ -18,35 +18,30 @@ state = {
     ],
     isLoading: false,
     currentModule: {
-        type: 'data_sources',
-        subtype: 'StreamingAPI',
-        index: 0
+        category: 'data_sources',
+        type: 'TwitterStreamingAPI',
+        index: 0,
+        parentIndex: -1,
+        parentCategory: 'root',
+        parentOutputIndex: -1,
     },
     currentPipeline: {
         pipeline_alias: 'My pipeline',
         data_sources: [
             {
-                alias: 'Test alias',
-                type: 'API',
-                subtype: 'Twitter streaming',
-                filters: [
-                    '@richiefrost'
-                ],
+                alias: 'Twitter Streaming Connection',
+                type: 'TwitterStreamingAPI',
                 outputs: [
                     'Language filter'
                 ],
-                projection: [
-                    'text',
-                    'lang',
-                    'created_at'
-                ]
+                filters: [],
+                projection: []
             }
         ],
         models: [
             {
                 alias: 'Sentiment classifier',
-                type: 'Custom model',
-                subtype: 'Keras',
+                type: 'CustomModel',
                 model_classname: 'Sentiment',
                 model_filename: 'sentiment.py',
                 model_function: 'predict',
@@ -63,6 +58,7 @@ state = {
             {
                 alias: 'Language filter',
                 attribute: 'lang',
+                type: 'Filter',
                 condition: '==',
                 value: 'en',
                 outputs: [
@@ -73,6 +69,7 @@ state = {
             {
                 alias: 'Is happy filter',
                 attribute: 'sentiment_score',
+                type: 'Filter',
                 condition: '>',
                 value: 0.7,
                 outputs: [
@@ -83,6 +80,7 @@ state = {
             {
                 alias: 'Is angry filter',
                 attribute: 'sentiment_score',
+                type: 'Filter',
                 condition: '<',
                 value: 0.3,
                 outputs: [
@@ -94,11 +92,13 @@ state = {
         storage: [
             {
                 alias: 'Happy tweets file',
+                type: 'FlatFileStorage',
                 filename: 'happytweets.json',
                 format: 'json lines'
             },
             {
                 alias: 'Angry tweets file',
+                type: 'FlatFileStorage',
                 filename: 'angrytweets.json',
                 format: 'json lines'
             }
@@ -106,16 +106,14 @@ state = {
         preprocessors: [
             {
                 alias: 'Text preprocessor',
-                type: 'Text',
-                subtype: 'custom',
-                preprocessor_classname: 'TextPreprocessor',
-                preprocessor_filename: 'text_preprocessor.py',
-                preprocessor_function: 'clean'
+                type: 'PrebuiltPreprocessor',
+                subtype: 'Text',
             }
         ],
         custom_entities: [
             {
-                alias: 'My Custom entity',
+                alias: 'Untitled custom entity',
+                type: 'CustomEntity',
                 classname: '',
                 filename: '',
                 function: '',
@@ -126,3 +124,5 @@ state = {
         ]
     }
 }
+
+export default defaultState;

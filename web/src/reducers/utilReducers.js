@@ -21,7 +21,7 @@ export const loadingReducer = (state = false, action) => {
 }
 
 const initialUserState = {
-    username: '',
+    username: 'rsfrost',
     credentials: {
         twitter: defaultCredentialAttributes['twitter']
     }
@@ -30,12 +30,16 @@ export const userReducer = (state = initialUserState, action) => {
     let tmpState = Object.assign({}, initialUserState);
     switch(action.type) {
         case 'SET_USER_CREDENTIAL_ATTRIBUTE':
-            if (!tmpState.hasOwnProperty(action.credentialsType)) {
+            if (!tmpState.credentials.hasOwnProperty(action.credentialsType)) {
                 console.error(`Previously undefined credentials type: '${action.credentialsType}'`);
                 return state;
             }
+            const credentials = Object.assign({}, tmpState.credentials);
+            const credentialTypeBlock = Object.assign({}, credentials[action.credentialsType]);
+            credentialTypeBlock[action.credentialAttribute] = action.credentialValue;
 
-            tmpState[action.credentialsType][action.attribute] = action.value;
+            credentials[action.credentialsType] = credentialTypeBlock;
+            tmpState.credentials = credentials;
             return tmpState;
         case 'SET_CURRENT_USERNAME':
             tmpState.username = action.username;
@@ -77,19 +81,22 @@ export const pipelineListReducer = (state = [], action) => {
 }
 
 const initialCurrentModuleState = {
-    type: '',
-    subtype: '',
+    category: 'data_sources',
+    type: 'FlatFile',
     index: 0
 }
-
 export const currentModuleReducer = (state = initialCurrentModuleState, action) => {
     let tmpState = Object.assign({}, state);
     switch(action.type) {
         case 'SET_CURRENT_MODULE':
-            tmpState.type = action.moduleType;
-            tmpState.subtype = action.moduleSubType;
-            tmpState.index = action.index;
-            return tmpState;
+            return {
+                category: action.category,
+                type: action.moduleType,
+                index: action.index,
+                parentIndex: action.parentIndex,
+                parentCategory: action.parentCategory,
+                parentOutputIndex: action.parentOutputIndex,
+            };
         default:
             return state;
     }

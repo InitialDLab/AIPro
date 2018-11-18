@@ -4,6 +4,8 @@ import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import API from './API';
+import { connect } from 'react-redux';
+import { setCredentialAttribute } from './actions/utilActions';
 
 class TwitterAccountForm extends Component {
     state = {
@@ -17,7 +19,7 @@ class TwitterAccountForm extends Component {
 
     handleFormSubmit = async () => {
         const requestBody = {
-            account_type: 'Twitter streaming',
+            account_type: 'TwitterStreamingAPI',
             username: this.props.username   
         };
         Object.assign(requestBody, this.state);
@@ -29,7 +31,10 @@ class TwitterAccountForm extends Component {
     }
 
     handleChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
+        const attribute = event.target.name;
+        const value = event.target.value;
+        this.props.setCredentialAttribute('twitter', attribute, value);
+        this.setState({...this.state, [attribute]: value });
     }
 
     async componentDidMount() {
@@ -65,4 +70,13 @@ class TwitterAccountForm extends Component {
     }
 }
 
-export default TwitterAccountForm;
+const mapDispatch = dispatch => {
+    return {
+        setCredentialAttribute: (credentialsType, credentialAttribute, credentialValue) => dispatch(setCredentialAttribute(credentialsType, credentialAttribute, credentialValue)),
+    }
+}
+
+export default connect(
+    null,
+    mapDispatch
+)(TwitterAccountForm );

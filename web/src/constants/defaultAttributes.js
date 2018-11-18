@@ -1,39 +1,40 @@
 const defaultStorageAttributes = {
-    FlatFile: {
+    FlatFileStorage: {
         alias: 'My flat file',
+        type: 'FlatFileStorage',
         filename: '',
-        format: 'json'
     },
     MongoDB: {
         alias: 'My MongoDB connection',
+        type: 'MongoDB',
         host: 'localhost',
         port: 27017,
         db: '',
         collection: ''
     },
     IO: {
-        alias: 'Standard output'
+        alias: 'Standard output',
+        type: 'IO',
     }
 };
 
 const defaultDataSourceAttributes = {
-    StreamingAPI: {
+    TwitterStreamingAPI: {
         alias: 'Twitter Streaming API',
+        type: 'TwitterStreamingAPI',
         auto_restart: true,
-        projection: [
-            'text',
-            'created_at',
-            'lang'
-        ],
+        projection: [],
         outputs: []
     },
-    FlatFile: {
+    FlatFileDataSource: {
         alias: 'My flat file',
+        type: 'FlatFileDataSource',
         filename: '',
         outputs: []
     },
     MongoDB: {
         alias: 'My MongoDB connection',
+        type: 'MongoDB',
         host: 'localhost',
         port: 27017,
         db: '',
@@ -43,27 +44,29 @@ const defaultDataSourceAttributes = {
 }
 
 const defaultModelAttributes = {
-    Custom: {
+    CustomModel: {
         alias: 'My custom model',
+        type: 'CustomModel',
         module_file_path: '',
         module_classname: '',
         method_name: '',
         output_attribute: '',
         preprocessor: '',
         input_attribute: '',
-        outputs: []
+        outputs: [],
+        projection: []
     },
-    ONNX: {
-        alias: 'Image Boundary Classifier'
+    PrebuiltModel: {
+        alias: 'Image Boundary Classifier',
+        type: 'PrebuiltModel',
+        subtype: '', // ONNX, Keras, etc.
+        outputs: [],
     },
-    Keras: {
-        alias: 'My keras model',
-        zipfile: ''
-    }
 }
 
 const defaultCustomEntityAttributes = {
-    alias: 'My Custom entity',
+    alias: 'Untitled Custom Entity',
+    type: 'CustomEntity',
     classname: '',
     filename: '',
     function: '',
@@ -73,25 +76,27 @@ const defaultCustomEntityAttributes = {
 }
 
 const defaultPreprocessorAttributes = {
-    Custom: {
+    CustomPreprocessor: {
         alias: 'My custom preprocessor',
+        type: 'CustomPreprocessor',
         module_file_path: '',
         module_classname: '',
-        method_name: ''
+        method_name: '',
     },
-    Prebuilt: {
-        alias: 'Text preprocessor'
+    PrebuiltPreprocessor: {
+        alias: 'Text preprocessor',
+        type: 'PrebuiltPreprocessor',
+        subtype: 'Text',
     }
 }
 
 const defaultFilterAttributes = {
     alias: 'Language filter',
+    type: 'Filter',
     attribute: 'lang',
     condition: '==',
     value: 'en',
-    outputs: [
-        'Sentiment classifier'
-    ],
+    outputs: [],
     projection: []
 }
 

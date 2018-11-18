@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, make_response
+from flask import Flask, request, redirect, url_for, make_response, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
@@ -61,17 +61,19 @@ def handle_login():
     log('User record for %s: %r' % (username, result))
 
     if result:
-        response = make_response()
+        response = jsonify({'success': True})
         response.set_cookie('current_user', username)
-        return json.dumps({'success': True})
+        return response
     else:
-        return json.dumps({'success': False})
+        response = jsonify({'success': False})
+        response.set_cookie('current_user', '')
+        return response
 
 @app.route('/logout', methods=['GET'])
 def handle_logout():
-    response = make_response()
+    response = jsonify({'success': True})
     response.set_cookie('current_user', '')
-    return json.dumps({'success': True})
+    return response
 
 @app.route('/user', methods=['POST'])
 def handle_create_user():

@@ -1,43 +1,39 @@
 import React, { Component } from 'react';
-import FlatFileStorageForm from './FlatFileStorageForm';
-import FilterForm from './FilterForm';
+import PipelineDetails from './PipelineDetails';
+import { connect } from 'react-redux';
+import ModuleDetails from './ModuleDetails';
+import { Divider } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    root: {
+        ...theme.mixins.gutters(),
+        paddingTop: theme.spacing.unit * 2,
+        paddingBottom: theme.spacing.unit * 2,
+        height: '100vh',
+        display: 'inline-block',
+        borderRight: '1px solid #eee',
+    },
+});
 
 class PipelineSidebar extends Component {
-    
-    
     render() {
-        let form = '';
-        switch(this.props.formType) {
-            case 'flat_file_storage':
-                form = (
-                    <FlatFileStorageForm 
-                        alias={this.props.alias} 
-                        filename={this.props.filename} 
-                        filetype={this.props.filetype}
-                        handleSave={this.props.handleSave}
-                    />
-                );
-                break;
-            case 'filter':
-                form = (
-                    <FilterForm
-                        alias={this.props.alias}
-                        comparison={this.props.comparison}
-                        value={this.props.value}
-                        save={this.props.save}
-                    />
-                );
-                break;
-            default:
-                form = '';
-                break;
-        }
+        const { classes } = this.props;
         return (
-            <div style={{width: '250px', height: '100vh', position: 'absolute'}}>
-                {form}
+            <div className={classes.root} >
+                <PipelineDetails />
+                <Divider />
+                <ModuleDetails />
             </div>
         )
     }
 }
 
-export default PipelineSidebar;
+const mapStateToProps = null;
+const mapDispatchToProps = null;
+
+export default withStyles(styles)(
+connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(PipelineSidebar));

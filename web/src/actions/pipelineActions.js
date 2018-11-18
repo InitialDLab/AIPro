@@ -2,64 +2,69 @@ import API from '../API';
 import { setError, START_LOADING, STOP_LOADING, setMessage } from './utilActions';
 const api = new API();
 
-export const selectModule = (moduleType, index) => {
-    return {
-        type: 'SELECT_MODULE',
-        moduleType,
-        index
-    };
-}
-
-export const updateModule = (moduleType, index, attribute, value) => {
+export const updateModule = (category, index, attribute, value) => {
     return {
         type: 'UPDATE_MODULE',
-        moduleType,
+        category,
         index,
         attribute,
         value
     };
 }
 
-export const addModule = (moduleType) => {
+export const addModule = (alias, category, moduleType) => {
     return {
         type: 'ADD_MODULE',
+        alias,
+        category,
         moduleType
     };
 }
 
-export const deleteModule = (moduleType, index) => {
+export const deleteModule = (category, index) => {
     return {
         type: 'DELETE_MODULE',
-        moduleType,
+        category,
         index
     };
 }
 
-export const addOutput = (parentModuleType, parentIndex, outputAlias) => {
+export const addOutput = (category, index, outputAlias) => {
     return {
         type: 'ADD_OUTPUT',
-        parentModuleType,
-        parentIndex,
+        category,
+        index,
         outputAlias
     };
 }
 
-export const deleteOutput = (parentModuleType, parentIndex, outputAlias) => {
+export const updateOutput = (category, index, outputIndex, outputAlias) => {
+    return {
+        type: 'UPDATE_OUTPUT',
+        category,
+        index,
+        outputIndex,
+        outputAlias,
+    }
+}
+
+export const deleteOutput = (category, index, outputAlias) => {
     return {
         type: 'DELETE_OUTPUT',
-        parentModuleType,
-        parentIndex,
+        category,
+        index,
         outputAlias
     };
 }
-export const receiveSinglePipeline = (pipeline) => {
+
+export const receiveSinglePipeline = pipeline => {
     return {
         type: 'RECEIVE_SINGLE_PIPELINE',
         pipeline
     };
 }
 
-export const receivePipelines = (pipelines) => {
+export const receivePipelines = pipelines => {
     return {
         type: 'RECEIVE_PIPELINES',
         pipelines
@@ -69,6 +74,13 @@ export const receivePipelines = (pipelines) => {
 export const CREATE_NEW_PIPELINE = {
     type: 'CREATE_NEW_PIPELINE'
 };
+
+export const savePipelineAlias = pipeline_alias => {
+    return {
+        type: 'SAVE_PIPELINE_ALIAS',
+        pipeline_alias
+    };
+}
 
 export const loadPipeline = (username, alias) => {
     return async function(dispatch) {
@@ -85,7 +97,7 @@ export const loadPipeline = (username, alias) => {
     }
 }
 
-export const loadAllPipelines = (username) => {
+export const loadAllPipelines = username => {
     return async function(dispatch) {
         dispatch(START_LOADING);
         const response = await api.get(`/${username}/pipelines`);
@@ -100,10 +112,48 @@ export const loadAllPipelines = (username) => {
     }
 }
 
-export const savePipeline = (username, pipeline) => {
+const buildTwitterDataSource = (currentUser, pipeline, dispatch) => {
+    // Check to see if there's a Twitter Streaming API in there
+    let editIndex = -1;
+    for (let i = 0; i < pipeline.data_sources.length; i++) {
+        if (pipeline.data_sources[i].type === 'TwitterStreamingAPI') {
+            editIndex = i;
+            break;
+        }
+    }
+
+    if (editIndex !== -1) {
+        const twitterCredentials = currentUser.credentials.twitter;
+        for (let key of ['api_key', 'api_secret', 'access_key', 'access_key_secret']) {
+            if (twitterCredentials[key].length === 0) {
+                dispatch(setError(`Make sure to add your Twitter credentials, '${key}' cannot be empty`));
+                return false;
+            }
+        }
+        const twitterModule = Object.assign(twitterCredentials, pipeline.data_sources[editIndex]);
+        pipeline.data_sources[editIndex] = twitterModule;
+        return pipeline;
+    }
+    else {
+        return pipeline;
+    }
+}
+
+export const savePipeline = (currentUser, pipeline) => {
     return async function(dispatch) {
         dispatch(START_LOADING);
-        const response = await api.post(`/${username}/pipeline`, pipeline);
+        if (pipeline.pipeline_alias.length === 0) {
+            dispatch(setError('Pipeline alias cannot be empty'));
+        }
+        const tmpPipeline = buildTwitterDataSource(currentUser, pipeline, dispatch);
+        const username = currentUser.username;
+        if (username.length === 0) {
+            dispatch(setError('Username cannot be empty'));
+            return;
+        }
+        if (tmpPipeline === false) 
+            return;
+        const response = await api.post(`/${username}/pipeline`, tmpPipeline);
         dispatch(STOP_LOADING);
         if (response !== false) {
             const saveResult = response.success;
@@ -114,10 +164,10 @@ export const savePipeline = (username, pipeline) => {
     }
 }
 
-export const deletePipeline = (username, pipeline) => {
+export const deletePipeline = (username, pipeline_alias) => {
     return async function(dispatch) {
         dispatch(START_LOADING);
-        const response = await api.delete(`/${username}/pipeline`, pipeline);
+        const response = await api.delete(`/${username}/pipeline`, {pipeline_alias});
         dispatch(STOP_LOADING);
         if (response !== false) {
             const deleteResult = response.success;
@@ -129,6 +179,27 @@ export const deletePipeline = (username, pipeline) => {
                 dispatch(setError(`Pipeline could not be deleted: ${response.message || 'unknown error'}`));
             }
         }
+    }
+}
+
+export const uploadFile = (moduleType, index, attribute, file) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        let formData = new FormData();
+        formData.append('file', file);
+        formData.append('filename', file.name);
+        const uploadResult = await api.post('/upload', formData);
+        // TODO: Handle upload result
+        if (uploadResult !== false) {
+            dispatch(setMessage('File uploaded successfully'));
+        }
+        else {
+            dispatch(setError('Couldn\'t upload file'));
+        }
+
+        dispatch(updateModule(moduleType, index, attribute, file.name));
+        dispatch(STOP_LOADING);
+
     }
 }
 

@@ -1,7 +1,7 @@
 import API from '../API';
 const api = new API();
 
-export const setLoggedIn = (loggedIn) => {
+export const setLoggedIn = loggedIn => {
     return {
         type: 'SET_LOGGED_IN',
         loggedIn
@@ -17,22 +17,26 @@ export const setCredentialAttribute = (credentialsType, credentialAttribute, cre
     };
 }
 
-export const setCurrentModule = (moduleType, moduleSubType, index) => {
+export const setCurrentModule = (category, moduleType, index, parentIndex, parentCategory, parentOutputIndex) => {
     return {
+        type: 'SET_CURRENT_MODULE',
+        category,
         moduleType,
-        moduleSubType,
-        index
+        index,
+        parentIndex,
+        parentCategory,
+        parentOutputIndex,
     };
 }
 
-export const setCurrentUsername = (username) => {
+export const setCurrentUsername = username => {
     return {
         type: 'SET_CURRENT_USERNAME',
         username
     };
 }
 
-export const setError = (errorMessage) => {
+export const setError = errorMessage => {
     return {
         type: 'SET_ERROR',
         errorMessage

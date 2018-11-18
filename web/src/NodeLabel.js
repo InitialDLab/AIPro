@@ -11,16 +11,29 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
 import AddConfirmationDialog from './AddConfirmationDialog';
 import { connect } from 'react-redux';
-import { addModule, addOutput, deleteOutput, deleteModule, selectModule } from './actions/pipelineActions';
+import { deleteOutput, deleteModule } from './actions/pipelineActions';
+import { setCurrentModule } from './actions/utilActions';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    selected: {
+        backgroundColor: theme.palette.primary.light
+    },
+    normal: {
+        color: theme.palette.secondary.light,
+        backgroundColor: theme.palette.common.white
+    }
+});
 
 class NodeLabel extends Component {
     state = {
         anchorEl: null,
         deleteDialogOpen: false,
-        addDialogOpen: false
+        addDialogOpen: false,
     };
 
     handleOpenMenu = event => {
+        event.preventDefault();
         this.setState({ ...this.state, anchorEl: event.currentTarget});
     };
 
@@ -36,20 +49,15 @@ class NodeLabel extends Component {
         this.setState({...this.state, addDialogOpen: true});
     }
 
-    handleDelete = () => {
-        this.setState({...this.state, deleteDialogOpen: false});
-        this.props.deleteNode(this.props.nodeData.type, this.props.nodeData.alias, this.props.nodeData.array_position);
-    };
-
-    handleAdd = type => {
-        this.props.addNode(type);
-    }
-
     handleEdit = () => {
-
+        const attrs = this.props.nodeData; 
+        this.handleClose();
+        this.props.setCurrentModule(attrs.category, attrs.type, attrs.index, attrs.parentIndex, attrs.parentCategory, attrs.parentOutputIndex);
     }
     
     render() {
+        const { classes } = this.props;
+
         const menu = (
             <Menu
                 id="simple-menu"
@@ -57,36 +65,33 @@ class NodeLabel extends Component {
                 open={Boolean(this.state.anchorEl)}
                 onClose={this.handleClose}
             >
-                {this.props.nodeData.type !== 'storage' ? <MenuItem onClick={this.handleOpenAddDialog}>Add output</MenuItem> : ''}
-                <MenuItem onClick={this.handleClose}>Edit</MenuItem>
+                {this.props.nodeData.category !== 'storage' ? <MenuItem onClick={this.handleOpenAddDialog}>Add output</MenuItem> : ''}
+                <MenuItem onClick={this.handleEdit}>Edit</MenuItem>
                 <MenuItem onClick={this.handleOpenDeleteDialog}>Delete</MenuItem>
             </Menu>
         )
 
         let iconName = '';
         switch(this.props.nodeData.type) {
-            case 'data_source_api':
-            case 'data_sources':
+            case 'TwitterStreamingAPI':
                 iconName = 'cloud_queue';
                 break;
-            case 'data_source_file':
+            case 'FlatFileDataSource':
                 iconName = 'attach_file'
                 break;
-            case 'models':
-            case 'model_custom':
+            case 'CustomModel':
                 iconName = 'code';
                 break;
-            case 'model_prebuilt':
+            case 'PrebuiltModel':
                 iconName = 'memory';
                 break;
-            case 'filters':
+            case 'Filter':
                 iconName = 'filter_list';
                 break;
-            case 'storage':
-            case 'storage_flat_file':
+            case 'FlatFileStorage':
                 iconName = 'folder_open';
                 break;
-            case 'storage_database':
+            case 'MongoDB':
                 iconName = 'storage';
                 break;
             default:
@@ -95,21 +100,28 @@ class NodeLabel extends Component {
         }
 
         const nodeTypeAvatar = (
-            <Avatar style={{backgroundColor: pink[500]}}>
+            <Avatar className={this.props.selected ? classes.selected : classes.normal}>
                 <Icon>{iconName}</Icon>
             </Avatar>
         );
 
         const moduleTypeNameMap = {
-            'storage': 'Storage',
-            'models': 'Model',
-            'data_sources': 'Data source',
-            'filters': 'Filter module'
+            'TwitterStreamingAPI': 'Twitter Streaming API',
+            'FlatFileDataSource': 'Flat File Data Source',
+            'CustomModel': 'Custom Model',
+            'PrebuiltModel': 'Prebuilt Model',
+            'Filter': 'Filter',
+            'FlatFileStorage': 'Flat File Storage',
+            'MongoDB': 'MongoDB Connection',
+            'CustomEntity': 'Custom Entity',
         };
         
         return (
             <div>
-                <Card>
+                <Card 
+                    elevation={this.props.selected ? 15 : 1}
+                    
+                >
                     <CardHeader
                         avatar={nodeTypeAvatar}
                         title={this.props.nodeData.alias}
@@ -128,15 +140,18 @@ class NodeLabel extends Component {
                 {menu}
                 <DeleteConfirmationDialog 
                     open={this.state.deleteDialogOpen} 
-                    handleClose={this.handleClose} 
-                    handleDelete={this.handleDelete}
+                    handleClose={this.handleClose}
                     nodeName={this.props.nodeData.alias}
+                    parentCategory={this.props.nodeData.category}
+                    parentIndex={this.props.nodeData.index}
                 />
                 <AddConfirmationDialog
                     open={this.state.addDialogOpen}
                     handleClose={this.handleClose}
-                    handleAdd={this.handleAdd}
+                    handleError={this.handleDialogError}
                     nodeName={this.props.nodeData.alias}
+                    parentCategory={this.props.nodeData.category}
+                    parentIndex={this.props.nodeData.index}
                 />
             </div>
         );
@@ -144,22 +159,27 @@ class NodeLabel extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    return {
+    let selected = false;
+    const currentIndex = ownProps.nodeData.index;
+    const currentType = ownProps.nodeData.type;
+    if (state.currentModule.index === currentIndex && state.currentModule.type === currentType)
+        selected = true;
 
+    return {
+        selected
     };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        addModule,
-        addOutput,
-        deleteModule,
-        deleteOutput,
-        selectModule
+        deleteModule: (moduleType, index) => dispatch(deleteModule(moduleType, index)),
+        deleteOutput: (parentModuleType, parentIndex, outputAlias) => dispatch(deleteOutput(parentModuleType, parentIndex, outputAlias)),
+        setCurrentModule: (type, subtype, index, parentIndex, parentCategory, parentOutputIndex) => dispatch(setCurrentModule(type, subtype, index, parentIndex, parentCategory, parentOutputIndex)),
     };
 }
 
-export default connect(
+export default withStyles(styles)(
+connect(
     mapStateToProps,
     mapDispatchToProps
-)(NodeLabel);
+)(NodeLabel));
