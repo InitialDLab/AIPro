@@ -77,7 +77,7 @@ class ModuleDetails extends Component {
 
     render() {
         let { classes } = this.props;
-        const form = this.getForm(this.props.attrs.type);
+        const form = this.props.attrs ? this.getForm(this.props.attrs.type) : '';
         return(
             <FormControl className={classes.root}>
                 <Typography variant='h6'>

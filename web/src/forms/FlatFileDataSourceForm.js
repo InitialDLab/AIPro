@@ -26,7 +26,9 @@ class FlatFileDataSourceForm extends Component {
 }
 
 const mapStateToProps = state => {
-    const currentModule = state.currentPipeline[state.currentModule.type][state.currentModule.index];
+    console.log(state.currentModule);
+    console.log(state.pipeline);
+    const currentModule = state.currentPipeline[state.currentModule.category][state.currentModule.index];
     return {
         alias: currentModule.alias,
         filename: currentModule.filename,
@@ -37,8 +39,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateModule: (type, index, attribute, value) => dispatch(updateModule(type, index, attribute, value)),
-        uploadFile: (type, index, attribute, file) => dispatch(uploadFile(type, index, attribute, file)),
+        updateModule: (category, index, attribute, value) => dispatch(updateModule(category, index, attribute, value)),
+        uploadFile: (category, index, attribute, file) => dispatch(uploadFile(category, index, attribute, file)),
     };
 }
 

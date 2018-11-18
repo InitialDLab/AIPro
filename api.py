@@ -103,18 +103,19 @@ def handle_create_user():
     else:
         return json.dumps({'success': False})
 
-@app.route('/account/<account_type>/<username>', methods=['GET'])
-def handle_get_account(account_type, username):
+@app.route('/<username>/account/<account_type>/', methods=['GET'])
+def handle_get_account(username, account_type):
     accounts_collection = db['accounts']
     query = {'account_type': account_type, 'username': username}
     account = accounts_collection.find_one(query, {'_id': 0})
+    log(account)
     if account:
         return json.dumps(account)
     else:
         return json.dumps({'error': True, 'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
 
-@app.route('/account/<account_type>', methods=['POST'])
-def handle_save_account(account_type):
+@app.route('/<username>/account/<account_type>', methods=['POST'])
+def handle_save_account(username, account_type):
     data = request.json
     accounts_collection = db['accounts']
 
@@ -128,7 +129,7 @@ def handle_save_account(account_type):
         
         new_account_info = accounts_collection.replace_one(
             {
-                'username': data['username'], 
+                'username': username, 
                 'account_type': data['account_type']
             }, 
             account_data, upsert=True)
@@ -149,7 +150,7 @@ def get_single_pipeline(username, pipeline_alias):
     
     return json.dumps({'pipeline': pipeline})
 
-@app.route('/<username>/pipelines/', methods=['GET'])
+@app.route('/<username>/pipelines', methods=['GET'])
 def get_pipelines(username):
     pipelines_collection = db['pipelines']
     pipelines = pipelines_collection.find({'username': username}, {'_id': 0})
@@ -159,12 +160,16 @@ def get_pipelines(username):
 
     return json.dumps({'pipelines': result})
 
-@app.route('/<username>/pipeline', methods=['POST, DELETE'])
+@app.route('/<username>/pipeline', methods=['POST', 'DELETE'])
 def save_or_delete_pipeline(username):
+    log(request.method)
     if not username:
         log('Invalid username, username cannot be empty')
         return json.dumps({'success': False, 'message': 'Invalid username, username cannot be empty'})
-    
+    if request.method == 'OPTIONS':
+        log('Options, moving on...')
+        return json.dumps({})
+
     if request.method == 'POST':
         data = request.json
 
@@ -177,13 +182,13 @@ def save_or_delete_pipeline(username):
             data, upsert=True)
 
         if saved_pipeline_info.matched_count:
-            message = '\'%s\' pipeline modified for \'%s\'' % (data['pipeline_alias'], data['username'])
+            message = '\'%s\' pipeline modified for \'%s\'' % (data['pipeline_alias'], username)
             log(message)
-            return json.dumps({'message': message})
+            return json.dumps({'message': message, 'success': True})
         else:
-            message = 'New pipeline \'%s\' created for \'%s\'' % (data['pipeline_alias'], data['username'])
+            message = 'New pipeline \'%s\' created for \'%s\'' % (data['pipeline_alias'], username)
             log(message)
-            return json.dumps({'message': message})
+            return json.dumps({'message': message, 'success': True})
     elif request.method == 'DELETE':
         data = request.json
 
@@ -200,7 +205,7 @@ def save_or_delete_pipeline(username):
             log(message)
             return json.dumps({'success': True, 'message': message})
         else:
-            log('%d pipelines with username %s and pipeline alias %s about to be deleted' % (username, data['pipeline_alias']))
+            log('%d pipelines with username %s and pipeline alias %s about to be deleted' % (num_pipelines, username, data['pipeline_alias']))
             delete_result = pipelines_collection.delete_one(filterObj)
             message = 'Deleted count %d' % delete_result.deleted_count
             log(message)

@@ -11,6 +11,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
+import { Button } from '@material-ui/core';
 
 class Header extends Component {
     state = {
@@ -26,19 +27,21 @@ class Header extends Component {
     render() {
         const menuConfig = [
             {'text': 'View Pipelines', 'link': '/pipelines'},
-            {'text': 'Create New Pipeline', 'link': '/pipelines/new'},
+            {'text': 'Edit Current Pipeline', 'link': '/pipeline/edit'},
+            {'text': 'New Batch Pipeline', 'link': '/pipeline/new/batch'},
+            {'text': 'New Streaming Pipeline', 'link': '/pipeline/new/streaming'},
         ];
         
         const menuList = (
             <div style={{width: 250}}>
-            <List>
-                {menuConfig.map(config => (
-                <ListItem component={Link} to={config.link} key={config.text} >
-                    <ListItemText primary={config.text} />
-                    <Divider />
-                </ListItem>
-                ))}
-            </List>
+                <List>
+                    {menuConfig.map(config => (
+                    <ListItem component={Link} to={config.link} key={config.text} >
+                        <ListItemText primary={config.text} />
+                        <Divider />
+                    </ListItem>
+                    ))}
+                </List>
             </div>
         );
         return (

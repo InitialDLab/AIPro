@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import Typography from '@material-ui/core/Typography';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import { loadAllPipelines } from './actions/pipelineActions';
+import { loadAllPipelines, deletePipeline, receiveSinglePipeline } from './actions/pipelineActions';
 import { connect } from 'react-redux';
 
 class AllPipelines extends Component {
@@ -20,7 +20,24 @@ class AllPipelines extends Component {
         return text.substring(0).toUpperCase();
     }
 
+    handleDelete = pipeline_alias => {
+        this.props.deletePipeline(this.props.currentUsername, pipeline_alias);
+        this.props.loadAllPipelines(this.props.currentUsername);
+    }
+
+    handleEdit = pipeline => {
+        this.props.receiveSinglePipeline(pipeline);
+        this.setState({...this.state, toEditPage: true});
+    }
+
+    state = {
+        toEditPage: false,
+    }
+
     render() {
+        if (this.state.toEditPage) {
+            return <Redirect to='/pipeline/edit' />;
+        }
         if (this.props.isLoading === true)
             return '';
         
@@ -29,7 +46,7 @@ class AllPipelines extends Component {
             pipelines = this.props.pipelines.map((pipeline, i) => {
                 const dataSources = pipeline.data_sources ? <Typography>{pipeline.data_sources.length} data source{pipeline.data_sources.length > 1 ? 's' : ''}</Typography> : '';
                 const models = pipeline.models ? <Typography>{pipeline.models.length} model{pipeline.models.length > 1 ? 's' : ''}</Typography> : '';
-                const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filters{pipeline.filters.length > 1 ? 's' : ''}</Typography> : '';
+                const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filter{pipeline.filters.length > 1 ? 's' : ''}</Typography> : '';
                 const storage = pipeline.storage ? <Typography>{pipeline.storage.length} storage method{pipeline.storage.length > 1 ? 's' : ''}</Typography> : '';
                 return(
                     <Card key={i}>
@@ -49,8 +66,8 @@ class AllPipelines extends Component {
                             {storage}
                         </CardContent>
                         <CardActions>
-                        <Button variant='contained' color='secondary'>Delete</Button>
-                            <Button variant='contained' color='primary'>Edit</Button>
+                            <Button onClick={() => this.handleDelete(pipeline.pipeline_alias)} variant='contained' color='secondary'>Delete</Button>
+                            <Button onClick={() => this.handleEdit(pipeline)} variant='contained' color='primary'>Edit</Button>
                         </CardActions>
                     </Card>
                 );
@@ -71,7 +88,7 @@ class AllPipelines extends Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
     return {
         pipelines: state.pipelines,
         isLoading: state.isLoading,
@@ -79,8 +96,12 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-const mapDispatchToProps = {
-    loadAllPipelines
+const mapDispatchToProps = dispatch => {
+    return {
+        loadAllPipelines: username => dispatch(loadAllPipelines(username)),
+        deletePipeline: (username, pipeline_alias) => dispatch(deletePipeline(username, pipeline_alias)),
+        receiveSinglePipeline: pipeline => dispatch(receiveSinglePipeline(pipeline)),
+    }
 }
 
 export default connect(

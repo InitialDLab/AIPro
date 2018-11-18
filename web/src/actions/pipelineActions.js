@@ -71,8 +71,11 @@ export const receivePipelines = pipelines => {
     };
 }
 
-export const CREATE_NEW_PIPELINE = {
-    type: 'CREATE_NEW_PIPELINE'
+export const createNewPipeline = dataSourceType => {
+    return {
+        type: 'CREATE_NEW_PIPELINE',
+        dataSourceType,
+    }
 };
 
 export const savePipelineAlias = pipeline_alias => {
@@ -124,7 +127,7 @@ const buildTwitterDataSource = (currentUser, pipeline, dispatch) => {
 
     if (editIndex !== -1) {
         const twitterCredentials = currentUser.credentials.twitter;
-        for (let key of ['api_key', 'api_secret', 'access_key', 'access_key_secret']) {
+        for (let key of ['api_key', 'api_secret', 'access_token', 'access_token_secret']) {
             if (twitterCredentials[key].length === 0) {
                 dispatch(setError(`Make sure to add your Twitter credentials, '${key}' cannot be empty`));
                 return false;
@@ -144,15 +147,17 @@ export const savePipeline = (currentUser, pipeline) => {
         dispatch(START_LOADING);
         if (pipeline.pipeline_alias.length === 0) {
             dispatch(setError('Pipeline alias cannot be empty'));
+            return;
         }
-        const tmpPipeline = buildTwitterDataSource(currentUser, pipeline, dispatch);
         const username = currentUser.username;
         if (username.length === 0) {
             dispatch(setError('Username cannot be empty'));
             return;
         }
+        const tmpPipeline = buildTwitterDataSource(currentUser, pipeline, dispatch);
         if (tmpPipeline === false) 
             return;
+        tmpPipeline.username = username;
         const response = await api.post(`/${username}/pipeline`, tmpPipeline);
         dispatch(STOP_LOADING);
         if (response !== false) {
@@ -173,7 +178,7 @@ export const deletePipeline = (username, pipeline_alias) => {
             const deleteResult = response.success;
             if (deleteResult === true) {
                 dispatch(setMessage('Pipeline successfully deleted'));
-                dispatch(CREATE_NEW_PIPELINE);
+                dispatch(createNewPipeline('batch'));
             }
             else {
                 dispatch(setError(`Pipeline could not be deleted: ${response.message || 'unknown error'}`));
@@ -182,7 +187,7 @@ export const deletePipeline = (username, pipeline_alias) => {
     }
 }
 
-export const uploadFile = (moduleType, index, attribute, file) => {
+export const uploadFile = (category, index, attribute, file) => {
     return async function(dispatch) {
         dispatch(START_LOADING);
         let formData = new FormData();
@@ -197,7 +202,7 @@ export const uploadFile = (moduleType, index, attribute, file) => {
             dispatch(setError('Couldn\'t upload file'));
         }
 
-        dispatch(updateModule(moduleType, index, attribute, file.name));
+        dispatch(updateModule(category, index, attribute, file.name));
         dispatch(STOP_LOADING);
 
     }

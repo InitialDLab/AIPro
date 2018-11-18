@@ -129,68 +129,6 @@ class PipelineDAG extends Component {
         }
     }
 
-    /* TODO: Delete node
-    deleteNode = (nodeType, alias, index) => {
-        // Delete module
-        this.props.pipeline[nodeType].splice(index, 1);
-
-        // Delete references
-        // Data sources
-        if (this.props.pipeline['data_sources']){
-            for (let [index, data_source] of this.props.pipeline['data_sources'].entries()) {
-                if (data_source.outputs) {
-                    let deleteIndex = -1;
-                    for (let i = 0; i < data_source.outputs.length; i++) {
-                        if (data_source.outputs[i] === alias) {
-                            deleteIndex = i;
-                            break;
-                        }
-                    }
-                    if (deleteIndex !== -1) {
-                        this.props.pipeline['data_sources'][index].outputs.splice(deleteIndex, 1);
-                    }
-                }
-            }
-        }
-
-        // Models
-        if (this.props.pipeline['models']){
-            for (let [index, model] of this.props.pipeline['models'].entries()) {
-                if (model.outputs) {
-                    let deleteIndex = -1;
-                    for (let i = 0; i < model.outputs.length; i++) {
-                        if (model.outputs[i] === alias) {
-                            deleteIndex = i;
-                            break;
-                        }
-                    }
-                    if (deleteIndex !== -1) {
-                        this.props.pipeline['models'][index].outputs.splice(deleteIndex, 1);
-                    }
-                }
-            }
-        }
-
-        // Filters
-        if (this.props.pipeline['filters']){
-            for (let [index, filter] of this.props.pipeline['filters'].entries()) {
-                if (filter.outputs) {
-                    let deleteIndex = -1;
-                    for (let i = 0; i < filter.outputs.length; i++) {
-                        if (filter.outputs[i] === alias) {
-                            deleteIndex = i;
-                            break;
-                        }
-                    }
-                    if (deleteIndex !== -1) {
-                        this.props.pipeline['filters'][index].outputs.splice(deleteIndex, 1);
-                    }
-                }
-            }
-        }
-    }
-    */
-
     handleNodeClick = (selectedModule, event) => {
         console.log('Node data:');
         console.log(selectedModule);
@@ -205,6 +143,15 @@ class PipelineDAG extends Component {
     componentDidMount() {
         const firstModule = this.props.pipeline.data_sources[0];
         this.props.setCurrentModule('data_sources', firstModule.type, 0, -1, 'root', -1);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.pipeline.pipeline_alias !== this.props.pipeline.pipeline_alias){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
     render() {

@@ -8,7 +8,7 @@ import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import AllPipelines from './AllPipelines';
 import { connect } from 'react-redux';
-import { setLoggedIn, CLEAR_ERROR, CLEAR_MESSAGE } from './actions/utilActions';
+import { setLoggedIn, CLEAR_ERROR, CLEAR_MESSAGE, loadCredentials } from './actions/utilActions';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -25,6 +25,12 @@ const theme = createMuiTheme({
 });
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    const account_type = 'Twitter streaming';
+    props.loadCredentials(props.currentUsername, account_type);
+  }
+  
   handleSnackbarClose = event => {
     if (this.props.message)
       this.props.closeSnackbar('message');
@@ -55,11 +61,21 @@ class App extends Component {
               <Settings /> 
               : <Redirect to='/login' />}
               />
-            <Route exact path='/pipelines/new' render={() => 
-              loggedIn ? 
-              <Pipeline /> 
+            <Route exact path='/pipeline/edit' render={() =>
+              loggedIn ?
+              <Pipeline />
               : <Redirect to='/login' />}
-              />
+            />
+            <Route exact path='/pipeline/new/batch' render={() => 
+              loggedIn ? 
+              <Pipeline new={true} type='batch' /> 
+              : <Redirect to='/login' />}
+            />
+            <Route exact path='/pipeline/new/streaming' render={() => 
+              loggedIn ? 
+              <Pipeline new={true} type='streaming' /> 
+              : <Redirect to='/login' />}
+            />
             <Route exact path='/pipelines' render={() => 
               loggedIn ? 
               <AllPipelines /> 
@@ -103,13 +119,15 @@ const mapStateToProps = state => {
   return {
     loggedIn: state.loggedIn,
     message: state.message,
-    errorMessage: state.error
+    errorMessage: state.error,
+    currentUsername: state.currentUser.username,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    setLoggedIn,
+    loadCredentials: (username, account_type) => dispatch(loadCredentials(username, account_type)),
+    setLoggedIn: loggedIn => dispatch(setLoggedIn(loggedIn)),
     closeSnackbar: typeOfMessage => {
       if (typeOfMessage === 'errorMessage')
         dispatch(CLEAR_ERROR); 

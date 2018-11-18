@@ -2,12 +2,30 @@ import { defaultModuleAttributes } from '../constants/defaultAttributes';
 import defaultState from '../constants/defaultState';
 
 const initialPipeline = defaultState.currentPipeline;
-const newPipeline = {
+const newBatchPipeline = {
     pipeline_alias: 'Untitled Pipeline',
     data_sources: [
         {
             alias: 'Untitled Data Source',
-            type: 'FlatFile',
+            type: 'FlatFileDataSource',
+            filename: '',
+            outputs: [],
+            projection: [],
+        }
+    ],
+    models: [],
+    filters: [],
+    storage: [],
+    preprocessors: [],
+    custom_entities: [],
+};
+const newStreamingPipeline = {
+    pipeline_alias: 'Untitled Pipeline',
+    data_sources: [
+        {
+            alias: 'Untitled Data Source',
+            type: 'TwitterStreamingAPI',
+            filename: '',
             outputs: [],
             projection: [],
         }
@@ -98,11 +116,96 @@ const updateOutputCase = (tmpPipeline, action) => {
     return tmpPipeline;
 }
 
+const findAliasCategory = (tmpPipeline, alias) => {
+    if (tmpPipeline.filters.find(filter => filter.alias === alias))
+        return 'filters';
+    else if (tmpPipeline.data_sources.find(data_source => data_source.alias === alias))
+        return 'data_sources';
+    else if (tmpPipeline.models.find(model => model.alias === alias))
+        return 'models';
+    else
+        return null;
+}
+
+const deleteModuleCase = (tmpPipeline, category, moduleIndex) => {
+    // Recursively find the children first
+    for (let i = 0; i < tmpPipeline[category][moduleIndex].outputs.length; i++) {
+        const recAlias = tmpPipeline[category][moduleIndex].outputs[i];
+        const recCategory = findAliasCategory(tmpPipeline, recAlias);
+        if (recCategory) {
+            const recIndex = tmpPipeline[recCategory].findIndex(value => value.alias === recAlias);
+            deleteModuleCase(tmpPipeline, recCategory, recIndex);
+        }
+    }
+    
+    // Delete module
+    const alias = tmpPipeline[category][moduleIndex].alias;
+    const byCategory = tmpPipeline[category].slice();
+    byCategory.splice(moduleIndex, 1);
+    tmpPipeline[category] = byCategory;
+
+    // Delete references
+    // Data sources   
+    for (let [index, data_source] of tmpPipeline['data_sources'].entries()) {
+        let deleteIndex = -1;
+        for (let i = 0; i < data_source.outputs.length; i++) {
+            if (data_source.outputs[i] === alias) {
+                deleteIndex = i;
+                break;
+            }
+        }
+        if (deleteIndex !== -1) {
+            tmpPipeline['data_sources'][index].outputs.splice(deleteIndex, 1);
+        }
+    }
+    
+    // Models
+    for (let [index, model] of tmpPipeline['models'].entries()) {
+        let deleteIndex = -1;
+        for (let i = 0; i < model.outputs.length; i++) {
+            if (model.outputs[i] === alias) {
+                deleteIndex = i;
+                break;
+            }
+        }
+        if (deleteIndex !== -1) {
+            tmpPipeline['models'][index].outputs.splice(deleteIndex, 1);
+        }
+    }
+
+    // Filters
+    for (let [index, filter] of tmpPipeline['filters'].entries()) {
+        let deleteIndex = -1;
+        for (let i = 0; i < filter.outputs.length; i++) {
+            if (filter.outputs[i] === alias) {
+                deleteIndex = i;
+                break;
+            }
+        }
+        if (deleteIndex !== -1) {
+            tmpPipeline['filters'][index].outputs.splice(deleteIndex, 1);
+        }
+    }
+
+    // Recursively look for the other children
+    tmpPipeline.filters.forEach((filter, index) => {
+        if (filter.alias === alias) {
+            deleteModuleCase(tmpPipeline, 'filters', )
+        }
+    })
+
+    return tmpPipeline;
+}
+
 const pipelineReducer = (pipeline = initialPipeline, action) => {
     const tmpPipeline = Object.assign({}, pipeline);
     switch(action.type) {
         case 'ADD_MODULE':
             return addModuleCase(tmpPipeline, action);
+        case 'UPDATE_MODULE':
+            return updateModuleCase(tmpPipeline, action);
+        case 'DELETE_MODULE':
+            return deleteModuleCase(tmpPipeline, action.category, action.index);
         case 'ADD_OUTPUT':
             return addOutputCase(tmpPipeline, action);
         case 'UPDATE_OUTPUT':
@@ -111,9 +214,14 @@ const pipelineReducer = (pipeline = initialPipeline, action) => {
             tmpPipeline.pipeline_alias = action.pipeline_alias;
             return tmpPipeline;
         case 'CREATE_NEW_PIPELINE':
-            return Object.assign({}, initialPipeline);
-        case 'UPDATE_MODULE':
-            return updateModuleCase(tmpPipeline, action);
+            if (action.dataSourceType === 'batch')
+                return Object.assign({}, newBatchPipeline);
+            else if (action.dataSourceType === 'streaming')
+                return Object.assign({}, newStreamingPipeline);
+            else
+                return pipeline;
+        case 'RECEIVE_SINGLE_PIPELINE':
+            return Object.assign({}, action.pipeline);
         default:
             return tmpPipeline;
     }

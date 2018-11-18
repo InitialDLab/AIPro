@@ -128,3 +128,28 @@ export const logout = () => {
         }
     }
 }
+
+export const loadCredentials = (username, account_type) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        if (!username) {
+            console.error('Missing username');
+        }
+        const url = encodeURI(`/${username}/account/${account_type}/`);
+        try{
+            const account_info = await api.get(url);
+            console.log(account_info);
+            if (account_info.error) {
+                console.error(account_info.message);
+            }
+            else {
+                for (let attribute of ['api_key', 'api_secret', 'access_token', 'access_token_secret']) {
+                    dispatch(setCredentialAttribute('twitter', attribute, account_info[attribute]));
+                }
+            }
+        } catch(err) {
+            console.error('Error with getting Twitter account credentials, removing this');
+            console.error(err);
+        }
+    }
+}

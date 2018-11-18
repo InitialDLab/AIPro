@@ -6,7 +6,34 @@ class API {
         const options = {
             body: JSON.stringify(body),
             method: 'POST',
-            mode: 'cors',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+        try{
+            const url = `${this.method}://${this.urlBase}${resource}`;
+            const response = await fetch(url, options);
+            if (response.ok)
+                return response.json();
+            else {
+                console.error(`POST request returned sad response: ${response.status}`);
+                return false;
+            }
+                
+
+        } catch(err) {
+            console.error(`Problem with POST request to ${resource}`);
+            console.error(err);
+            return false;
+        }
+        
+    }
+
+    async delete(resource, body) {
+        const options = {
+            body: JSON.stringify(body),
+            method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

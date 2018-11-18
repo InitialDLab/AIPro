@@ -27,7 +27,7 @@ const initialUserState = {
     }
 }
 export const userReducer = (state = initialUserState, action) => {
-    let tmpState = Object.assign({}, initialUserState);
+    let tmpState = Object.assign({}, state);
     switch(action.type) {
         case 'SET_USER_CREDENTIAL_ATTRIBUTE':
             if (!tmpState.credentials.hasOwnProperty(action.credentialsType)) {

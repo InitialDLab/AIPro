@@ -54,6 +54,11 @@ class NodeLabel extends Component {
         this.handleClose();
         this.props.setCurrentModule(attrs.category, attrs.type, attrs.index, attrs.parentIndex, attrs.parentCategory, attrs.parentOutputIndex);
     }
+
+    handleDelete = () => {
+        const attrs = this.props.nodeData;
+        this.props.deleteModule(attrs.category, attrs.index);
+    }
     
     render() {
         const { classes } = this.props;
@@ -141,6 +146,7 @@ class NodeLabel extends Component {
                 <DeleteConfirmationDialog 
                     open={this.state.deleteDialogOpen} 
                     handleClose={this.handleClose}
+                    handleDelete={this.handleDelete}
                     nodeName={this.props.nodeData.alias}
                     parentCategory={this.props.nodeData.category}
                     parentIndex={this.props.nodeData.index}
@@ -172,7 +178,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        deleteModule: (moduleType, index) => dispatch(deleteModule(moduleType, index)),
+        deleteModule: (category, index) => dispatch(deleteModule(category, index)),
         deleteOutput: (parentModuleType, parentIndex, outputAlias) => dispatch(deleteOutput(parentModuleType, parentIndex, outputAlias)),
         setCurrentModule: (type, subtype, index, parentIndex, parentCategory, parentOutputIndex) => dispatch(setCurrentModule(type, subtype, index, parentIndex, parentCategory, parentOutputIndex)),
     };
