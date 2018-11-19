@@ -31,6 +31,7 @@ class FilterForm extends Component {
                     <MenuItem value={'>'}>Greater than</MenuItem>
                     <MenuItem value={'<'}>Less than</MenuItem>
                     <MenuItem value={'=='}>Equals</MenuItem>
+                    <MenuItem value={'!='}>Not Equal to</MenuItem>
                 </Select>
                 <TextField value={this.props.attrs.value} name='value' onChange={this.handleChange} label='Value' />
                 <Button variant='contained' color='primary' onClick={this.props.save}>Save</Button>

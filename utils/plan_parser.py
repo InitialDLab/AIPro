@@ -3,6 +3,7 @@ import os
 from import_module import import_module_from_file
 from messaging import Messenger
 from compass_preprocessor import CompassPreprocessor
+from filter_module import Filter
 
 def get_data_sources_from_config(config):
 	data_sources = []
@@ -76,11 +77,24 @@ def get_storage_from_config(config):
 
 	return storage
 
+def get_filters_from_config(config):
+	filters = []
+	if 'filters' in config:
+		for filter_config in config['filters']:
+			messenger = Messenger(config['messaging'])
+			messenger.set_incoming(filter_config['alias'])
+			messenger.set_outgoing(filter_config['outputs'])
+
+			filters.append(Filter(filter_config, messenger))
+
+	return filters
+
 
 def init_modules(config):
 	modules = []
 	modules += get_data_sources_from_config(config)
 	modules += get_models_from_config(config)
 	modules += get_storage_from_config(config)
+	modules += get_filters_from_config(config)
 
 	return modules

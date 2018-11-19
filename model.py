@@ -22,7 +22,6 @@ class Model:
 			print('Error while preprocessing')
 			return
 
-		# TODO: Make this handle more than just JSON
 		if self.output_attribute:
 			data[self.output_attribute] = self.model_fn(x)
 		else:

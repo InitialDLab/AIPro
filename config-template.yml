@@ -31,9 +31,9 @@ models:
     module_file_path: 'examples/sentiment-analysis/sentiment.py' # Required (Can be either the full path, or path relative to the config file you pass to main.py)
     module_classname: 'SentimentClassifier' # Required
     method_name: 'predict' # Required, method name on the class instance
+    input_attribute: 'fasdf' # Optional, depending on data type
     output_attribute: 'sentiment_score' # Optional, useful for JSON 
     preprocessor: 'Tweet Preprocessor' # Optional
-    json_attribute: 'fasdf' # Optional, depending on data type
     
     outputs: # Required (at least one entry)
         - 'Twitter Sentiment Predictions File'

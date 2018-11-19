@@ -9,7 +9,6 @@ import CustomModelForm from './forms/CustomModelForm';
 import PrebuiltModelForm from './forms/PrebuiltModelForm';
 import FlatFileStorageForm from './forms/FlatFileStorageForm';
 import MongoDBForm from './forms/MongoDBForm';
-import { defaultModuleAttributes } from './constants/defaultAttributes';
 
 const styles = theme => ({
     root: {
@@ -75,13 +74,38 @@ class ModuleDetails extends Component {
         }
     }
 
+    getFormTitle(formType) {
+        switch(formType) {
+            case 'FlatFileDataSource':
+                return 'Flat File (Data Source)';
+            case 'TwitterStreamingAPI':
+                return 'Twitter Streaming API';
+            case 'FlatFileStorage':
+                return 'Flat File (Storage)';
+            case 'CustomModel':
+                return 'Custom Model';
+            case 'PrebuiltModel':
+                return 'Prebuilt Model';
+            case 'Filter':
+                return 'Filter';
+            case 'MongoDB':
+                return 'MongoDB';
+            default:
+                return 'Other';
+        }
+    }
+
     render() {
         let { classes } = this.props;
         const form = this.props.attrs ? this.getForm(this.props.attrs.type) : '';
+        const moduleType = this.props.attrs ? this.getFormTitle(this.props.attrs.type) : 'Other';
         return(
             <FormControl className={classes.root}>
                 <Typography variant='h6'>
                     Module Details
+                </Typography>
+                <Typography variant='caption'>
+                    Type: {moduleType}
                 </Typography>
                 {form}
             </FormControl>
