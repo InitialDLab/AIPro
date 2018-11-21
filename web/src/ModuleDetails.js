@@ -104,7 +104,7 @@ class ModuleDetails extends Component {
                 <Typography variant='h6'>
                     Module Details
                 </Typography>
-                <Typography variant='caption'>
+                <Typography variant='subtitle1'>
                     Type: {moduleType}
                 </Typography>
                 {form}

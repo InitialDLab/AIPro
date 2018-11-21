@@ -86,6 +86,13 @@ const updateModuleCase = (tmpPipeline, action) => {
     };
 }
 
+const saveModuleCase = (tmpPipeline, action) => {
+    console.log(action.moduleData);
+    const moduleToSave = Object.assign({}, action.moduleData);
+    tmpPipeline[action.category][action.index] = moduleToSave;
+    return tmpPipeline;
+}
+
 const addOutputCase = (tmpPipeline, action) => {
     // category, index, outputAlias
     const modules = tmpPipeline[action.category].slice();
@@ -204,6 +211,8 @@ const pipelineReducer = (pipeline = initialPipeline, action) => {
             return addModuleCase(tmpPipeline, action);
         case 'UPDATE_MODULE':
             return updateModuleCase(tmpPipeline, action);
+        case 'SAVE_MODULE':
+            return saveModuleCase(tmpPipeline, action);
         case 'DELETE_MODULE':
             return deleteModuleCase(tmpPipeline, action.category, action.index);
         case 'ADD_OUTPUT':

@@ -86,7 +86,6 @@ const initialCurrentModuleState = {
     index: 0
 }
 export const currentModuleReducer = (state = initialCurrentModuleState, action) => {
-    let tmpState = Object.assign({}, state);
     switch(action.type) {
         case 'SET_CURRENT_MODULE':
             return {

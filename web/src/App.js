@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Redirect} from 'react-router-dom'
 import Settings from './Settings';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
-import AllPipelines from './AllPipelines';
+import ManagePipelines from './ManagePipelines';
 import { connect } from 'react-redux';
 import { setLoggedIn, CLEAR_ERROR, CLEAR_MESSAGE, loadCredentials } from './actions/utilActions';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -14,10 +14,12 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
+import {indigo, purple } from '@material-ui/core/colors/';
 
 const theme = createMuiTheme({
   palette: {
-    primary: blue,
+    primary: purple,
+    secondary: blue,
   },
   typography: {
     useNextVariants: true
@@ -53,7 +55,7 @@ class App extends Component {
             <Header />
             <Route exact path='/' render={() => 
               loggedIn ? 
-              <Pipeline /> 
+              <Redirect to='/pipelines' />
               : <Redirect to='/login' />} 
               />
             <Route path='/settings' render={() => 
@@ -78,7 +80,7 @@ class App extends Component {
             />
             <Route exact path='/pipelines' render={() => 
               loggedIn ? 
-              <AllPipelines /> 
+              <ManagePipelines /> 
               : <Redirect to='/login' />} 
               />
             <Route path='/login' render={() => <LoginPage />} 

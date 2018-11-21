@@ -23,6 +23,7 @@ class Filter:
         
         # Filtered out, don't worry about it and let it drop
         if not output:
+            print('Output dropped with filter \'%s %s\' on attribute %s' %(self.condition, self.value, self.attribute))
             return
         
         if self.projection:

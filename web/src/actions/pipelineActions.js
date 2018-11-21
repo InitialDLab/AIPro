@@ -2,6 +2,7 @@ import API from '../API';
 import { setError, START_LOADING, STOP_LOADING, setMessage } from './utilActions';
 const api = new API();
 
+// To be deprecated...
 export const updateModule = (category, index, attribute, value) => {
     return {
         type: 'UPDATE_MODULE',
@@ -10,6 +11,15 @@ export const updateModule = (category, index, attribute, value) => {
         attribute,
         value
     };
+}
+
+export const saveModule = (category, index, moduleData) => {
+    return {
+        type: 'SAVE_MODULE',
+        category,
+        index,
+        moduleData,
+    }
 }
 
 export const addModule = (alias, category, moduleType) => {
@@ -178,7 +188,7 @@ export const deletePipeline = (username, pipeline_alias) => {
             const deleteResult = response.success;
             if (deleteResult === true) {
                 dispatch(setMessage('Pipeline successfully deleted'));
-                dispatch(createNewPipeline('batch'));
+                dispatch(loadAllPipelines(username));
             }
             else {
                 dispatch(setError(`Pipeline could not be deleted: ${response.message || 'unknown error'}`));

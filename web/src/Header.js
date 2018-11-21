@@ -6,12 +6,12 @@ import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import Button from '@material-ui/core/Button';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
-import { Button } from '@material-ui/core';
 
 class Header extends Component {
     state = {
@@ -26,7 +26,7 @@ class Header extends Component {
 
     render() {
         const menuConfig = [
-            {'text': 'View Pipelines', 'link': '/pipelines'},
+            {'text': 'Manage Pipelines', 'link': '/pipelines'},
             {'text': 'Edit Current Pipeline', 'link': '/pipeline/edit'},
             {'text': 'New Batch Pipeline', 'link': '/pipeline/new/batch'},
             {'text': 'New Streaming Pipeline', 'link': '/pipeline/new/streaming'},
@@ -36,10 +36,10 @@ class Header extends Component {
             <div style={{width: 250}}>
                 <List>
                     {menuConfig.map(config => (
-                    <ListItem component={Link} to={config.link} key={config.text} >
+                    <Button style={{width: '100%', marginBottom: '10px'}} component={Link} to={config.link} key={config.text} >
                         <ListItemText primary={config.text} />
                         <Divider />
-                    </ListItem>
+                    </Button>
                     ))}
                 </List>
             </div>
@@ -56,14 +56,14 @@ class Header extends Component {
                 {menuList}
                 </div>
             </Drawer>
-            <AppBar position='static'>
+            <AppBar position='static' style={{backgroundColor: '#000'}}>
                 <Toolbar>
                 <IconButton onClick={this.toggleMenu(!this.state.menuOpen)} style={{marginLeft: -12, marginRight: 20}} color="inherit" aria-label="Menu">
                 <MenuIcon />
                 </IconButton>
                 
                 <Typography component={Link} to='/' style={{textDecoration: 'none'}} variant="h6" color="inherit">
-                    Handoff
+                    AI Pro
                 </Typography>
                 
                 <div style={{flexGrow: 1, textAlign: 'right'}}>

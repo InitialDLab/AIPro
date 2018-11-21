@@ -15,6 +15,7 @@ const styles = theme => ({
         width: '69%',
         display: 'inline-block',
         verticalAlign: 'top',
+        background: '#f6f6f6',
     },
     headline: {
         textAlign: 'center'

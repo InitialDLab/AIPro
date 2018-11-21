@@ -5,7 +5,6 @@ import Icon from '@material-ui/core/Icon';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
-import pink from '@material-ui/core/colors/pink';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteConfirmationDialog from './DeleteConfirmationDialog';
@@ -14,14 +13,32 @@ import { connect } from 'react-redux';
 import { deleteOutput, deleteModule } from './actions/pipelineActions';
 import { setCurrentModule } from './actions/utilActions';
 import { withStyles } from '@material-ui/core/styles';
+import { blue, pink } from '@material-ui/core/colors/';
 
 const styles = theme => ({
     selected: {
-        backgroundColor: theme.palette.primary.light
+        backgroundColor: pink[400],
+        color: theme.palette.common.white,
+    },
+    selectedTitle: {
+        color: theme.palette.common.white,
+        fontWeight: 'bold',
+    },
+    normalIcon: {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.common.white,
+    },
+    selectedIcon: {
+        backgroundColor: theme.palette.common.white,
+        color: pink[400],
     },
     normal: {
-        color: theme.palette.secondary.light,
-        backgroundColor: theme.palette.common.white
+        color: theme.palette.common.black,
+        backgroundColor: theme.palette.common.white,
+    },
+    normalTitle: {
+        color: theme.palette.common.black,
+        fontWeight: 'bold',
     }
 });
 
@@ -105,7 +122,7 @@ class NodeLabel extends Component {
         }
 
         const nodeTypeAvatar = (
-            <Avatar className={this.props.selected ? classes.selected : classes.normal}>
+            <Avatar className={this.props.selected ? classes.selectedIcon : classes.normalIcon}>
                 <Icon>{iconName}</Icon>
             </Avatar>
         );
@@ -125,9 +142,13 @@ class NodeLabel extends Component {
             <div>
                 <Card 
                     elevation={this.props.selected ? 15 : 1}
-                    
+                    className={this.props.selected ? classes.selected : classes.normal}
                 >
                     <CardHeader
+                        classes={{
+                            title: this.props.selected ? classes.selectedTitle : classes.normalTitle,
+                            subheader: this.props.selected ? classes.selected : classes.normal,
+                        }}
                         avatar={nodeTypeAvatar}
                         title={this.props.nodeData.alias}
                         subheader={moduleTypeNameMap[this.props.nodeData.type]}
@@ -137,7 +158,7 @@ class NodeLabel extends Component {
                             aria-haspopup="true"
                             onClick={this.handleOpenMenu}
                             >
-                                <MoreVertIcon style={{stroke: 'none'}} />
+                                <MoreVertIcon style={{stroke: 'none'}} className={this.props.selected ? classes.selected : classes.normal} />
                             </IconButton>
                         }
                         />
