@@ -12,21 +12,26 @@ class Filter:
             '==': self.eq,
             '!=': self.neq
         }
-        self.projection = config['projection']
+        if 'projection' in config:
+            self.projection = config['projection']
         self.messenger = messenger
 
     def publish(self, data):
         self.messenger.publish(data)
+
+    # Just a wrapper, for backwards compati
+    def run(self):
+		self.messenger.start(self.process)
 
     def process(self, data):
         output = self.funcs[self.condition](data)
         
         # Filtered out, don't worry about it and let it drop
         if not output:
-            print('Output dropped with filter \'%s %s\' on attribute %s' %(self.condition, self.value, self.attribute))
+            #print('Output dropped with filter \'%s %s\' on attribute %s' %(self.condition, self.value, self.attribute))
             return
         
-        if self.projection:
+        if hasattr(self, 'projection'):
             output = [output[key] for key in self.projection]
         self.messenger.publish(output)
 

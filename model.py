@@ -23,6 +23,9 @@ class Model:
 			return
 
 		if self.output_attribute:
+			# Make sure we can add an output attribute :)
+			if type(data) != dict:
+				data = {'input_data': data}
 			data[self.output_attribute] = self.model_fn(x)
 		else:
 			data = self.model_fn(x)

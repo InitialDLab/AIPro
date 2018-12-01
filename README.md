@@ -93,4 +93,8 @@ In order to get the config file set up, there are some things you'll need to pay
 
 
 ## [Data Preprocessor Notes](#data-preprocessor-notes)
-Data Preprocessors are important for massaging the data when necessary.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
+Data Preprocessors are important for massaging the data when necessary. All of the massaging happens in memory too, so you don't need to worry about serialization when preprocessing your input data for the model.  For example, in the sentiment analysis example, tweets need to be translated into a sequence of integers to be run in the sentiment model.  If your data doesn't need preprocessing, don't worry - we have a default preprocessor that just passes data through.
+
+It's important to remember that if you need to do any initialization for your preprocessors, you must do so within the constructor of your preprocessor class. In the tweet preprocessor example, the model reads in a dictionary file to convert words to integers.
+
+Another really important use of data preprocessors is if you need to extract features from data points before feeding them to a model. You might not want to have bulky features sitting around in the data that gets written to output, so the data preprocessor discards them in the Python garbage collector when you're done using them for inference.
