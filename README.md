@@ -43,12 +43,18 @@ git clone https://github.com/InitialDLab/AIPro.git
 ## :octocat:[Get started with the web UI](#octocatget-started-webui)
 **AI Pro** comes with a state of the art web-based user interface to make managing pipelines easier. Here are some of the steps to get that started:
 1. Clone this repository
-2. Install dependencies (already handled if you're using Docker)
-	- RabbitMQ
-	- MongoDB
-3. Build the React.js frontend in the `web/` directory
-4. Serve the front end from `web/public`, or run `npm start` from the web directory for development
-5. Create an account, then start building!
+2. Install dependencies
+	- `./install.sh`
+3. Start the API and its dependencies
+	- `./run.sh`
+	- `python api.py`
+		- This will download the Docker images if they are not already downloaded
+4. Build the React.js frontend in the `web/` directory
+	- `cd web/`
+	- `npm install`
+	- `npm build`
+5. Serve the front end from `web/public`, or run `npm start` from the web directory for development
+6. Create an account, then start building pipelines!
 
 ## :octocat:[Get started with command line](#octocatget-started-command-line)
 1. Clone this repository
