@@ -50,7 +50,7 @@ git clone https://github.com/InitialDLab/AIPro.git
 4. Serve the front end from `web/public`, or run `npm start` from the web directory for development
 5. Create an account, then start building!
 
-## :octocat:[Get started](#octocatget-started)
+## :octocat:[Get started with command line](#octocatget-started-command-line)
 1. Clone this repository
 2. Install dependencies
     - Install Messaging Interface 
