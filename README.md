@@ -1,26 +1,26 @@
-# Compass
+# AI Pro
 ### A primer
-**Compass** stands for **Compr**ehensive **A**nalytics on **S**entiment for **S**patiotemporal data. The project started with an aim to provide framework for running several machine learning models over spatiotempral data with a single configuration file. 
+Previously known as Compass, the project started with an aim to provide a framework for running several machine learning models over spatiotempral data with a single configuration file.
 
-Presently **Compass** do much more. It act as a framework to unite `data sources`, `models` and `stores` components. 
+Today, **AI Pro** does much more. It acts as a framework to unite `data sources`, `models` and `storage` components. 
 
 	- Data Source types: 
-		- `API`
-		- `Socket`
-		- `File` 
+		- `Streaming (API)`
+		- `Batch (files)` 
 	- Models types:
-		- `API`
-		- `Downloadable` or `Local`
-	- Store types
+		- `Custom`
+		- `Prebuilt`
+	- Storage types
 		- `Databases`
-		- `File`
+		- `Files`
+
 A pipeline with any combination of components can be created with just a configuration file. 
-**Compass**'s goal is to help you make your own **Data Science as a Service (DSaaS)** platform.
+**AIPro**'s goal is to help you make your own **Data Science as a Service (DSaaS)** platform.
 
 ## :rocket:[Quick Start on Ubuntu](#rocketquick-start-on-ubuntu)
 1. Clone this repository
 ``
-git clone https://github.com/debjyoti385/Compass.git
+git clone https://github.com/InitialDLab/AIPro.git
 ``
 
 2. Install dependencies
@@ -32,7 +32,7 @@ git clone https://github.com/debjyoti385/Compass.git
 3. Run Sentiment Analysis pipeline from `examples`
 	- Install model dependencies
 		- `source venv/bin/activate && pip install -r examples/sentiment-analysis/requirements.txt`
-	- Run Compass
+	- Run AI Pro
 		- `python main.py -c examples/sentiment-analysis/config-rawfile.yml`
 	- Output
 		- JSON file contaiining tweets with sentiment scores 
@@ -40,11 +40,21 @@ git clone https://github.com/debjyoti385/Compass.git
 4. To stop
 	- `ctrl+c` or `SIGKILL`
 
+## :octocat:[Get started with the web UI](#octocatget-started-webui)
+**AI Pro** comes with a state of the art web-based user interface to make managing pipelines easier. Here are some of the steps to get that started:
+1. Clone this repository
+2. Install dependencies (already handled if you're using Docker)
+	- RabbitMQ
+	- MongoDB
+3. Build the React.js frontend in the `web/` directory
+4. Serve the front end from `web/public`, or run `npm start` from the web directory for development
+5. Create an account, then start building!
+
 ## :octocat:[Get started](#octocatget-started)
 1. Clone this repository
 2. Install dependencies
     - Install Messaging Interface 
-        - We use RabbitMQ as of now.
+        - We use RabbitMQ
         - Start a RabbitMQ server instance, preferably your local machine.
 	    - If you don't have RabbitMQ installed, we highly recommend using [Docker](https://hub.docker.com/_/rabbitmq/). We provide a script `docker-ubuntu.sh` to install docker on Ubuntu 16.04.  
         - Once you have Docker installed, the `run.sh` script in this directory will start RabbitMQ with the proper settings.
@@ -55,13 +65,13 @@ git clone https://github.com/debjyoti385/Compass.git
     - An example can be found at `examples/sentiment-analysis/config-rawfile.yml`
 4. Install all the Python requirements specific to your models, data sources and storage methods within the same virtual environment that was created in step 2.
 	- Example: `source venv/bin/activate && pip install -r examples/sentiment-analysis/requirements.txt`.
-	- The directory `venv` resides in the `Compass/` folder contains all the python dependency packages.
-5. To run Compass 
+	- The directory `venv` resides in the `AIPro/` folder contains all the python dependency packages.
+5. To run AI Pro 
     - Make sure you are in the same virtual environment.
     - `python main.py -c config-file`, where config-file is the location of the config file you created in step 3.
 6. To stop
     - ctrl+c or SIGKILL
-	- By default, each Compass instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
+	- By default, each AI Pro instance will run indefinitely until stopped with a keyboard interrupt or SIGKILL.
 
 
 ## [Config file setup](#config-file-setup)
