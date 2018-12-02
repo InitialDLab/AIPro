@@ -2,10 +2,16 @@ import sys
 import os
 from import_module import import_module_from_file
 from messaging import Messenger
-from compass_preprocessor import CompassPreprocessor
+from data_sources.twitterStream import Twitter
+from custom_entity import CustomEntity
+from storage_methods.IO import IO
+from storage_methods.databases import MongoDB
+from data_sources.flatFile import FlatFile
+from storage_methods.fileStorage import FileStorage
+from preprocessor import Preprocessor
 from filter_module import Filter
 
-def get_data_sources_from_config(config):
+def get_data_sources(config):
 	data_sources = []
 	if 'data_sources' in config:
 		for source_config in config['data_sources']:
@@ -14,18 +20,16 @@ def get_data_sources_from_config(config):
 			messenger.set_outgoing(source_config['outputs'])
 			
 			if source_config['type'] == 'StreamingAPI':
-				from data_sources.twitterStream import Twitter
 				data_sources.append(Twitter(source_config, messenger))
 
 			if source_config['type'] == 'FlatFileDataSource':
-				from data_sources.flatFile import FlatFile
 				# Include the base path (the location of the config file), in case the flat file's path is relative to the config file
-				source_config['base_path'] = config['base_path']
+				#source_config['base_path'] = config['base_path']
 				data_sources.append(FlatFile(source_config, messenger))
 
 	return data_sources
 
-def get_models_from_config(config):
+def get_models(config):
 	models = []
 	if 'models' in config:
 		for model_config in config['models']:
@@ -33,30 +37,27 @@ def get_models_from_config(config):
 			messenger.set_incoming(model_config['alias'])
 			messenger.set_outgoing(model_config['outputs'])
 
-			if 'preprocessor' in model_config and 'preprocessors' in config:
-				for preprocess_config in config['preprocessors']:
-					if preprocess_config['alias'] == model_config['preprocessor']:
-						preprocessor_path = config['base_path'] + '/' + preprocess_config['module_file_path']
-						print('Loading preprocessor from path "%s"' % preprocessor_path)
-						preprocessor = import_module_from_file(preprocess_config['module_classname'], preprocessor_path)
-						constructor = getattr(preprocessor, preprocess_config['module_classname'])
-						instance = constructor(preprocess_config)
-						preprocessor = CompassPreprocessor(preprocess_config, instance)
-						break
+			if 'preprocessor_filename' in model_config and model_config['preprocessor_filename'] != '':
+				preprocessor_path = os.path.join(os.getcwd(), model_config['preprocessor_filename'])
+				print('Loading preprocessor from path "%s"' % preprocessor_path)
+				preprocessor = import_module_from_file(model_config['preprocessor_classname'], preprocessor_path)
+				constructor = getattr(preprocessor, model_config['preprocessor_classname'])
+				instance = constructor(model_config)
+				preprocessor = Preprocessor(model_config, instance)	
 			
-			# No preprocessor provided? That's ok, we'll just use the default one.
+			# No preprocessor provided? That's ok, we'll just use the default one and pass data through without preprocessing.
 			else:
-				preprocessor = CompassPreprocessor(None, None)
+				preprocessor = Preprocessor(None, None)
 
 			from model import Model
-			module = import_module_from_file(model_config['module_classname'], config['base_path'] + '/' + model_config['module_file_path'])
+			module = import_module_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))
 			constructor = getattr(module, model_config['module_classname'])
 			instance = constructor()
 			models.append(Model(model_config, instance, messenger, preprocessor))
 
 	return models
 
-def get_storage_from_config(config):
+def get_storage(config):
 	storage = []
 	if 'storage' in config:
 		for storage_config in config['storage']:
@@ -64,20 +65,17 @@ def get_storage_from_config(config):
 			messenger.set_incoming(storage_config['alias'])
 			
 			if storage_config['type'] == 'MongoDB':
-				from storage_methods.databases import MongoDB
 				storage.append(MongoDB(storage_config, messenger))
+
 			if storage_config['type'] == 'FlatFileStorage':
-				from storage_methods.fileStorage import FileStorage
-				storage_config['base_path'] = config['base_path']
 				storage.append(FileStorage(storage_config, messenger))
 
 			if storage_config['type'] == 'IO':
-				from storage_methods.IO import IO
 				storage.append(IO(messenger))
 
 	return storage
 
-def get_filters_from_config(config):
+def get_filters(config):
 	filters = []
 	if 'filters' in config:
 		for filter_config in config['filters']:
@@ -89,12 +87,28 @@ def get_filters_from_config(config):
 
 	return filters
 
+def get_custom_entities(pipeline):
+	custom_entities = []
+	if 'custom_entities' in pipeline:
+		for config in pipeline['custom_entities']:
+			messenger = Messenger(pipeline['messaging'])
+			messenger.set_incoming(config['alias'])
+			messenger.set_outgoing(config['outputs'])
+
+			module = import_module_from_file(config['classname'], os.path.join(os.getcwd(), config['filename']))
+			constructor = getattr(module, config['classname'])
+			instance = constructor()
+
+			custom_entities.append(CustomEntity(config, instance, messenger))
+	
+	return custom_entities
 
 def init_modules(config):
 	modules = []
-	modules += get_data_sources_from_config(config)
-	modules += get_models_from_config(config)
-	modules += get_storage_from_config(config)
-	modules += get_filters_from_config(config)
+	modules += get_data_sources(config)
+	modules += get_models(config)
+	modules += get_storage(config)
+	modules += get_filters(config)
+	modules += get_custom_entities(config)
 
 	return modules

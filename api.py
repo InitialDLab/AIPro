@@ -190,6 +190,14 @@ def get_pipelines(username):
     
     # TODO: Check to make sure that pipelines is OK, not an error
     result = list(pipelines)
+    
+    # Check to see if any of these pipelines are running
+    for instance_id in processes:
+        pipeline_alias = processes[instance_id]['pipeline_alias']
+        for i in range(len(result)):
+            if pipeline_alias == result[i]['pipeline_alias']:
+                result[i]['instance_id'] = instance_id
+                result[i]['running'] = True
 
     return json.dumps({'pipelines': result})
 
@@ -249,7 +257,6 @@ def save_or_delete_pipeline(username):
 @app.route('/<username>/pipeline/<pipeline_alias>/start')
 def handle_start_pipeline(username, pipeline_alias):
     log('Getting pipeline \'%s\' from user \'%s\'' % (pipeline_alias, username))
-    log('HELLO THERE')
     pipelines_collection = db['pipelines']
     pipeline = pipelines_collection.find_one({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
 
@@ -259,14 +266,18 @@ def handle_start_pipeline(username, pipeline_alias):
         pyaml.dump(pipeline, yaml_file)
 
     popen = subprocess.Popen(['python', 'main.py', '-c', yaml_filename])
-    processes[instance_id] = popen
+    processes[instance_id] = {
+        'process': popen,
+        'pipeline_alias': pipeline_alias,
+        'instance_id': instance_id
+    }
     log('Started pipeline instance id %s' % instance_id)
     return json.dumps({'instance_id': instance_id})
 
 @app.route('/stop/<instance_id>')
 def handle_stop_pipeline(instance_id):
     if instance_id in processes:
-        processes[instance_id].terminate()
+        processes[instance_id]['process'].terminate()
         del processes[instance_id]
         subprocess.call(['rm', '%s.yml' % instance_id])
         log('Stopped pipeline instance id %s' % instance_id)
@@ -289,7 +300,7 @@ def install():
     check_file_request(request)
     uploaded_file = save_file(request.files['file'], app.config['CONFIG_FILE_UPLOAD_FOLDER'])
 
-    # TODO: Check this file to make sure it's safe first?
+    # TODO: Check this file to make sure it's safe first
     subprocess.call(['./install_custom.sh', uploaded_file])
 
     return json.dumps({'message': 'Custom requirements file \'%s\' installed' % request.files['file'].filename})

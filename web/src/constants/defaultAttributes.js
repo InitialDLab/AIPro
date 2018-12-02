@@ -72,7 +72,8 @@ const defaultCustomEntityAttributes = {
     function: '',
     input_attribute: '',
     output_attribute: '',
-    outputs: []
+    outputs: [],
+    projection: [],
 }
 
 const defaultPreprocessorAttributes = {

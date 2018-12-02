@@ -5,17 +5,12 @@ import os
 
 class FileStorage(Storage):
 	def __init__(self, config, messenger):
-		relative_file_path = os.path.realpath(os.path.join(config['base_path'], config['save_filename']))
-		full_file_path = os.path.realpath(config['save_filename'])
-		print('Saving at %s' % full_file_path)
-		if os.path.isdir(os.path.dirname(relative_file_path)):
-			self.save_filename = relative_file_path
-		elif os.path.isdir(os.path.dirname(full_file_path)):
-			self.save_filename = full_file_path
+		file_path = os.path.realpath(os.path.join(os.getcwd(), config['save_filename']))
+		if os.path.isdir(os.path.dirname(file_path)):
+			print('Saving output at %s' % file_path)
+			self.save_filename = file_path
 		else:
-			print os.path.dirname(full_file_path)
-			print os.path.dirname(config['save_filename'])
-			message = "File for alias %s not found. File path must be either relative to config file or the full path of the file." % config['alias']
+			message = "Directory '%s' does not exist for saving files. File path in config must be relative to the root directory of your AI Pro installation." % file_path
 			raise Exception(message)
 		
 		self.messenger = messenger
@@ -24,7 +19,7 @@ class FileStorage(Storage):
 		self.messenger.start(self.save)
 
 	def save(self, data):
-		if not data:
+		if data is None:
 			return
 		with open(self.save_filename, "a") as f:
 			if type(data) is list or type(data) is ndarray:

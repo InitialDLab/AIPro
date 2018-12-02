@@ -6,7 +6,8 @@ class IO:
 		self.messenger.start(self.write)
 
 	def write(self, data):
-		print data
+		print(data)
+		print
 
 	def stop(self):
 		self.messenger.stop()

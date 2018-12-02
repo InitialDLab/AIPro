@@ -46,13 +46,12 @@ if __name__ == '__main__':
 	config = {}
 
 	with open(args.config_file) as f:
-		print os.path.dirname(os.path.realpath(args.config_file))
 		config = yaml.load(f)
-		config['base_path'] = os.path.dirname(os.path.realpath(args.config_file))
+		#config['base_path'] = os.path.dirname(os.path.realpath(args.config_file))
 
 	modules = init_modules(config)
 
-	# Execute the plan on a loop, waiting for the keyboard interrupt to end the loop
+	# Execute the plan on a loop, waiting for the keyboard/sigterm interrupt to end the loop
 	try:
 		run_pipeline(modules)
 	except KeyboardInterrupt as e:
