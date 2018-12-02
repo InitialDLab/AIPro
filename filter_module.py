@@ -28,6 +28,9 @@ class Filter:
         self.messenger.stop()
 
     def process(self, data):
+        if hasattr(self, 'attribute') and self.attribute.split('.')[0] not in data:
+            return
+
         output = self.funcs[self.condition](data)
         
         # Filtered out, don't worry about it and let it drop
@@ -53,7 +56,11 @@ class Filter:
 
     def eq(self, data):
         if hasattr(self, 'attribute'):
-            return data if data[self.attribute] == self.value else None
+            # Get the nested attribute
+            data_point = data
+            for attribute in self.attribute.split('.'):
+                data_point = data_point[attribute]
+            return data if data_point == self.value else None
         else:
             return data if data == self.value else None
 

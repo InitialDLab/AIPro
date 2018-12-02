@@ -8,7 +8,7 @@ from storage_methods.IO import IO
 from storage_methods.databases import MongoDB
 from data_sources.flatFile import FlatFile
 from storage_methods.fileStorage import FileStorage
-from preprocessor import Preprocessor
+from ai_preprocessor import AIPreprocessor
 from filter_module import Filter
 
 def get_data_sources(config):
@@ -42,12 +42,12 @@ def get_models(config):
 				print('Loading preprocessor from path "%s"' % preprocessor_path)
 				preprocessor = import_module_from_file(model_config['preprocessor_classname'], preprocessor_path)
 				constructor = getattr(preprocessor, model_config['preprocessor_classname'])
-				instance = constructor(model_config)
-				preprocessor = Preprocessor(model_config, instance)	
+				instance = constructor()
+				preprocessor = AIPreprocessor(model_config, instance)	
 			
 			# No preprocessor provided? That's ok, we'll just use the default one and pass data through without preprocessing.
 			else:
-				preprocessor = Preprocessor(None, None)
+				preprocessor = AIPreprocessor(None, None)
 
 			from model import Model
 			module = import_module_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))

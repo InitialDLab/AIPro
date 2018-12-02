@@ -19,7 +19,7 @@ class SentimentClassifier:
             loaded_json_model = model_json_file.read()
             ml_model = model_from_json(loaded_json_model)
             ml_model.load_weights(saved_weights)
-            print "Loaded model from disk"
+            print "Loaded keras model from disk"
             return ml_model
 
     def prepare(self, model_files_dir):

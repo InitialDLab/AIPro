@@ -1,6 +1,6 @@
 import traceback
 
-class Preprocessor:
+class AIPreprocessor:
 	def __init__(self, config, instance):
 		self.instance = instance
 		self.preprocess_fn = self.default_preprocess
