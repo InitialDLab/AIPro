@@ -13,6 +13,8 @@ class FileStorage(Storage):
 			message = "Directory '%s' does not exist for saving files. File path in config must be relative to the root directory of your AI Pro installation." % file_path
 			raise Exception(message)
 		
+		if 'projection' in config:
+			self.projection = config['projection']
 		self.messenger = messenger
 
 	def run(self):
@@ -29,6 +31,8 @@ class FileStorage(Storage):
 				else:
 					f.write("\n".join([str(item) for item in data]))
 			else:
+				if hasattr(self, 'projection'):
+					data = {key: data[key] for key in self.projection if key in data}
 				f.write(json.dumps((data)))
 				f.write("\n")
 
