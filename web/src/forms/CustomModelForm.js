@@ -30,8 +30,10 @@ class CustomModelForm extends Component {
 
     handleSave = () => {
         const moduleData = this.state.data;
+        moduleData.type = 'CustomModel';
+        moduleData.outputs = this.props.outputs;
         const alias = this.state.data.alias;
-        this.props.saveModule(this.props.category, this.props.index, moduleData);
+        this.props.saveModule('models', this.props.index, moduleData);
         this.props.updateOutput(this.props.parentCategory, this.props.parentIndex, this.props.parentOutputIndex, alias);
     }
     

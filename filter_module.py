@@ -4,15 +4,16 @@ class Filter:
     def __init__(self, config, messenger):
         self.config = config
         self.condition = config['condition']
-        self.attribute = config['attribute']
+        if 'attribute' in config and config['attribute'] != '':
+            self.attribute = config['attribute']
         self.value = config['value']
         self.funcs = {
-            '>': self.gt,
-            '<': self.lt,
-            '==': self.eq,
-            '!=': self.neq
+            'gt': self.gt,
+            'lt': self.lt,
+            'eq': self.eq,
+            'neq': self.neq
         }
-        if 'projection' in config:
+        if 'projection' in config and len(config['projection']) > 0:
             self.projection = config['projection']
         self.messenger = messenger
 
@@ -23,26 +24,41 @@ class Filter:
     def run(self):
 		self.messenger.start(self.process)
 
+    def stop(self):
+        self.messenger.stop()
+
     def process(self, data):
         output = self.funcs[self.condition](data)
         
         # Filtered out, don't worry about it and let it drop
         if not output:
-            #print('Output dropped with filter \'%s %s\' on attribute %s' %(self.condition, self.value, self.attribute))
+            #print('Output dropped with filter \'%s %s\'' %(self.condition, self.value))
             return
-        
+
         if hasattr(self, 'projection'):
             output = [output[key] for key in self.projection]
         self.messenger.publish(output)
 
     def gt(self, data):
-        return data if data[self.attribute] > self.value else None
+        if hasattr(self, 'attribute'):
+            return data if data[self.attribute] > self.value else None
+        else:
+            return data if data > self.value else None
 
     def lt(self, data):
-        return data if data[self.attribute] < self.value else None
+        if hasattr(self, 'attribute'):
+            return data if data[self.attribute] < self.value else None
+        else:
+            return data if data < self.value else None
 
     def eq(self, data):
-        return data if data[self.attribute] == self.value else None
+        if hasattr(self, 'attribute'):
+            return data if data[self.attribute] == self.value else None
+        else:
+            return data if data == self.value else None
 
     def neq(self, data):
-        return data if data[self.attribute] != self.value else None
+        if hasattr(self, 'attribute'):
+            return data if data[self.attribute] != self.value else None
+        else:
+            return data if data != self.value else None

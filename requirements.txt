@@ -16,3 +16,6 @@ flask
 flask-cors
 pymongo
 numpy
+gensim
+keras
+tensorflow

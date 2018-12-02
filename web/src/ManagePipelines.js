@@ -20,13 +20,16 @@ class ManagePipelines extends Component {
         if ( this.props.pipelines.length > 0) {
             pipelines = this.props.pipelines.map((pipeline, i) => {
                 return(
-                    <PipelineCard pipeline={pipeline} key={i} index={i} />    
+                    <PipelineCard 
+                        pipeline={pipeline}
+                        key={i} 
+                        index={i} />    
                 );
             })
         }
         else {
             pipelines = (
-                <Typography style={{textAlign: 'center'}}>No pipelines yet! Click <Link to='/pipelines/new'>here</Link> to add one.</Typography>
+                <Typography style={{textAlign: 'center'}}>No pipelines yet! Click <Link to='/pipeline/new/batch'>here</Link> to add one.</Typography>
             );
         }
 

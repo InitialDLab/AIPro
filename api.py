@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect, url_for, make_response, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 import os
 import subprocess
@@ -8,11 +8,13 @@ import json
 from pymongo import MongoClient
 import pyaml
 
-ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml'])
+ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml', 'py', 'json', 'csv'])
 RANDOM_PREFIX_LENGTH = 10
 
 mongo = MongoClient('localhost', 27017)
 db = mongo['compass']
+
+processes = {}
 
 app = Flask(__name__)
 CORS(app)
@@ -30,26 +32,57 @@ def generate_random_string(length):
     return ''.join(random.choice(letters + numbers) for __ in range(length))
 
 def check_file_request(request):
+    log('Checking file request...')
     # Check if the post has the return type
     if 'file' not in request.files:
         return json.dumps({'message': 'Missing file in upload'})
-    file = request.files['file']
+    my_file = request.files['file']
 
     # If the user doesn't select a file, browser also submits an empty part without filename
-    if file.filename == '':
+    if my_file.filename == '':
         return json.dumps({'message': 'Missing file in upload'})
 
-    if not (file and allowed_file(file.filename)):
-        return json.dumps({'message': 'Invalid file type: \'%s\'' % file.filename})
+    if not (my_file and allowed_file(my_file.filename)):
+        return json.dumps({'message': 'Invalid file type: \'%s\'' % my_file.filename})
 
-def save_file(file, directory):
+def save_file(the_file, directory):
     random_string = generate_random_string(RANDOM_PREFIX_LENGTH)
-    filename = secure_filename(file.filename)
+    filename = secure_filename(the_file.filename)
     filename_to_save = '%s__%s' % (random_string, filename) # Make this string uniquely identifiable
     uploaded_file = os.path.join(directory, filename_to_save)
-    file.save(uploaded_file)
+    the_file.save(uploaded_file)
+    log('File saved to %s' % uploaded_file)
 
     return uploaded_file
+
+@app.route('/upload', methods=['POST', 'GET'])
+def handle_upload():
+    # Check if the post has the return type
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+    if 'file' not in request.files:
+        log('Missing file in upload')
+        return json.dumps({'message': 'Missing file in upload', 'error': True})
+    my_file = request.files['file']
+
+    # If the user doesn't select a file, browser also submits an empty part without filename
+    if my_file.filename == '':
+        return json.dumps({'message': 'Missing file in upload'})
+
+    if not (my_file and allowed_file(my_file.filename)):
+        return json.dumps({'message': 'Invalid file type: \'%s\'' % my_file.filename})
+    #uploaded_file = save_file(request.files['file'], '/uploads')
+
+    #return json.dumps({'message': 'File \'%s\' uploaded' % request.files['file'].filename})
+    return json.dumps({'message': 'Everything OK, you\'re good.'})
 
 @app.route('/login', methods=['POST'])
 def handle_login():
@@ -112,7 +145,7 @@ def handle_get_account(username, account_type):
     if account:
         return json.dumps(account)
     else:
-        return json.dumps({'error': True, 'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
+        return json.dumps({'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
 
 @app.route('/<username>/account/<account_type>', methods=['POST'])
 def handle_save_account(username, account_type):
@@ -144,7 +177,7 @@ def handle_save_account(username, account_type):
 @app.route('/<username>/pipelines/<pipeline_alias>', methods=['GET'])
 def get_single_pipeline(username, pipeline_alias):
     pipelines_collection = db['pipelines']
-    pipeline = pipelines_collection.findOne({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
+    pipeline = pipelines_collection.find_one({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
     
     # TODO: Check to make sure pipeline is OK, not an error
     
@@ -213,15 +246,37 @@ def save_or_delete_pipeline(username):
     else:
         return json.dumps({'success': False, 'message': 'Unsupported request type %s' % request.method})
 
+@app.route('/<username>/pipeline/<pipeline_alias>/start')
+def handle_start_pipeline(username, pipeline_alias):
+    log('Getting pipeline \'%s\' from user \'%s\'' % (pipeline_alias, username))
+    log('HELLO THERE')
+    pipelines_collection = db['pipelines']
+    pipeline = pipelines_collection.find_one({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
 
+    instance_id = generate_random_string(15)
+    yaml_filename = '%s.yml' % instance_id
+    with open(yaml_filename, 'w+') as yaml_file:
+        pyaml.dump(pipeline, yaml_file)
 
-@app.route('/start/<pipeline_alias>')
-def handle_start_pipeline(pipeline_alias):
-    pass
+    popen = subprocess.Popen(['python', 'main.py', '-c', yaml_filename])
+    processes[instance_id] = popen
+    log('Started pipeline instance id %s' % instance_id)
+    return json.dumps({'instance_id': instance_id})
 
-@app.route('/pause/<pipeline_alias>')
-def handle_pause_pipeline(pipeline_alias):
-    pass
+@app.route('/stop/<instance_id>')
+def handle_stop_pipeline(instance_id):
+    if instance_id in processes:
+        processes[instance_id].terminate()
+        del processes[instance_id]
+        subprocess.call(['rm', '%s.yml' % instance_id])
+        log('Stopped pipeline instance id %s' % instance_id)
+        if (processes.keys()):
+            log('Running processes:\n%s' % '\n'.join(processes.keys()))
+        else:
+            log('No more running processes\n')
+        return json.dumps({'message': 'Instance ID %s stopped' % instance_id})
+    else:
+        return json.dumps({'message': 'Couldn\'t find instance id %s' % instance_id, 'error': True})
 
 @app.route('/diagnostics/<pipeline_alias>')
 def handle_pipeline_diagnostics(pipeline_alias):

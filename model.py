@@ -19,7 +19,6 @@ class Model:
 
 		# If there was an issue preprocessing (i.e. the JSON attribute was missing from the data), just discard this instance.
 		if x == None:
-			print('Error while preprocessing')
 			return
 
 		if self.output_attribute:
@@ -34,3 +33,6 @@ class Model:
 
 	def publish(self, data):
 		self.messenger.publish(data)
+
+	def stop(self):
+		self.messenger.stop()

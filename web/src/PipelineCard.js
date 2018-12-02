@@ -12,7 +12,7 @@ import { amber, blue, green,
     blueGrey, brown, cyan, 
     lime, orange, pink, 
     red, yellow, deepOrange } from '@material-ui/core/colors/';
-import { deletePipeline, receiveSinglePipeline } from './actions/pipelineActions';
+import { deletePipeline, receiveSinglePipeline, startPipeline, stopPipeline } from './actions/pipelineActions';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
@@ -30,7 +30,6 @@ const styles = theme => ({
 
 class PipelineCard extends Component {
     state = {
-        running: false,
         toEditPage: false,
     }
 
@@ -54,6 +53,16 @@ class PipelineCard extends Component {
         this.setState({...this.state, toEditPage: true});
     }
 
+    handleStart = pipeline_alias => {
+        this.props.startPipeline(this.props.currentUsername, pipeline_alias);
+        this.setState({...this.state, running: true});
+    }
+
+    handleStop = (pipeline_alias, instance_id) => {
+        this.props.stopPipeline(pipeline_alias, instance_id);
+        this.setState({...this.state, running: false});
+    }
+
     render() {
         if (this.state.toEditPage) {
             return <Redirect to='/pipeline/edit' />;
@@ -64,6 +73,9 @@ class PipelineCard extends Component {
         }
         
         const { pipeline } = this.props;
+        const pipeline_alias = pipeline.pipeline_alias;
+        const instance_id = pipeline.instance_id || '';
+        const running = pipeline.running;
         const dataSources = pipeline.data_sources ? <Typography>{pipeline.data_sources.length} data source{pipeline.data_sources.length > 1 ? 's' : ''}</Typography> : '';
         const models = pipeline.models ? <Typography>{pipeline.models.length} model{pipeline.models.length > 1 ? 's' : ''}</Typography> : '';
         const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filter{pipeline.filters.length > 1 ? 's' : ''}</Typography> : '';
@@ -81,7 +93,7 @@ class PipelineCard extends Component {
                         {this.getAvatarText(pipeline.pipeline_alias)}
                     </Avatar>}
                     title={pipeline.pipeline_alias}
-                    subheader={`Status: ${this.state.running ? 'Running' : 'Stopped'}`}
+                    subheader={`Status: ${running ? 'Running' : 'Stopped'}`}
                 />
                 <CardContent>
                     <Typography variant='caption'>Pipeline overview:</Typography>
@@ -93,7 +105,7 @@ class PipelineCard extends Component {
                 <CardActions className={classes.actions}>
                     <Button onClick={() => this.handleDelete(pipeline.pipeline_alias)} >Delete</Button>
                     <Button onClick={() => this.handleEdit(pipeline)} >Edit</Button>
-                    <Button onClick={() => this.setState({...this.state, running: !this.state.running})} label={this.state.running ? 'Stop' : 'Run'}>{this.state.running ? 'Stop' : 'Run'}</Button>
+                    <Button onClick={running ? () => this.handleStop(pipeline_alias, instance_id) : () => this.handleStart(pipeline_alias)} label={this.props.running ? 'Stop' : 'Run'}>{running ? 'Stop' : 'Run'}</Button>
                 </CardActions>
             </Card>
         )
@@ -103,7 +115,7 @@ class PipelineCard extends Component {
 const mapStateToProps = state => {
     return {
         isLoading: state.isLoading,
-        currentUsername: state.currentUser.username
+        currentUsername: state.currentUser.username,
     }
 }
 
@@ -111,11 +123,13 @@ const mapDispatchToProps = dispatch => {
     return {
         deletePipeline: (username, pipeline_alias) => dispatch(deletePipeline(username, pipeline_alias)),
         receiveSinglePipeline: pipeline => dispatch(receiveSinglePipeline(pipeline)),
+        startPipeline: (username, pipeline_alias) => dispatch(startPipeline(username, pipeline_alias)),
+        stopPipeline: (pipeline_alias, instance_id) => dispatch(stopPipeline(pipeline_alias, instance_id)),
     }
 }
 
 export default withStyles(styles)(
 connect(
     mapStateToProps,
-    mapDispatchToProps) 
-(PipelineCard));
+    mapDispatchToProps
+)(PipelineCard));

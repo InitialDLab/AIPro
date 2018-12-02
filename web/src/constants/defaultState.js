@@ -27,6 +27,7 @@ const defaultState = {
     },
     currentPipeline: {
         pipeline_alias: 'My pipeline',
+        running: false,
         data_sources: [
             {
                 alias: 'Twitter Streaming Connection',
@@ -93,13 +94,13 @@ const defaultState = {
             {
                 alias: 'Happy tweets file',
                 type: 'FlatFileStorage',
-                filename: 'happytweets.json',
+                save_filename: 'happytweets.json',
                 format: 'json lines'
             },
             {
                 alias: 'Angry tweets file',
                 type: 'FlatFileStorage',
-                filename: 'angrytweets.json',
+                save_filename: 'angrytweets.json',
                 format: 'json lines'
             }
         ],
@@ -121,7 +122,10 @@ const defaultState = {
                 output_attribute: '',
                 outputs: []
             }
-        ]
+        ],
+        messaging: {
+            host: 'localhost'
+        },
     }
 }
 

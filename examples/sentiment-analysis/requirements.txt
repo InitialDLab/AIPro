@@ -2,4 +2,3 @@ keras
 gensim
 tensorflow
 h5py
-tweet-preprocessor

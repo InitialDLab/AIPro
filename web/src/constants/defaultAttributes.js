@@ -2,7 +2,7 @@ const defaultStorageAttributes = {
     FlatFileStorage: {
         alias: 'My flat file',
         type: 'FlatFileStorage',
-        filename: '',
+        save_filename: '',
     },
     MongoDB: {
         alias: 'My MongoDB connection',

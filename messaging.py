@@ -30,6 +30,9 @@ class Messenger:
 		self.channel.basic_consume(self.receive_handler, queue=self.incoming_alias)
 		self.channel.start_consuming()
 
+	def stop(self):
+		self.channel.stop_consuming()
+
 	def publish(self, message):
 		# Always publish an actual string of JSON
 		message = json.dumps({'message': message})

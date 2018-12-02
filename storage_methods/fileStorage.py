@@ -7,6 +7,7 @@ class FileStorage(Storage):
 	def __init__(self, config, messenger):
 		relative_file_path = os.path.realpath(os.path.join(config['base_path'], config['save_filename']))
 		full_file_path = os.path.realpath(config['save_filename'])
+		print('Saving at %s' % full_file_path)
 		if os.path.isdir(os.path.dirname(relative_file_path)):
 			self.save_filename = relative_file_path
 		elif os.path.isdir(os.path.dirname(full_file_path)):
@@ -35,3 +36,6 @@ class FileStorage(Storage):
 			else:
 				f.write(json.dumps((data)))
 				f.write("\n")
+
+	def stop(self):
+		self.messenger.stop()

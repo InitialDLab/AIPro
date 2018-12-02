@@ -7,3 +7,6 @@ class IO:
 
 	def write(self, data):
 		print data
+
+	def stop(self):
+		self.messenger.stop()

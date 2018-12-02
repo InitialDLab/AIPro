@@ -21,7 +21,7 @@ class FlatFileStorageForm extends Component {
         return (
             <FormControl>
                 <TextField onChange={this.handleChange} style={inputStyle} value={this.props.alias} name='alias' label='Module name' />
-                <TextField onChange={this.handleChange} style={inputStyle} value={this.props.filename} name='filename' label='Filename' />
+                <TextField onChange={this.handleChange} style={inputStyle} value={this.props.saveFilename} name='save_filename' label='Filename' />
             </FormControl>
         )
     }
@@ -33,7 +33,7 @@ const mapStateToProps = state => {
 
     return {
         alias: currentModule.alias,
-        filename: currentModule.filename,
+        saveFilename: currentModule.save_filename,
         index,
         parentCategory: state.currentModule.parentCategory,
         parentIndex: state.currentModule.parentIndex,

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TextField } from '@material-ui/core';
 import { updateModule, uploadFile } from '../actions/pipelineActions';
+import UploadButton from '../UploadButton';
 
 class FlatFileDataSourceForm extends Component {
     handleChange = event => {
@@ -16,6 +17,7 @@ class FlatFileDataSourceForm extends Component {
     }
     
     render() {
+        //const uploadButton = <UploadButton buttonText='Upload File' handleFile={this.uploadFile} />;
         return (
             <div>
                 <TextField value={this.props.alias} style={{display: 'block', marginBottom: '10px'}} name='alias' onChange={this.handleChange} label='Module name' />

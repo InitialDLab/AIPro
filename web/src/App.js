@@ -14,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
-import {indigo, purple } from '@material-ui/core/colors/';
+import { purple } from '@material-ui/core/colors/';
 
 const theme = createMuiTheme({
   palette: {

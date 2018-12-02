@@ -81,6 +81,15 @@ export const receivePipelines = pipelines => {
     };
 }
 
+export const setPipelineRunning = (pipeline_alias, instance_id, running) => {
+    return {
+        type: 'SET_PIPELINE_RUNNING',
+        pipeline_alias,
+        instance_id,
+        running,
+    };
+}
+
 export const createNewPipeline = dataSourceType => {
     return {
         type: 'CREATE_NEW_PIPELINE',
@@ -200,11 +209,16 @@ export const deletePipeline = (username, pipeline_alias) => {
 export const uploadFile = (category, index, attribute, file) => {
     return async function(dispatch) {
         dispatch(START_LOADING);
-        let formData = new FormData();
-        formData.append('file', file);
+        const formData = new FormData();
+        formData.append('files', file, file.name);
         formData.append('filename', file.name);
-        const uploadResult = await api.post('/upload', formData);
-        // TODO: Handle upload result
+
+        for(var pair of formData.entries()) {
+            console.log(pair[0]+ ', '+ pair[1]); 
+        }
+
+        const uploadResult = await api.postFile('/upload', formData);
+
         if (uploadResult !== false) {
             dispatch(setMessage('File uploaded successfully'));
         }
@@ -220,7 +234,33 @@ export const uploadFile = (category, index, attribute, file) => {
 
 // TODO: Validate pipeline
 
-// TODO: Start pipeline
+export const startPipeline = (username, pipeline_alias) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const result = await api.get(`/${username}/pipeline/${pipeline_alias}/start`);
+        if (result.error) {
+            dispatch(setError(`Couldn't start pipeline ${pipeline_alias}`));
+        }
+        else {
+            dispatch(setPipelineRunning(pipeline_alias, result.instance_id, true));
+        }
+        dispatch(STOP_LOADING);
+    }
+}
+
+export const stopPipeline = (pipeline_alias, pipeline_instance_id) => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const result = await api.get(`/stop/${pipeline_instance_id}`);
+        if (result.error) {
+            dispatch(setError(`Couldn't stop pipeline: ${result.message}`));
+        }
+        else {
+            dispatch(setPipelineRunning(pipeline_alias, pipeline_instance_id, false));
+        }
+        dispatch(STOP_LOADING);
+    }
+}
 
 // TODO: Stop pipeline
 

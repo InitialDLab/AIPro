@@ -72,9 +72,25 @@ export const messageReducer = (state = '', action) => {
 }
 
 export const pipelineListReducer = (state = [], action) => {
+    let index, pipeline, tmpState;
     switch(action.type) {
         case 'RECEIVE_PIPELINES':
             return action.pipelines;
+        case 'SET_PIPELINE_RUNNING':
+            index = state.findIndex(pipeline => pipeline.pipeline_alias === action.pipeline_alias);
+            if (index !== -1) {
+                console.log('Found index');
+                pipeline = Object.assign({}, state[index]);
+                pipeline.running = action.running;
+                pipeline.instance_id = action.instance_id;
+                tmpState = state.slice();
+                tmpState[index] = pipeline;
+                return tmpState;
+            }
+            else {
+                console.log('Couldn\'t find index to start');
+                return state;
+            }
         default:
             return state;
     }

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { deleteOutput, deleteModule } from './actions/pipelineActions';
 import { setCurrentModule } from './actions/utilActions';
 import { withStyles } from '@material-ui/core/styles';
-import { blue, pink } from '@material-ui/core/colors/';
+import { pink } from '@material-ui/core/colors/';
 
 const styles = theme => ({
     selected: {

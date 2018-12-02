@@ -4,6 +4,7 @@ import defaultState from '../constants/defaultState';
 const initialPipeline = defaultState.currentPipeline;
 const newBatchPipeline = {
     pipeline_alias: 'Untitled Pipeline',
+    running: false,
     data_sources: [
         {
             alias: 'Untitled Data Source',
@@ -18,9 +19,13 @@ const newBatchPipeline = {
     storage: [],
     preprocessors: [],
     custom_entities: [],
+    messaging: {
+        host: 'localhost'
+    },
 };
 const newStreamingPipeline = {
     pipeline_alias: 'Untitled Pipeline',
+    running: false,
     data_sources: [
         {
             alias: 'Untitled Data Source',
@@ -35,6 +40,9 @@ const newStreamingPipeline = {
     storage: [],
     preprocessors: [],
     custom_entities: [],
+    messaging: {
+        host: 'localhost'
+    },
 };
 
 const getDefaultAttributes = (category, moduleType) => {
@@ -136,12 +144,14 @@ const findAliasCategory = (tmpPipeline, alias) => {
 
 const deleteModuleCase = (tmpPipeline, category, moduleIndex) => {
     // Recursively find the children first
-    for (let i = 0; i < tmpPipeline[category][moduleIndex].outputs.length; i++) {
-        const recAlias = tmpPipeline[category][moduleIndex].outputs[i];
-        const recCategory = findAliasCategory(tmpPipeline, recAlias);
-        if (recCategory) {
-            const recIndex = tmpPipeline[recCategory].findIndex(value => value.alias === recAlias);
-            deleteModuleCase(tmpPipeline, recCategory, recIndex);
+    if (category !== 'storage'){
+        for (let i = 0; i < tmpPipeline[category][moduleIndex].outputs.length; i++) {
+            const recAlias = tmpPipeline[category][moduleIndex].outputs[i];
+            const recCategory = findAliasCategory(tmpPipeline, recAlias);
+            if (recCategory) {
+                const recIndex = tmpPipeline[recCategory].findIndex(value => value.alias === recAlias);
+                deleteModuleCase(tmpPipeline, recCategory, recIndex);
+            }
         }
     }
     

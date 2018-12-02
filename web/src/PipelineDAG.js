@@ -150,9 +150,8 @@ class PipelineDAG extends Component {
         if (nextProps.pipeline.pipeline_alias !== this.props.pipeline.pipeline_alias){
             return false;
         }
-        else {
-            return true;
-        }
+
+        return true;
     }
 
     render() {
@@ -168,6 +167,7 @@ class PipelineDAG extends Component {
                 orientation='vertical'
                 allowForeignObjects={true}
                 nodeSize={{x: 300, y: 150}}
+                shouldComponentUpdate={() => false}
                 textLayout={{textAnchor: 'middle', x: 0, y: 0}}
                 nodeLabelComponent={{render: <NodeLabel onClick={this.handleNodeClick} />, foreignObjectWrapper: {x: -135, y: -20, width: 280}}}
                 nodeSvgShape={{shape: 'rect', shapeProps: {width: 0, height: 0, x: -50, y: -10}}}

@@ -20,6 +20,7 @@ def run_pipeline(modules):
 			threads[thread_num].start()
 		while 1:
 			sleep(1)
+
 	except Exception as e:
 		print e
 		#close_gracefully(None, None)

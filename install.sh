@@ -59,10 +59,6 @@ pip install --upgrade pip
 echo "==================================================="
 echo "           PIP UPGRADED"
 echo "==================================================="
-# Install any additional python requirements provided by the user
-if [ -f "requirements.txt" ]; then
-	pip install -r requirements.txt
-fi
 
 # Install core python requirements
-pip install -r core-requirements.txt
+pip install -r requirements.txt

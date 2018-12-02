@@ -17,7 +17,7 @@ def get_data_sources_from_config(config):
 				from data_sources.twitterStream import Twitter
 				data_sources.append(Twitter(source_config, messenger))
 
-			if source_config['type'] == 'FlatFile':
+			if source_config['type'] == 'FlatFileDataSource':
 				from data_sources.flatFile import FlatFile
 				# Include the base path (the location of the config file), in case the flat file's path is relative to the config file
 				source_config['base_path'] = config['base_path']
@@ -66,7 +66,7 @@ def get_storage_from_config(config):
 			if storage_config['type'] == 'MongoDB':
 				from storage_methods.databases import MongoDB
 				storage.append(MongoDB(storage_config, messenger))
-			if storage_config['type'] == 'File':
+			if storage_config['type'] == 'FlatFileStorage':
 				from storage_methods.fileStorage import FileStorage
 				storage_config['base_path'] = config['base_path']
 				storage.append(FileStorage(storage_config, messenger))
