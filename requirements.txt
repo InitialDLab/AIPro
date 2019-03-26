@@ -19,3 +19,4 @@ numpy
 gensim
 keras
 tensorflow
+onnx
