@@ -30,10 +30,6 @@ class ModuleDetails extends Component {
         this.setState({...this.state, [event.target.name]: event.target.value});
     }
 
-    handleFile = event => {
-        console.log(event.target.files);
-    }
-
     getForm(formType) {
         switch(formType) {
             case 'FlatFileDataSource':
