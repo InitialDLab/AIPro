@@ -10,6 +10,7 @@ from data_sources.flatFile import FlatFile
 from storage_methods.fileStorage import FileStorage
 from ai_preprocessor import AIPreprocessor
 from filter_module import Filter
+from model import Model
 
 def get_data_sources(config):
 	data_sources = []
@@ -49,10 +50,13 @@ def get_models(config):
 			else:
 				preprocessor = AIPreprocessor(None, None)
 
-			from model import Model
 			module = import_module_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))
 			constructor = getattr(module, model_config['module_classname'])
-			instance = constructor()
+			
+			if 'onnx' in model_config and model_config['onnx'] is True:
+				instance = constructor(model_config)
+			else:
+				instance = constructor()
 			models.append(Model(model_config, instance, messenger, preprocessor))
 
 	return models

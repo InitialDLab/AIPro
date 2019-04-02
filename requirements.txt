@@ -20,3 +20,4 @@ gensim
 keras
 tensorflow
 onnx
+mxnet

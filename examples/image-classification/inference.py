@@ -2,18 +2,24 @@ import numpy as np
 import mxnet as mx
 from collections import namedtuple
 from mxnet.contrib.onnx.onnx2mx.import_model import import_model
+import os
 
 # Credit to the ImageNet notebook tutorial for ONNX with MXNet
 class ImageClassifier:
-    def __init__(self):
+    def _get_absolute_path(self, path):
+        return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+
+    def __init__(self, model_config):
         # Load all of the labels into memory
-        with open('data/synset.txt', 'r') as f:
-            self.labels = [l.rstrip() for l in f]
+        labels_path = self._get_absolute_path('data/synset.txt')
+        with open(labels_path, 'r') as f:
+            # synset.txt has a weird format, just get the first label
+            self.labels = [' '.join(l.rstrip().split()[1:]).split(',')[0] for l in f]
 
         self.Batch = namedtuple('Batch', ['data'])
 
         # Load the ONNX model
-        model_path= 'model/squeezenet1.1.onnx'
+        model_path= self._get_absolute_path(model_config['model_path'])
         sym, arg_params, aux_params = import_model(model_path)
 
         # Determine and set context
@@ -30,10 +36,10 @@ class ImageClassifier:
         self.mod.set_params(arg_params, aux_params, allow_missing=True, allow_extra=True)
 
     def predict(self, image):
-        self.mod.forward(self.Batch[image])
+        self.mod.forward(self.Batch([image]))
         scores = mx.ndarray.softmax(self.mod.get_outputs()[0]).asnumpy()
         scores = np.squeeze(scores)
         ranked_scores = np.argsort(scores)[::-1]
         
-        predictions_with_probabilities = [{'class': self.labels[i], 'probability': scores[i]} for i in ranked_scores[:5]]
-        return predictions_with_probabilities
+        predictions_with_probabilities = [{'class': self.labels[i], 'probability': scores[i].astype(float)} for i in ranked_scores[:5]]
+        return predictions_with_probabilities[0]

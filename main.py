@@ -22,11 +22,11 @@ def run_pipeline(modules):
 			sleep(1)
 
 	except Exception as e:
-		print e
+		print(e)
 		#close_gracefully(None, None)
 
 def close_gracefully(signal, frame):
-	print "Closing gracefully"
+	print("Closing gracefully")
 	if modules:
 		for module in modules:
 			# Try to clean up resources, if we can (close the streaming thread used in the Twitter Stream, for example)

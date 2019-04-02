@@ -61,8 +61,8 @@ class Messenger:
 			# The incoming message will always have a 'message' attribute that contains the actual data from the previous node in the DAG
 			self.process(data['message'])
 		except Exception as e:
-			print "Couldn't process incoming message %r" % message
-			print e
+			print("Couldn't process incoming message %r" % message)
+			print(e)
 			traceback.print_exc()
 		finally:
 			# Judgment call - if we can't process the JSON in an incoming message, we don't want it anyway - so it's OK for RabbitMQ to drop it

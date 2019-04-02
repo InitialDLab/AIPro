@@ -24,9 +24,9 @@ class Model:
 				x = None
 		else:
 			x = self.preprocessor.preprocess(data)
-
+		
 		# If there was an issue preprocessing (i.e. the JSON attribute was missing from the data), just discard this instance.
-		if x == None:
+		if x is None:
 			return
 
 		if hasattr(self, 'output_attribute'):
