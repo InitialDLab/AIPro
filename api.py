@@ -135,7 +135,7 @@ def handle_create_user():
         return json.dumps({'success': True})
     else:
         return json.dumps({'success': False})
-
+'''
 @app.route('/<username>/account/<account_type>/', methods=['GET'])
 def handle_get_account(username, account_type):
     accounts_collection = db['accounts']
@@ -146,33 +146,51 @@ def handle_get_account(username, account_type):
         return json.dumps(account)
     else:
         return json.dumps({'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
+'''
 
-@app.route('/<username>/account/<account_type>', methods=['POST'])
+@app.route('/<username>/account/<account_type>', methods=['POST', 'GET'])
 def handle_save_account(username, account_type):
-    data = request.json
-    accounts_collection = db['accounts']
+    if request.method == 'POST':
+        data = request.json
+        print('Incoming save credentials request:')
+        print(data)
+        accounts_collection = db['accounts']
 
-    assert 'account_type' in data
-    if data['account_type'] == 'Twitter streaming':
-        required_keys = ['username', 'account_type', 'api_key', 'api_secret', 'access_token', 'access_token_secret']
-        for key in required_keys:
-            assert key in data
-        
-        account_data = {key: data[key] for key in required_keys}
-        
-        new_account_info = accounts_collection.replace_one(
-            {
-                'username': username, 
-                'account_type': data['account_type']
-            }, 
-            account_data, upsert=True)
+        assert 'username' in data
+        assert 'account_type' in data
+        if account_type == 'twitter':
+            required_keys = ['account_type', 'api_key', 'api_secret', 'access_token', 'access_token_secret', 'username']
+            for key in required_keys:
+                assert key in data
+            
+            account_data = {key: data[key] for key in required_keys}
+            
+            new_account_info = accounts_collection.replace_one(
+                {
+                    'username': username, 
+                    'account_type': account_type
+                }, 
+                account_data, upsert=True)
 
-        if new_account_info.matched_count:
-            log('\'%s\' account modified for \'%s\'' % (data['account_type'], data['username']))
-            return json.dumps({'message': 'Account modified successfully'})
+            if new_account_info.matched_count:
+                log('\'%s\' account modified for \'%s\'' % (account_type, username))
+                return json.dumps({'message': 'Account modified successfully'})
+            else:
+                log('New \'%s\' account created for: \'%s\'' % (account_type, username))
+                return json.dumps({'message': 'Account created successfully'})
         else:
-            log('New \'%s\' account created for: \'%s\'' % (data['account_type'], data['username']))
-            return json.dumps({'message': 'Account created successfully'})    
+            return json.dumps({'error': True, 'message': 'Unknown account  type {}'.format(account_type)}) 
+    elif request.method == 'GET':
+        accounts_collection = db['accounts']
+        query = {'account_type': account_type, 'username': username}
+        account = accounts_collection.find_one(query, {'_id': 0})
+        log(account)
+        if account:
+            return json.dumps(account)
+        else:
+            return json.dumps({'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
+    else:
+        return json.dumps({'message': 'Default message for options'})
 
 @app.route('/<username>/pipelines/<pipeline_alias>', methods=['GET'])
 def get_single_pipeline(username, pipeline_alias):

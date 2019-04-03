@@ -12,7 +12,8 @@ class TwitterAccountForm extends Component {
 
     handleFormSubmit = async () => {
         const requestBody = {
-            account_type: 'TwitterStreamingAPI',
+            account_type: 'twitter',
+            username: this.props.username
         };
         Object.assign(requestBody, this.props.credentials.twitter);
         try {

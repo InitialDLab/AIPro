@@ -29,7 +29,7 @@ const theme = createMuiTheme({
 class App extends Component {
   constructor(props) {
     super(props);
-    const account_type = 'Twitter streaming';
+    const account_type = 'twitter';
     props.loadCredentials(props.currentUsername, account_type);
   }
   
@@ -47,7 +47,7 @@ class App extends Component {
     else
       isOpen = false;
 
-    const loggedIn = true; // this.props.loggedIn;
+    const loggedIn = this.props.loggedIn;
     return (
       <MuiThemeProvider theme={theme}>
         <Router>

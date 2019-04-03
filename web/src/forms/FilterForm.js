@@ -17,7 +17,6 @@ class FilterForm extends Component {
     };
 
     handleChange = event => {
-        // this.setState({...this.state, [event.target.name]: event.target.value});
         if (event.target.name === 'alias') {
             this.props.updateOutput(this.props.parentCategory, this.props.parentIndex, this.props.parentOutputIndex, event.target.value);
         }

@@ -7,14 +7,16 @@ from data_source import DataSource
 
 class TwitterStream(StreamListener):
 	def  __init__(self, instance):
+		print('Initializing Twitter Stream instance')
 		self.instance = instance
+		print('Twitter Stream instance initialized')
 
 	def on_data(self, data):
 		#print "Receiving data of size %d" % len(data)
 		self.instance.publish(data)
 
 	def on_error(self, status_code):
-		print "Twitter streaming error: %s" % status_code
+		print("Twitter streaming error: %s" % status_code)
 		self.instance.on_stream_error()
 
 class Twitter(DataSource):
@@ -49,7 +51,7 @@ class Twitter(DataSource):
 		self.stream.disconnect()
 		if self.auto_restart == True:
 			if self.do_log:
-				print "Restarting Twitter stream"
+				print("Restarting Twitter stream")
 			self.run()
 		else:
 			self.close_gracefully()
@@ -62,11 +64,11 @@ class Twitter(DataSource):
 				# Only take the tweet if it has our entire projection
 				if not all([key in tmp for key in self.projection]):
 					if self.do_log:
-						print "Not all projection fields were present in data, skipping this Tweet:"
+						print("Not all projection fields were present in data, skipping this Tweet:")
 						for key in self.projection:
 							if key not in tmp:
-								print "%s not in tmp" % key
-						print "\n\n"
+								print("%s not in tmp" % key)
+						print("\n\n")
 					return
 				for key in self.projection:
 					if key in tmp:
@@ -77,8 +79,8 @@ class Twitter(DataSource):
 				return
 			self.messenger.publish(data)
 		except Exception as e:
-			print "Could not load streaming tweets."
-			print e
+			print("Could not load streaming tweets.")
+			print(e)
 			self.close_gracefully()
 
 	def run(self):
@@ -95,9 +97,9 @@ class Twitter(DataSource):
 			self.stream.sample(async=False)
 		
 	def close_stream(self):
-		print "Closing twitter stream"
+		print("Closing twitter stream")
 		self.stream.disconnect()
 
 	def close_gracefully(self):
-		print "Gracefully shutting down Twitter Stream..."
+		print("Gracefully shutting down Twitter Stream...")
 		self.close_stream()

@@ -124,7 +124,7 @@ export const logout = () => {
             dispatch(setLoggedIn(false));
         }
         else {
-            dispatch(setError('Error loggign out, try again'));
+            dispatch(setError('Error logging out, try again'));
         }
     }
 }
@@ -135,7 +135,7 @@ export const loadCredentials = (username, account_type) => {
         if (!username) {
             console.error('Missing username');
         }
-        const url = encodeURI(`/${username}/account/${account_type}/`);
+        const url = encodeURI(`/${username}/account/${account_type}`);
         try{
             const account_info = await api.get(url);
             

@@ -9,6 +9,7 @@ class CustomModelForm extends Component {
         this.state = {
             data: {
                 alias: this.props.alias,
+                model_path: '',
                 module_file_path: this.props.module_file_path,
                 module_classname: this.props.module_classname,
                 method_name: this.props.method_name,
@@ -36,11 +37,26 @@ class CustomModelForm extends Component {
         this.props.saveModule('models', this.props.index, moduleData);
         this.props.updateOutput(this.props.parentCategory, this.props.parentIndex, this.props.parentOutputIndex, alias);
     }
+
+    componentDidUpdate(prevProps) {
+        const data = Object.assign({}, this.state.data);
+        let updated = false;
+        for (let key of Object.keys(this.props)) {
+            if (prevProps[key] != this.props[key]) {
+                data[key] = this.props[key];
+                updated = true;
+            }
+        }
+        if (updated) {
+            this.setState({...this.state, data});
+        }
+    }
     
     render() {
         return (
             <FormControl>
                 <TextField name='alias' value={this.state.data.alias} onChange={this.handleChange} label='Module name' />
+                <TextField name='model_path' value={this.state.data.model_path} onChange={this.handleChange} label='Model path' />
                 <TextField name='module_file_path' value={this.state.data.module_file_path} onChange={this.handleChange} label='Module file path' />
                 <TextField name='module_classname' value={this.state.data.module_classname} onChange={this.handleChange} label='Module class name' />
                 <TextField name='method_name' value={this.state.data.method_name} onChange={this.handleChange} label='Method name' />

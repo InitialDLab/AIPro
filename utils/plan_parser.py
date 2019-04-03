@@ -20,7 +20,7 @@ def get_data_sources(config):
 			# Only need to set outputs for messenger, since data sources don't receive external messages
 			messenger.set_outgoing(source_config['outputs'])
 			
-			if source_config['type'] == 'StreamingAPI':
+			if source_config['type'] == 'TwitterStreamingAPI':
 				data_sources.append(Twitter(source_config, messenger))
 
 			if source_config['type'] == 'FlatFileDataSource':
@@ -53,7 +53,7 @@ def get_models(config):
 			module = import_module_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))
 			constructor = getattr(module, model_config['module_classname'])
 			
-			if 'onnx' in model_config and model_config['onnx'] is True:
+			if 'model_path' in model_config and model_config['model_path'].strip()  != '':
 				instance = constructor(model_config)
 			else:
 				instance = constructor()
