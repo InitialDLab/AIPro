@@ -175,7 +175,17 @@ class PipelineDAG extends Component {
             return false;
         }
 
-        return true;
+        // See if the number of nodes of each type has changed. If so, update. If not, don't update the entire tree
+        const nodeTypes = ['models', 'filters', 'data_sources', 'storage', 'custom_entities']
+        for (let nodeType of nodeTypes) {
+            if (nextProps.pipeline.hasOwnProperty(nodeType) &&
+                this.props.pipeline.hasOwnProperty(nodeType) &&
+                nextProps.pipeline[nodeType].length !== this.props.pipeline[nodeType].length) {
+                    return true;
+                }
+        }
+
+        return false;
     }
 
     render() {
