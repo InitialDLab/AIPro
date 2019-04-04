@@ -128,11 +128,35 @@ class PipelineDAG extends Component {
                 }
             }
         }
+
+        // Look in custom entities
+        if (this.props.pipeline.hasOwnProperty('custom_entities')) {
+            for (let [index, custom] of this.props.pipeline.custom_entities.entries()) {
+                if (custom.alias === nodeName) {
+                    node.category = 'custom_entities';
+                    node.index = index;
+                    node.type = custom.type;
+                    if (custom.outputs) {
+                        node.children = custom.outputs.map((outputName, outputIndex) => {
+                            return {
+                                alias: outputName,
+                                name: outputName,
+                                parentIndex: index,
+                                parentCategory: 'custom_entities',
+                                parentOutputIndex: outputIndex,
+                            };
+                        });
+                        
+                        for (let i = 0; i < node.children.length; i++) {
+                            this.getChildrenRec(node.children[i]);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     handleNodeClick = (selectedModule, event) => {
-        console.log('Node data:');
-        console.log(selectedModule);
         const pipeline = this.props.pipeline;
         for (let i = 0; i < pipeline[selectedModule.category].length; i++) {
             if (pipeline[selectedModule.category][i].alias === selectedModule.alias) {

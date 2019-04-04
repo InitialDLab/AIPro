@@ -86,6 +86,7 @@ class AddConfirmationDialog extends React.Component {
                     <Button className={classes.button} onClick={() => this.handleAddModule('models', 'CustomModel')}><Icon className={classes.icon}>code</Icon>Custom Model</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('models', 'PrebuiltModel')}><Icon className={classes.icon}>memory</Icon>Prebuilt Model</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('filters', 'Filter')}><Icon className={classes.icon}>filter_list</Icon>Filter</Button>
+                    <Button className={classes.button} onClick={() => this.handleAddModule('custom_entities', 'CustomEntity')}><Icon className={classes.icon}>widgets</Icon>Custom Entity</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('storage', 'FlatFileStorage')}><Icon className={classes.icon}>folder_open</Icon>File storage</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('storage', 'MongoDB')}><Icon className={classes.icon}>storage</Icon>Database storage</Button>
                 </DialogContent>

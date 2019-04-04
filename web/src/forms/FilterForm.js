@@ -6,37 +6,62 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import { connect } from 'react-redux';
-import { updateModule, updateOutput } from '../actions/pipelineActions';
+import { updateModule, updateOutput, saveModule } from '../actions/pipelineActions';
 
 class FilterForm extends Component {
-    state = {
-        alias: '',
-        condition: '',
-        attribute: '',
-        value: '',
-    };
+    
+    constructor(props){
+        super(props);
+        this.state = {
+            alias: this.props.attrs.alias,
+            condition: this.props.attrs.condition,
+            attribute: this.props.attrs.attribute,
+            value: this.props.attrs.value,
+        };
+    }
 
     handleChange = event => {
-        if (event.target.name === 'alias') {
-            this.props.updateOutput(this.props.parentCategory, this.props.parentIndex, this.props.parentOutputIndex, event.target.value);
+        const newState = Object.assign({}, this.state);
+        newState[event.target.name] = event.target.value;
+        this.setState(newState);
+    }
+
+    handleSave = () => {
+        const moduleData = Object.assign({}, this.state);
+        moduleData.outputs = this.props.attrs.outputs;
+        moduleData.type = 'Filter';
+        this.props.saveModule('filters', this.props.index, moduleData);
+        this.props.updateOutput(this.props.parentCategory, this.props.parentIndex, this.props.parentOutputIndex, this.state.alias)
+    }
+
+    componentDidUpdate(prevProps) {
+        const data = Object.assign({}, this.state);
+        let updated = false;
+        for (let key of Object.keys(this.props.attrs)) {
+            if (prevProps.attrs[key] != this.props.attrs[key]) {
+                data[key] = this.props.attrs[key];
+                updated = true;
+            }
         }
-        this.props.updateModule('filters', this.props.index, event.target.name, event.target.value);
+        if (updated) {
+            this.setState({...this.state, data});
+        }
     }
 
     render() {
         return (
             <FormControl>
                 <Typography>Filter module</Typography>
-                <TextField value={this.props.attrs.alias} name='alias' onChange={this.handleChange} label='Alias' />
-                <TextField value={this.props.attrs.attribute} name='attribute' onChange={this.handleChange} label='Attribute' />
-                <Select onChange={this.handleChange} label='Filter type' name='condition' value={this.props.attrs.condition}>
+                <TextField value={this.state.alias} name='alias' onChange={this.handleChange} label='Alias' />
+                <TextField value={this.state.attribute} name='attribute' onChange={this.handleChange} label='Attribute' />
+                <Select onChange={this.handleChange} label='Filter type' name='condition' value={this.state.condition}>
                     <MenuItem value={'gt'}>Greater than</MenuItem>
                     <MenuItem value={'lt'}>Less than</MenuItem>
                     <MenuItem value={'eq'}>Equals</MenuItem>
                     <MenuItem value={'neq'}>Not Equal to</MenuItem>
                 </Select>
-                <TextField value={this.props.attrs.value} name='value' onChange={this.handleChange} label='Value' />
-                <Button variant='contained' color='primary' onClick={this.props.save}>Save</Button>
+                <TextField value={this.state.value} name='value' onChange={this.handleChange} label='Value' />
+                <Button variant='contained' color='primary' onClick={this.handleSave}>Save</Button>
             </FormControl>
         );
     }
@@ -56,6 +81,7 @@ const mapStateToProps = state => {
 }
 const mapDispatch = dispatch => {
     return {
+        saveModule: (category, index, moduleData) => dispatch(saveModule(category, index, moduleData)),
         updateModule: (category, index, attribute, value) => dispatch(updateModule(category, index, attribute, value)),
         updateOutput: (category, index, outputIndex, outputAlias) => dispatch(updateOutput(category, index, outputIndex, outputAlias)),
     }

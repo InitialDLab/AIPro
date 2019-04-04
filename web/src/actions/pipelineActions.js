@@ -253,11 +253,10 @@ export const stopPipeline = (pipeline_alias, pipeline_instance_id) => {
         dispatch(START_LOADING);
         const result = await api.get(`/stop/${pipeline_instance_id}`);
         if (result.error) {
-            dispatch(setError(`Couldn't stop pipeline: ${result.message}`));
+            console.error(`Error stopping pipeline: ${result.message}`);
         }
-        else {
-            dispatch(setPipelineRunning(pipeline_alias, pipeline_instance_id, false));
-        }
+
+        dispatch(setPipelineRunning(pipeline_alias, pipeline_instance_id, false));
         dispatch(STOP_LOADING);
     }
 }

@@ -104,6 +104,9 @@ class NodeLabel extends Component {
             case 'CustomModel':
                 iconName = 'code';
                 break;
+            case 'CustomEntity':
+                iconName = 'widgets';
+                break;
             case 'PrebuiltModel':
                 iconName = 'memory';
                 break;
@@ -131,11 +134,11 @@ class NodeLabel extends Component {
             'TwitterStreamingAPI': 'Twitter Streaming API',
             'FlatFileDataSource': 'Flat File Data Source',
             'CustomModel': 'Custom Model',
+            'CustomEntity': 'Custom Entity',
             'PrebuiltModel': 'Prebuilt Model',
             'Filter': 'Filter',
             'FlatFileStorage': 'Flat File Storage',
             'MongoDB': 'MongoDB Connection',
-            'CustomEntity': 'Custom Entity',
         };
         
         return (

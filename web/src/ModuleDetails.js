@@ -6,6 +6,7 @@ import TwitterStreamingAPIForm from './forms/TwitterStreamingAPIForm';
 import FlatFileDataSourceForm from './forms/FlatFileDataSourceForm';
 import FilterForm from './forms/FilterForm';
 import CustomModelForm from './forms/CustomModelForm';
+import CustomEntityForm from './forms/CustomEntityForm';
 import PrebuiltModelForm from './forms/PrebuiltModelForm';
 import FlatFileStorageForm from './forms/FlatFileStorageForm';
 import MongoDBForm from './forms/MongoDBForm';
@@ -48,6 +49,14 @@ class ModuleDetails extends Component {
                             output_attribute={this.props.attrs.output_attribute}
                             preprocessor={this.props.attrs.preprocessor}
                         />;
+            case 'CustomEntity':
+                return <CustomEntityForm
+                            alias={this.props.attrs.alias}
+                            input_attribute={this.props.attrs.input_attribute}
+                            output_attribute={this.props.attrs.output_attribute}
+                            filename={this.props.attrs.filename}
+                            function={this.props.attrs.function}
+                        />;
             case 'PrebuiltModel':
                 return <PrebuiltModelForm alias={this.props.attrs.alias} subtype={this.props.attrs.subtype} />
             case 'Filter':
@@ -80,6 +89,8 @@ class ModuleDetails extends Component {
                 return 'Flat File (Storage)';
             case 'CustomModel':
                 return 'Custom Model';
+            case 'CustomEntity':
+                return 'Custom Entity';
             case 'PrebuiltModel':
                 return 'Prebuilt Model';
             case 'Filter':
