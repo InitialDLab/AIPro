@@ -56,6 +56,16 @@ const defaultModelAttributes = {
         outputs: [],
         projection: []
     },
+    APIModel: {
+        alias: 'My API model',
+        type: 'APIModel',
+        endpoint: 'http://example.com',
+        outputs: [],
+        http_method: 'GET',
+        input_attribute: '',
+        output_attribute: '',
+        image_location_attr: '',
+    },
     PrebuiltModel: {
         alias: 'Image Boundary Classifier',
         type: 'PrebuiltModel',

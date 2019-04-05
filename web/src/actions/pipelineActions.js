@@ -261,6 +261,4 @@ export const stopPipeline = (pipeline_alias, pipeline_instance_id) => {
     }
 }
 
-// TODO: Stop pipeline
-
 // TODO: Check pipeline status

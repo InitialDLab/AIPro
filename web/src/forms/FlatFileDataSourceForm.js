@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { TextField } from '@material-ui/core';
 import { updateModule, uploadFile } from '../actions/pipelineActions';
-import UploadButton from '../UploadButton';
 
 class FlatFileDataSourceForm extends Component {
     handleChange = event => {

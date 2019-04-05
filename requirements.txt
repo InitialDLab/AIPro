@@ -21,3 +21,4 @@ keras
 tensorflow
 onnx
 mxnet
+requests

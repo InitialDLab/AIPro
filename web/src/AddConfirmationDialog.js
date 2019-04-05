@@ -45,7 +45,6 @@ class AddConfirmationDialog extends React.Component {
             this.setState({...this.state, errorMessage: 'Output name cannot be empty'});
             return;
         }
-        console.log('Still closing...');
         this.props.handleClose();
         const alias = this.state.alias;
         this.props.addModule(alias, category, type);
@@ -84,6 +83,7 @@ class AddConfirmationDialog extends React.Component {
                         (You can add more details later)
                     </DialogContentText>
                     <Button className={classes.button} onClick={() => this.handleAddModule('models', 'CustomModel')}><Icon className={classes.icon}>code</Icon>Custom Model</Button>
+                    <Button className={classes.button} onClick={() => this.handleAddModule('models', 'APIModel')}><Icon className={classes.icon}>cloud</Icon>API Model</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('models', 'PrebuiltModel')}><Icon className={classes.icon}>memory</Icon>Prebuilt Model</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('filters', 'Filter')}><Icon className={classes.icon}>filter_list</Icon>Filter</Button>
                     <Button className={classes.button} onClick={() => this.handleAddModule('custom_entities', 'CustomEntity')}><Icon className={classes.icon}>widgets</Icon>Custom Entity</Button>

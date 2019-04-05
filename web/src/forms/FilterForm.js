@@ -38,7 +38,7 @@ class FilterForm extends Component {
         const data = Object.assign({}, this.state);
         let updated = false;
         for (let key of Object.keys(this.props.attrs)) {
-            if (prevProps.attrs[key] != this.props.attrs[key]) {
+            if (prevProps.attrs[key] !== this.props.attrs[key]) {
                 data[key] = this.props.attrs[key];
                 updated = true;
             }

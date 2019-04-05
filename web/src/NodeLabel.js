@@ -76,6 +76,18 @@ class NodeLabel extends Component {
         const attrs = this.props.nodeData;
         this.props.deleteModule(attrs.category, attrs.index);
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (nextProps.nodeData.alias !== this.props.nodeData.alias) {
+            return true;
+        }
+
+        if (nextProps.selected !== this.props.selected) {
+            return true;
+        }
+        
+        return true;
+    }
     
     render() {
         const { classes } = this.props;
@@ -103,6 +115,9 @@ class NodeLabel extends Component {
                 break;
             case 'CustomModel':
                 iconName = 'code';
+                break;
+            case 'APIModel':
+                iconName = 'cloud';
                 break;
             case 'CustomEntity':
                 iconName = 'widgets';
@@ -134,6 +149,7 @@ class NodeLabel extends Component {
             'TwitterStreamingAPI': 'Twitter Streaming API',
             'FlatFileDataSource': 'Flat File Data Source',
             'CustomModel': 'Custom Model',
+            'APIModel': 'API Model',
             'CustomEntity': 'Custom Entity',
             'PrebuiltModel': 'Prebuilt Model',
             'Filter': 'Filter',
