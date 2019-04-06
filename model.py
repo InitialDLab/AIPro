@@ -1,5 +1,7 @@
 import json
 import requests
+import random
+import os
 
 class Model(object):
 	def __init__(self, config, instance, messenger, preprocessor):
@@ -65,13 +67,12 @@ class APIModel(Model):
 		self.endpoint = config['endpoint']
 		self.model_fn = self._send_request
 		self.image_location_attr  = config['image_location_attr']
+		self.request_builder = ImageRequestBuilder()
 
-	# TODO: Make this something the user provides for handling request/response
 	def _build_request_data(self, data):
-		image_file = open(data[self.image_location_attr], 'rb')
-		image =  image_file.read()
-		image_file.close()
-		return {'image':  (data[self.image_location_attr], image, 'image/jpg')}
+		request = self.request_builder.prepare_request(data)
+		
+		return request
 
 	# TODO: Same here
 	def _extract_response(self, response):
@@ -109,3 +110,21 @@ class APIModel(Model):
 			print(e)
 
 		return result
+
+class ImageRequestBuilder:
+	def generate_random_string(self, length):
+		letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+		numbers = '0123456789'
+		return ''.join(random.choice(letters + numbers) for __ in range(length))
+
+	def prepare_request(self, data):
+		url = data['url']
+		response = requests.get(url, stream=True)
+		image = response.raw.read()
+		if image:
+			filename = '{}.jpeg'.format(self.generate_random_string(15))
+			print('Image being saved at', os.path.join(os.path.dirname(__file__), filename))
+			with open(filename, 'w+') as f:
+				f.write(image)
+		req = {'image': ('image.jpeg', image, 'image/jpeg')}
+		return req

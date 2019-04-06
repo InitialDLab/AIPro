@@ -3,11 +3,8 @@ from mxnet.gluon.data.vision import transforms
 import os
 
 class ImagePreprocessor:
-    def __init__(self):
-        pass
-
     def _get_absolute_path(self, path):
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+        return os.path.join(os.path.dirname(__file__), path)
 
     def _get_image(self, image_path):
         image_path = self._get_absolute_path(image_path)
