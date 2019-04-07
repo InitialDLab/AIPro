@@ -3,7 +3,7 @@ import os
 import json
 from time import sleep
 
-class CustomDataSource:
+class StreamingImagesAPI:
 	def __init__(self, config, messenger):
 		self.messenger = messenger
 		self.done = False

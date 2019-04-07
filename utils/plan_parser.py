@@ -7,7 +7,7 @@ from custom_entity import CustomEntity
 from storage_methods.IO import IO
 from storage_methods.databases import MongoDB
 from data_sources.flatFile import FlatFile
-from data_sources.custom_data_source import CustomDataSource
+from data_sources.StreamingImagesAPI import StreamingImagesAPI
 from storage_methods.fileStorage import FileStorage
 from ai_preprocessor import AIPreprocessor
 from filter_module import Filter
@@ -29,8 +29,8 @@ def get_data_sources(config):
 				#source_config['base_path'] = config['base_path']
 				data_sources.append(FlatFile(source_config, messenger))
 
-			if source_config['type'] == 'CustomDataSource':
-				data_sources.append(CustomDataSource(source_config, messenger))
+			if source_config['type'] == 'StreamingImagesAPI':
+				data_sources.append(StreamingImagesAPI(source_config, messenger))
 
 	return data_sources
 

@@ -12,7 +12,7 @@ class ImageRequestBuilder:
         response = requests.get(url, stream=True)
         image = response.raw.read()
         if image:
-            filename = '{}.jpeg'.format(self.generate_random_string(15))
+            filename = 'streaming-images/{}.jpeg'.format(self.generate_random_string(15))
             with open(filename, 'w+') as f:
                 f.write(image)
         req = {'image': ('image.jpeg', image, 'image/jpeg')}

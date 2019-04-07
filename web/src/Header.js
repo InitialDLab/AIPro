@@ -27,8 +27,9 @@ class Header extends Component {
         const menuConfig = [
             {'text': 'Manage Pipelines', 'link': '/pipelines'},
             {'text': 'Edit Current Pipeline', 'link': '/pipeline/edit'},
-            {'text': 'New Batch Pipeline', 'link': '/pipeline/new/batch'},
-            {'text': 'New Streaming Pipeline', 'link': '/pipeline/new/streaming'},
+            {'text': 'New Pipeline from Flat File', 'link': '/pipeline/new/batch'},
+            {'text': 'New Pipeline from streaming tweets', 'link': '/pipeline/new/streaming'},
+            {'text': 'New Pipeline from streaming images', 'link': '/pipeline/new/streaming-images'}
         ];
         
         const menuList = (

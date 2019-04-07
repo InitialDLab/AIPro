@@ -44,6 +44,28 @@ const newStreamingPipeline = {
         host: 'localhost'
     },
 };
+const newStreamingImagesPipeline = {
+    pipeline_alias: 'Streaming Images Pipeline',
+    running: false,
+    data_sources: [
+        {
+            alias: 'Untitled Data Source',
+            type: 'StreamingImagesAPI',
+            url: 'http://example.com',
+            http_method: 'GET',
+            outputs: [],
+            projection: [],
+        }
+    ],
+    models: [],
+    filters: [],
+    storage: [],
+    preprocessors: [],
+    custom_entities: [],
+    messaging: {
+        host: 'localhost'
+    },
+};
 
 const getDefaultAttributes = (category, moduleType) => {
     if (!defaultModuleAttributes.hasOwnProperty(category)) {
@@ -237,6 +259,8 @@ const pipelineReducer = (pipeline = initialPipeline, action) => {
                 return Object.assign({}, newBatchPipeline);
             else if (action.dataSourceType === 'streaming')
                 return Object.assign({}, newStreamingPipeline);
+            else if (action.dataSourceType === 'streaming-images')
+                return Object.assign({}, newStreamingImagesPipeline);
             else
                 return pipeline;
         case 'RECEIVE_SINGLE_PIPELINE':

@@ -122,9 +122,11 @@ class ImageRequestBuilder:
 		response = requests.get(url, stream=True)
 		image = response.raw.read()
 		if image:
-			filename = '{}.jpeg'.format(self.generate_random_string(15))
+			filename = 'streaming-images/{}.jpeg'.format(self.generate_random_string(15))
 			print('Image being saved at', os.path.join(os.path.dirname(__file__), filename))
 			with open(filename, 'w+') as f:
 				f.write(image)
+				data['download_location'] = filename
 		req = {'image': ('image.jpeg', image, 'image/jpeg')}
+		
 		return req

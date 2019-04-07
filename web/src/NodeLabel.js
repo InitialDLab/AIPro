@@ -110,6 +110,9 @@ class NodeLabel extends Component {
             case 'TwitterStreamingAPI':
                 iconName = 'cloud_queue';
                 break;
+            case 'StreamingImagesAPI':
+                iconName = 'cloud_download';
+                break;
             case 'FlatFileDataSource':
                 iconName = 'attach_file'
                 break;
@@ -147,6 +150,7 @@ class NodeLabel extends Component {
 
         const moduleTypeNameMap = {
             'TwitterStreamingAPI': 'Twitter Streaming API',
+            'StreamingImagesAPI': 'Streaming Images API',
             'FlatFileDataSource': 'Flat File Data Source',
             'CustomModel': 'Custom Model',
             'APIModel': 'API Model',

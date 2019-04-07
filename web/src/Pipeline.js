@@ -26,6 +26,10 @@ class Pipeline extends Component {
                 this.props.setCurrentModule('data_sources', 'TwitterStreamingAPI', 0, -1, 'root', -1);
                 this.props.startNewPipeline('streaming');
             }
+            else if (props.type === 'streaming-images') {
+                this.props.setCurrentModule('data_sources', 'StreamingImagesAPI', 0, -1, 'root', -1);
+                this.props.startNewPipeline('streaming-images')
+            }
         }
     }
 

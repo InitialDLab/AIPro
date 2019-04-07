@@ -3,6 +3,7 @@ import { FormControl, Typography} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import TwitterStreamingAPIForm from './forms/TwitterStreamingAPIForm';
+import StreamingImagesAPIForm from './forms/StreamingImagesAPIForm';
 import FlatFileDataSourceForm from './forms/FlatFileDataSourceForm';
 import FilterForm from './forms/FilterForm';
 import CustomModelForm from './forms/CustomModelForm';
@@ -38,6 +39,11 @@ class ModuleDetails extends Component {
                 return <FlatFileDataSourceForm alias={this.props.attrs.alias} filename={this.props.attrs.filename} />;
             case 'TwitterStreamingAPI':
                 return <TwitterStreamingAPIForm alias={this.props.attrs.alias} />;
+            case 'StreamingImagesAPI':
+                return <StreamingImagesAPIForm 
+                            alias={this.props.attrs.alias}
+                            url={this.props.attrs.url}
+                        />;
             case 'FlatFileStorage':
                 return <FlatFileStorageForm alias={this.props.attrs.alias} filename={this.props.attrs.filename} />
             case 'CustomModel':
@@ -95,6 +101,8 @@ class ModuleDetails extends Component {
                 return 'Flat File (Data Source)';
             case 'TwitterStreamingAPI':
                 return 'Twitter Streaming API';
+            case 'StreamingImagesAPI':
+                return 'Streaming Images API';
             case 'FlatFileStorage':
                 return 'Flat File (Storage)';
             case 'CustomModel':
