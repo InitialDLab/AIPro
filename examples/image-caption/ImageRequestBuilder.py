@@ -3,7 +3,7 @@ import random
 
 class ImageRequestBuilder:
     def __init__(self):
-        print('Initializing image request builder')
+        print('Initializing ImageRequestBuilder')
 
     def generate_random_string(self, length):
         letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
