@@ -2,6 +2,9 @@ import requests
 import random
 
 class ImageRequestBuilder:
+    def __init__(self):
+        print('Initializing image request builder')
+
     def generate_random_string(self, length):
         letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         numbers = '0123456789'

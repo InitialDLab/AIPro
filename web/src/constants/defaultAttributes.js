@@ -26,6 +26,12 @@ const defaultDataSourceAttributes = {
         projection: [],
         outputs: []
     },
+    StreamingImagesAPI: {
+        alias: 'Streaming Images API',
+        type: 'StreamingImagesAPI',
+        url: 'http://examples.com',
+        outputs: []
+    },
     FlatFileDataSource: {
         alias: 'My flat file',
         type: 'FlatFileDataSource',
@@ -64,7 +70,9 @@ const defaultModelAttributes = {
         http_method: 'GET',
         input_attribute: '',
         output_attribute: '',
-        image_location_attr: '',
+        preprocessor_filename: '',
+        preprocessor_classname: '',
+        preprocessor_method_name: '',
     },
     PrebuiltModel: {
         alias: 'Image Boundary Classifier',

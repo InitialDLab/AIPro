@@ -56,7 +56,9 @@ class APIModelForm extends Component {
                 <TextField name='output_attribute' value={this.state.data.output_attribute} onChange={this.handleChange} label='Output attribute' />
                 <TextField name='http_method' value={this.state.data.http_method} onChange={this.handleChange} label='HTTP Method' />
                 <TextField name='endpoint' value={this.state.data.endpoint} onChange={this.handleChange} label='API Endpoint' />
-                <TextField name='image_location_attr' value={this.state.data.image_location_attr} onChange={this.handleChange} label='Image location attribute' />
+                <TextField name='preprocessor_filename' value={this.state.data.preprocessor_filename} onChange={this.handleChange} label='Preprocessor Filename' />
+                <TextField name='preprocessor_classname' value={this.state.data.preprocessor_classname} onChange={this.handleChange} label='Preprocessor Class Name' />
+                <TextField name='preprocessor_method_name' value={this.state.data.preprocessor_method_name} onChange={this.handleChange} label='Preprocessor Method Name' />
                 <Button onClick={this.handleSave} variant='contained' color='primary'>Save</Button>
             </FormControl>
         );

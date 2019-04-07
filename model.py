@@ -66,15 +66,9 @@ class APIModel(Model):
 		print('HTTP Method: {}'.format(self.http_method))
 		self.endpoint = config['endpoint']
 		self.model_fn = self._send_request
-		self.image_location_attr  = config['image_location_attr']
-		self.request_builder = ImageRequestBuilder()
+		self.preprocessor = preprocessor
 
-	def _build_request_data(self, data):
-		request = self.request_builder.prepare_request(data)
-		
-		return request
-
-	# TODO: Same here
+	# TODO: Add support for a post-processing module?
 	def _extract_response(self, response):
 		data = response.json()
 		if data['status'] == 'ok':
@@ -85,13 +79,12 @@ class APIModel(Model):
 		else:
 			return {'caption': 'N/A'}
 
-	def _send_request(self, data):
+	def _send_request(self, request_data):
 		result = None
 		try:
 			if self.http_method == 'GET':
 				response  = requests.get(self.endpoint)
 			elif self.http_method == 'POST':
-				request_data = self._build_request_data(data)
 				print('Sending POST request to {}'.format(self.endpoint))
 				response = requests.post(self.endpoint, files=request_data)
 				print('Response: {}'.format(response.text))
