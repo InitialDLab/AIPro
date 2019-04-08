@@ -18,5 +18,6 @@ class ImageRequestBuilder:
             filename = 'streaming-images/{}.jpeg'.format(self.generate_random_string(15))
             with open(filename, 'w+') as f:
                 f.write(image)
+                data['download_location'] = filename
         req = {'image': ('image.jpeg', image, 'image/jpeg')}
         return req

@@ -7,7 +7,7 @@ import os
 # Credit to the ImageNet notebook tutorial for ONNX with MXNet
 class ImageClassifier:
     def _get_absolute_path(self, path):
-        return os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+        return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
     def __init__(self, model_config):
         # Load all of the labels into memory

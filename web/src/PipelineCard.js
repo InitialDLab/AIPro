@@ -76,10 +76,10 @@ class PipelineCard extends Component {
         const pipeline_alias = pipeline.pipeline_alias;
         const instance_id = pipeline.instance_id || '';
         const running = pipeline.running;
-        const dataSources = pipeline.data_sources ? <Typography>{pipeline.data_sources.length} data source{pipeline.data_sources.length > 1 ? 's' : ''}</Typography> : '';
-        const models = pipeline.models ? <Typography>{pipeline.models.length} model{pipeline.models.length > 1 ? 's' : ''}</Typography> : '';
-        const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filter{pipeline.filters.length > 1 ? 's' : ''}</Typography> : '';
-        const storage = pipeline.storage ? <Typography>{pipeline.storage.length} storage method{pipeline.storage.length > 1 ? 's' : ''}</Typography> : '';
+        const dataSources = pipeline.data_sources ? <Typography>{pipeline.data_sources.length} data source{pipeline.data_sources.length != 1 ? 's' : ''}</Typography> : '';
+        const models = pipeline.models ? <Typography>{pipeline.models.length} model{pipeline.models.length != 1 ? 's' : ''}</Typography> : '';
+        const filters = pipeline.filters ? <Typography>{pipeline.filters.length} filter{pipeline.filters.length != 1 ? 's' : ''}</Typography> : '';
+        const storage = pipeline.storage ? <Typography>{pipeline.storage.length} storage method{pipeline.storage.length != 1 ? 's' : ''}</Typography> : '';
 
         const colors = [amber, blue, green, grey, purple, indigo, blueGrey, brown, cyan, lime, orange, pink, red, yellow, deepOrange];
         const colorIndex = this.props.index % colors.length;

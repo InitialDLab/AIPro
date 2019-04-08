@@ -2,6 +2,8 @@ import traceback
 
 class AIPreprocessor:
 	def __init__(self, config, instance):
+		print('Initializing preprocessor with config')
+		print(config)
 		self.instance = instance
 		self.preprocess_fn = self.default_preprocess
 		if config and hasattr(instance, config['preprocessor_method_name']) and callable(getattr(instance, config['preprocessor_method_name'])):
