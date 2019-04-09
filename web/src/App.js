@@ -7,6 +7,8 @@ import Settings from './Settings';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import ManagePipelines from './ManagePipelines';
+import StreamingCaptionsDemo from './StreamingCaptionsDemo';
+import StreamingTweetsDemo from './StreamingTweetsDemo';
 import { connect } from 'react-redux';
 import { setLoggedIn, CLEAR_ERROR, CLEAR_MESSAGE, loadCredentials } from './actions/utilActions';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -78,11 +80,26 @@ class App extends Component {
               <Pipeline new={true} type='streaming' /> 
               : <Redirect to='/login' />}
             />
+            <Route exact path='/pipeline/new/streaming-images' render={() => 
+              loggedIn ? 
+              <Pipeline new={true} type='streaming-images' /> 
+              : <Redirect to='/login' />}
+            />
             <Route exact path='/pipelines' render={() => 
               loggedIn ? 
               <ManagePipelines /> 
               : <Redirect to='/login' />} 
               />
+            <Route exact path='/demo/captions' render={() => 
+              loggedIn ?
+              <StreamingCaptionsDemo />
+              : <Redirect to='/login' />}
+            />
+            <Route exact path='/demo/tweets' render={() => 
+              loggedIn ?
+              <StreamingTweetsDemo />
+              : <Redirect to='/login' />}
+            />
             <Route path='/login' render={() => <LoginPage />} 
             />
             <Route path='/signup' render={() => 

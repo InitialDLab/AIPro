@@ -14,6 +14,9 @@ class APIModelForm extends Component {
                 http_method: this.props.http_method,
                 endpoint: this.props.endpoint,
                 image_location_attr: this.props.image_location_attr,
+                preprocessor_filename: this.props.preprocessor_filename,
+                preprocessor_classname: this.props.preprocessor_classname,
+                preprocessor_method_name: this.props.preprocessor_method_name,
             }
         }
     }

@@ -29,7 +29,9 @@ class Header extends Component {
             {'text': 'Edit Current Pipeline', 'link': '/pipeline/edit'},
             {'text': 'New Pipeline from Flat File', 'link': '/pipeline/new/batch'},
             {'text': 'New Pipeline from streaming tweets', 'link': '/pipeline/new/streaming'},
-            {'text': 'New Pipeline from streaming images', 'link': '/pipeline/new/streaming-images'}
+            {'text': 'New Pipeline from streaming images', 'link': '/pipeline/new/streaming-images'},
+            {'text': 'Image Captions Demo', 'link': '/demo/captions'},
+            {'text': 'Tweet Sentiment Demo', 'link': '/demo/tweets'},
         ];
         
         const menuList = (

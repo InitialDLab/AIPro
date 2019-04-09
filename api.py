@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, make_response, jsonify
+from flask import Flask, request, redirect, url_for, make_response, jsonify, send_file
 from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 import os
@@ -54,6 +54,27 @@ def save_file(the_file, directory):
     log('File saved to %s' % uploaded_file)
 
     return uploaded_file
+
+@app.route('/demo-data/<demo_type>', methods=['GET'])
+def run_demo(demo_type):
+    if demo_type == 'captions':
+        with open('captions-demo.json') as f:
+            lines = [json.loads(line) for line in f]
+            return json.dumps({'images': lines[::-1]})
+    elif demo_type == 'sentiment':
+        with open('sentiment-demo.json') as f:
+            lines = [json.loads(line) for line in f]
+            return json.dumps({'tweets': lines[::-1]})
+    elif demo_type == 'classification':
+        with open('classification-demo.json') as f:
+            lines = [json.loads(line) for line in f]
+            return json.dumps({'images': lines[::-1]})
+    else:
+        return json.dumps({'error': True, 'message': 'Unknown demo type {}'.format(demo_type)})
+
+@app.route('/streaming-images/<image_name>')
+def get_image(image_name):
+    return send_file('streaming-images/{}'.format(image_name), mimetype='image/jpeg')
 
 @app.route('/upload', methods=['POST', 'GET'])
 def handle_upload():

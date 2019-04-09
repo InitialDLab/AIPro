@@ -16,7 +16,7 @@ class StreamingImagesAPI:
 		while not self.done:
 			message = {'url': self.url}
 			self.publish(message)
-			sleep(0.5)
+			sleep(1)
 
 	def publish(self, data):
 		self.messenger.publish(data)

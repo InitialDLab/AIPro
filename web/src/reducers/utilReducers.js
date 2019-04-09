@@ -116,3 +116,14 @@ export const currentModuleReducer = (state = initialCurrentModuleState, action) 
             return state;
     }
 }
+
+export const demoReducer = (state = {'images': []}, action) => {
+    switch(action.type) {
+        case 'SET_CAPTIONS_DEMO_DATA':
+            return action.demoData;
+        case 'SET_SENTIMENT_DEMO_DATA':
+            return action.demoData;
+        default:
+            return state;
+    }
+}

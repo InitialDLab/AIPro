@@ -63,6 +63,38 @@ export const STOP_LOADING = {
     type: 'STOP_LOADING'
 };
 
+export const setCaptionsDemoData = demoData => {
+    return {
+        type: 'SET_CAPTIONS_DEMO_DATA',
+        demoData
+    };
+}
+
+export const setSentimentDemoData = demoData => {
+    return {
+        type: 'SET_SENTIMENT_DEMO_DATA',
+        demoData
+    };
+}
+
+export const loadStreamingCaptionsDemoData = () => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const response = await api.get('/demo-data/captions');
+        dispatch(STOP_LOADING);
+        dispatch(setCaptionsDemoData(response));
+    }
+}
+
+export const loadStreamingSentimentDemoData = () => {
+    return async function(dispatch) {
+        dispatch(START_LOADING);
+        const response  = await  api.get('/demo-data/sentiment');
+        dispatch(STOP_LOADING);
+        dispatch(setSentimentDemoData(response));
+    }
+}
+
 export const signup = (username, password, email) => {
     return async function(dispatch) {
         if (username.length === 0) {

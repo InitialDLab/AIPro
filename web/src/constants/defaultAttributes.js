@@ -75,9 +75,9 @@ const defaultModelAttributes = {
         preprocessor_method_name: '',
     },
     PrebuiltModel: {
-        alias: 'Image Boundary Classifier',
+        alias: 'Image Classifier',
         type: 'PrebuiltModel',
-        subtype: '', // ONNX, Keras, etc.
+        subtype: '',
         outputs: [],
     },
 }

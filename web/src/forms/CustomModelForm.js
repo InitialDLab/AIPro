@@ -9,7 +9,7 @@ class CustomModelForm extends Component {
         this.state = {
             data: {
                 alias: this.props.alias,
-                model_path: '',
+                model_path: this.props.model_path,
                 module_file_path: this.props.module_file_path,
                 module_classname: this.props.module_classname,
                 method_name: this.props.method_name,

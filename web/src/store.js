@@ -9,6 +9,7 @@ import {
     loggedInReducer, 
     pipelineListReducer,
     currentModuleReducer,
+    demoReducer
 } from './reducers/utilReducers';
 import pipelineReducer from './reducers/pipelineReducer';
 
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     currentUser: userReducer,
     currentPipeline: pipelineReducer,
     pipelines: pipelineListReducer,
-    currentModule: currentModuleReducer
+    currentModule: currentModuleReducer,
+    demo: demoReducer,
 });
 
 const store = createStore(
