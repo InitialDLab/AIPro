@@ -1,4 +1,4 @@
-# AI Pro
+# AI Pro [Demo](https://www.youtube.com/watch?v=e6imr87kdB4)
 ### A primer
 Previously known as Compass, the project started with an aim to provide a framework for running several machine learning models over spatiotempral data with a single configuration file.
 
