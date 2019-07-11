@@ -1,5 +1,6 @@
 from data_source import DataSource
 import os
+import pandas as pd
 import json
 
 class FlatFile(DataSource):
@@ -20,15 +21,20 @@ class FlatFile(DataSource):
 			self.filetype = 'lines'
 		
 	def run(self):
-		with open(self.filename) as f:
-			if self.filetype == 'json':
+		if self.filetype == 'json':
+			with open(self.filename) as f:
 				data = json.loads(f.read())
 				for line in data:
 					self.publish(line)
-			elif self.filetype == 'lines':
+		elif self.filetype == 'lines':
+			with open(self.filename) as f:
 				for line in f:
 					message = json.loads(line.rstrip())
 					self.publish(message)
+		elif self.filetype == 'csv':
+			df = pd.read_csv(self.filename)
+			for __, row in df.iterrows():
+				self.messenger.publish(row.to_json())
 
 	def publish(self, data):
 		self.messenger.publish(data)

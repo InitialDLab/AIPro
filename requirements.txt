@@ -22,3 +22,4 @@ tensorflow
 onnx
 mxnet
 requests
+pandas
