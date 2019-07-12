@@ -1,18 +1,21 @@
 # AI Pro [Demo](https://www.youtube.com/watch?v=e6imr87kdB4)
-### A primer
-Previously known as Compass, the project started with an aim to provide a framework for running several machine learning models over spatiotempral data with a single configuration file.
+### What is it?
+AI Pro is data science as a service. Rather than munging through data endlessly and forever tweaking lines of code to get your inference pipelines just right, AI Pro does this all seamlessly for you.
 
-Today, **AI Pro** does much more. It acts as a framework to unite `data sources`, `models` and `storage` components. 
+You can either use the browser-based UI, or write config files yourself.
+
+At its core, AI Pro acts as a framework to unite `data sources`, `models` and `storage` components. 
 
 	- Data Source types: 
-		- `Streaming (API)`
-		- `Batch (files)` 
+		- JSON Lines
+		- Twitter's Streaming API
+		- CSV files
+		- Image streams 
 	- Models types:
-		- `Custom`
-		- `Prebuilt`
+		- Custom models (Tensorflow, Keras, Scikit-Learn, and more)
 	- Storage types
-		- `Databases`
-		- `Files`
+		- MongoDB
+		- Flat files
 
 A pipeline with any combination of components can be created with just a configuration file. 
 **AIPro**'s goal is to help you make your own **Data Science as a Service (DSaaS)** platform.
@@ -24,7 +27,7 @@ git clone https://github.com/InitialDLab/AIPro.git
 ``
 
 2. Install dependencies
-	- Assuming Docker and RabbitMQ both not present
+	- Use Docker and Rabbit MQ for the message processing
 		- `./docker-ubuntu.sh`
 		- `./run.sh`	
 	- Installing Python dependencies
@@ -53,8 +56,8 @@ git clone https://github.com/InitialDLab/AIPro.git
 	- `cd web/`
 	- `npm install`
 	- `npm build`
-5. Serve the front end from `web/public`, or run `npm start` from the web directory for development
-6. Create an account, then start building pipelines!
+5. Serve the front end from `web/public`, or run `npm start` from the web directory for hot-reload development
+6. Create an account, then start building pipelines! You can manage pipeline runs from within the browser as well.
 
 ## :octocat:[Get started with command line](#octocatget-started-command-line)
 1. Clone this repository
