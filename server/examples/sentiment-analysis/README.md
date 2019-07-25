@@ -1,0 +1,4 @@
+# How was this pipeline made?
+This pipeline was used in part for predicting how voters felt about the different candidates during the 2016 United States Presidential Election.  A flat file of raw tweets in JSON format (a very small subset from the original paper) is passed (line by line) to a sentiment prediction model written in Keras, which is then stored in a flat file.
+
+This model also works well with a streaming Twitter API connection, so if you want to try that out, you can change this config to have a "StreamingAPI" type data source and feed it through the same pipeline.  Just make sure to remember to include your API credentials!  We also included a tweets preprocessor so you can see how easy it is to clean data in the pipeline in streaming fashion.

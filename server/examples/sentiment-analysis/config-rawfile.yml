@@ -1,0 +1,38 @@
+data_sources:
+  -
+    type: 'FlatFileDataSource'
+    alias: 'Raw Tweets JSON File'
+    filename: 'examples/sentiment-analysis/data/raw_tweets.json'
+    outputs:
+      - 'Lang filter'
+filters:
+  - alias: 'Lang filter'
+    condition: 'eq'
+    value: 'en'
+    attribute: 'user.lang'
+    outputs:
+      - Sentiment Classifier
+models:
+  -
+    alias: 'Sentiment Classifier'
+    module_file_path: 'examples/sentiment-analysis/sentiment.py'
+    module_classname: 'SentimentClassifier'
+    method_name: 'predict'
+    input_attribute: 'text'
+    output_attribute: 'sentiment_score'
+    preprocessor_filename: 'examples/sentiment-analysis/tweet_preprocessor.py'
+    preprocessor_classname: 'TweetPreprocessor'
+    preprocessor_method_name: 'preprocess'
+    outputs:
+        - 'Tweets with Sentiment Score'
+storage:
+  -
+    type: 'FlatFileStorage'
+    alias: 'Tweets with Sentiment Score'
+    save_filename: 'examples/sentiment-analysis/feelings.json'
+    projection:
+      - sentiment_score
+      - text
+      - geolocation
+messaging:
+    host: 'localhost'
