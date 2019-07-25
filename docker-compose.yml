@@ -1,0 +1,23 @@
+version: '3'
+services:
+  messaging:
+    image: "rabbitmq:3-management"
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: volume
+        source: db_data
+        target: /data/db
+  server:
+    build: ./server
+    image: aipro-server
+    ports:
+      - "5000:5000"
+  web:
+    image: alpine
+    
