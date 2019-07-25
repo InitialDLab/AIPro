@@ -1,6 +1,6 @@
 import sys
 import os
-from import_module import import_module_from_file
+from . import_module import import_from_file
 from messaging import Messenger
 from data_sources.twitterStream import Twitter
 from custom_entity import CustomEntity
@@ -45,7 +45,7 @@ def get_models(config):
 			if 'preprocessor_filename' in model_config and model_config['preprocessor_filename'] != '':
 				preprocessor_path = os.path.join(os.getcwd(), model_config['preprocessor_filename'])
 				print('Loading preprocessor from path "%s"' % preprocessor_path)
-				preprocessor = import_module_from_file(model_config['preprocessor_classname'], preprocessor_path)
+				preprocessor = import_from_file(model_config['preprocessor_classname'], preprocessor_path)
 				constructor = getattr(preprocessor, model_config['preprocessor_classname'])
 				instance = constructor()
 				preprocessor = AIPreprocessor(model_config, instance)	
@@ -56,7 +56,7 @@ def get_models(config):
 
 			# TODO: Make it more obvious that models can be either on-premise or exist as APIs
 			if 'module_file_path' in model_config:
-				module = import_module_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))
+				module = import_from_file(model_config['module_classname'], os.path.join(os.getcwd(), model_config['module_file_path']))
 				constructor = getattr(module, model_config['module_classname'])
 				
 				#  Used for ONNX models
@@ -109,7 +109,7 @@ def get_custom_entities(pipeline):
 			messenger.set_incoming(config['alias'])
 			messenger.set_outgoing(config['outputs'])
 
-			module = import_module_from_file(config['classname'], os.path.join(os.getcwd(), config['filename']))
+			module = import_from_file(config['classname'], os.path.join(os.getcwd(), config['filename']))
 			constructor = getattr(module, config['classname'])
 			instance = constructor()
 
