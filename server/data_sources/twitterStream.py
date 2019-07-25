@@ -3,7 +3,6 @@ from tweepy import Stream
 from tweepy import StreamListener
 from tweepy import API
 import json
-from data_source import DataSource
 
 class TwitterStream(StreamListener):
 	def  __init__(self, instance):
@@ -18,7 +17,7 @@ class TwitterStream(StreamListener):
 		print("Twitter streaming error: {}".format(status_code))
 		self.instance.on_stream_error()
 
-class Twitter(DataSource):
+class Twitter:
 	def __init__(self, config, messenger):
 		assert('api_key' in config)
 		assert('api_secret' in config)

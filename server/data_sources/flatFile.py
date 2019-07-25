@@ -1,9 +1,8 @@
-from data_source import DataSource
 import os
 import pandas as pd
 import json
 
-class FlatFile(DataSource):
+class FlatFile:
 	def __init__(self, config, messenger):
 		self.messenger = messenger
 		file_path = os.path.realpath(os.path.join(os.getcwd(), config['filename']))
