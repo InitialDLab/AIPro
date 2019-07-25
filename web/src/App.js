@@ -49,7 +49,7 @@ class App extends Component {
     else
       isOpen = false;
 
-    const loggedIn = true; // this.props.loggedIn;
+    const loggedIn = this.props.loggedIn;
     return (
       <MuiThemeProvider theme={theme}>
         <Router>
