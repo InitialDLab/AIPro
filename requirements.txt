@@ -3,10 +3,9 @@ chardet==3.0.4
 idna==2.6
 oauthlib==2.0.7
 pika==0.11.2
-pyaml==17.12.1
+pyaml==19.4.1
 PySocks==1.6.8
 PyYAML==3.12
-requests==2.18.4
 requests-oauthlib==0.8.0
 six==1.11.0
 tweepy==3.6.0
@@ -15,12 +14,12 @@ urllib3==1.22
 flask
 flask-cors
 pymongo
-numpy
+numpy>=1.14.6
 gensim
 keras
 tensorflow
 onnx
-mxnet
+mxnet>=1.4.0
 requests
 pandas
 scikit-learn
