@@ -1,3 +1,6 @@
 pyaml
 numpy
 pika
+flask
+flask-cors
+pymongo

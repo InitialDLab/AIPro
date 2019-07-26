@@ -11,8 +11,8 @@ import pyaml
 ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml', 'py', 'json', 'csv'])
 RANDOM_PREFIX_LENGTH = 10
 
-mongo = MongoClient('localhost', 27017)
-db = mongo['compass']
+mongo = MongoClient('db', 27017)
+db = mongo['aipro']
 
 processes = {}
 
@@ -343,6 +343,10 @@ def install():
     subprocess.call(['./install_custom.sh', uploaded_file])
 
     return json.dumps({'message': 'Custom requirements file \'%s\' installed' % request.files['file'].filename})
+
+@app.route('/test', methods=['GET'])
+def test_route():
+    return json.dumps({'test': True})
 
 if __name__ == '__main__':
     app.config.update({
