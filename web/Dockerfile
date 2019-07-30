@@ -1,4 +1,9 @@
-FROM ubuntu
+FROM node:alpine
 
-RUN apt-get update && apt-get install node
-RUN npm build
+WORKDIR /app
+
+COPY . /app
+
+RUN yarn 
+
+CMD ["npm", "start"]

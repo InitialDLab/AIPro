@@ -18,6 +18,16 @@ services:
     image: aipro-server
     ports:
       - "5000:5000"
+  frontend:
+    build: ./web
+    image: aipro-web
+    volumes:
+      - "./web:/app"
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
 volumes:
   db_data:
+  web:
     

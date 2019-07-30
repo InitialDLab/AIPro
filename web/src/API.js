@@ -1,6 +1,6 @@
 class API {
     method = 'http';
-    urlBase = 'localhost:5000';
+    urlBase = 'server:5000';
 
     async postFile(resource, file) {
         const headers = new Headers({
