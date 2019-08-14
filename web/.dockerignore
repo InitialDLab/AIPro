@@ -1,3 +1,2 @@
 # Ignore the folders that are built
-node_modules
-public
+node_modules/*

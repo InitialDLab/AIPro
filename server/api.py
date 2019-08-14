@@ -8,52 +8,22 @@ import json
 from pymongo import MongoClient
 import pyaml
 
-ALLOWED_UPLOAD_EXTENSIONS = set(['txt', 'yml', 'py', 'json', 'csv'])
-RANDOM_PREFIX_LENGTH = 10
-
 mongo = MongoClient('db', 27017)
 db = mongo['aipro']
 
 processes = {}
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="http://localhost/*")
 
 def log(message):
     print(message)
 
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_UPLOAD_EXTENSIONS
-
-def generate_random_string(length):
+def generate_random_string():
+    length = 15
     letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     numbers = '0123456789'
     return ''.join(random.choice(letters + numbers) for __ in range(length))
-
-def check_file_request(request):
-    log('Checking file request...')
-    # Check if the post has the return type
-    if 'file' not in request.files:
-        return json.dumps({'message': 'Missing file in upload'})
-    my_file = request.files['file']
-
-    # If the user doesn't select a file, browser also submits an empty part without filename
-    if my_file.filename == '':
-        return json.dumps({'message': 'Missing file in upload'})
-
-    if not (my_file and allowed_file(my_file.filename)):
-        return json.dumps({'message': 'Invalid file type: \'%s\'' % my_file.filename})
-
-def save_file(the_file, directory):
-    random_string = generate_random_string(RANDOM_PREFIX_LENGTH)
-    filename = secure_filename(the_file.filename)
-    filename_to_save = '%s__%s' % (random_string, filename) # Make this string uniquely identifiable
-    uploaded_file = os.path.join(directory, filename_to_save)
-    the_file.save(uploaded_file)
-    log('File saved to %s' % uploaded_file)
-
-    return uploaded_file
 
 @app.route('/demo-data/<demo_type>', methods=['GET'])
 def run_demo(demo_type):
@@ -75,35 +45,6 @@ def run_demo(demo_type):
 @app.route('/streaming-images/<image_name>')
 def get_image(image_name):
     return send_file('streaming-images/{}'.format(image_name), mimetype='image/jpeg')
-
-@app.route('/upload', methods=['POST', 'GET'])
-def handle_upload():
-    # Check if the post has the return type
-    if request.method == 'GET':
-        return '''
-        <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form method=post enctype=multipart/form-data>
-        <input type=file name=file>
-        <input type=submit value=Upload>
-        </form>
-        '''
-    if 'file' not in request.files:
-        log('Missing file in upload')
-        return json.dumps({'message': 'Missing file in upload', 'error': True})
-    my_file = request.files['file']
-
-    # If the user doesn't select a file, browser also submits an empty part without filename
-    if my_file.filename == '':
-        return json.dumps({'message': 'Missing file in upload'})
-
-    if not (my_file and allowed_file(my_file.filename)):
-        return json.dumps({'message': 'Invalid file type: \'%s\'' % my_file.filename})
-    #uploaded_file = save_file(request.files['file'], '/uploads')
-
-    #return json.dumps({'message': 'File \'%s\' uploaded' % request.files['file'].filename})
-    return json.dumps({'message': 'Everything OK, you\'re good.'})
 
 @app.route('/login', methods=['POST'])
 def handle_login():
@@ -156,18 +97,6 @@ def handle_create_user():
         return json.dumps({'success': True})
     else:
         return json.dumps({'success': False})
-'''
-@app.route('/<username>/account/<account_type>/', methods=['GET'])
-def handle_get_account(username, account_type):
-    accounts_collection = db['accounts']
-    query = {'account_type': account_type, 'username': username}
-    account = accounts_collection.find_one(query, {'_id': 0})
-    log(account)
-    if account:
-        return json.dumps(account)
-    else:
-        return json.dumps({'message': 'No \'%s\' account found for \'%s\'' % (account_type, username)})
-'''
 
 @app.route('/<username>/account/<account_type>', methods=['POST', 'GET'])
 def handle_save_account(username, account_type):
@@ -299,7 +228,7 @@ def handle_start_pipeline(username, pipeline_alias):
     pipelines_collection = db['pipelines']
     pipeline = pipelines_collection.find_one({'username': username, 'pipeline_alias': pipeline_alias}, {'_id': 0})
 
-    instance_id = generate_random_string(15)
+    instance_id = generate_random_string()
     yaml_filename = '%s.yml' % instance_id
     with open(yaml_filename, 'w+') as yaml_file:
         pyaml.dump(pipeline, yaml_file)
@@ -328,30 +257,9 @@ def handle_stop_pipeline(instance_id):
     else:
         return json.dumps({'message': 'Couldn\'t find instance id %s' % instance_id, 'error': True})
 
-@app.route('/diagnostics/<pipeline_alias>')
-def handle_pipeline_diagnostics(pipeline_alias):
-    if pipeline_alias == 'richie':
-        return json.dumps({'message': 'pipeline diagnostics for alias \'Richie\''})
-    return json.dumps({'message': 'Generic pipeline diagnostics for \'%s\'' % pipeline_alias})     
-
-@app.route('/install/custom', methods=['POST'])
-def install():
-    check_file_request(request)
-    uploaded_file = save_file(request.files['file'], app.config['CONFIG_FILE_UPLOAD_FOLDER'])
-
-    # TODO: Check this file to make sure it's safe first
-    subprocess.call(['./install_custom.sh', uploaded_file])
-
-    return json.dumps({'message': 'Custom requirements file \'%s\' installed' % request.files['file'].filename})
-
 @app.route('/test', methods=['GET'])
 def test_route():
     return json.dumps({'test': True})
 
 if __name__ == '__main__':
-    app.config.update({
-        'INSTALL_FILE_UPLOAD_FOLDER': 'uploads/custom_install_files',
-        'CONFIG_FILE_UPLOAD_FOLDER': 'uploads/config_files'
-    })
-
-    app.run()
+    app.run(host="0.0.0.0")

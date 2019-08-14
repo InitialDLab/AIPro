@@ -2,32 +2,30 @@ version: '3.7'
 services:
   messaging:
     image: "rabbitmq:3-management"
-    ports: 
-      - "5672:5672"
+    expose: 
+      - 5672
+    ports:
       - "15672:15672"
   db:
     image: mongo
-    ports:
-      - "27017:27017"
+    expose:
+      - 27017
     volumes:
       - type: volume
         source: db_data
         target: /data/db
   server:
     build: ./server
-    image: aipro-server
+    depends_on:
+      - db
+      - messaging
     ports:
       - "5000:5000"
-  frontend:
+  web:
     build: ./web
-    image: aipro-web
-    volumes:
-      - "./web:/app"
-    expose:
-      - 3000
+    depends_on:
+      - server
     ports:
-      - "3000:3000"
+      - "80:80"
 volumes:
   db_data:
-  web:
-    
