@@ -20,7 +20,7 @@ At its core, AI Pro acts as a framework to unite `data sources`, `models` and `s
 A pipeline with any combination of components can be created with just a configuration file. 
 **AIPro**'s goal is to help you make your own **Data Science as a Service (DSaaS)** platform.
 
-## :rocket:[Quick Start on Ubuntu](#rocketquick-start-on-ubuntu)
+## :rocket:[Quick Start](#quickstart)
 1. Clone this repository
 ``
 git clone https://github.com/InitialDLab/AIPro.git
